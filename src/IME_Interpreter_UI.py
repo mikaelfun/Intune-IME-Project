@@ -13,9 +13,6 @@ class Root(Tk):
         super(Root, self).__init__()
         self.title("IME log Interpreter  V1.0")
         self.minsize(640, 400)
-        # self.wm_iconbitmap('icon.ico')
-
-        # self.filename = "C:\\Users\\kufang\\Downloads\\IntuneManagementExtension-20210704-211516.log"
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
         self.labelFrame.grid(column=0, row=1, padx=20, pady=20)
@@ -63,7 +60,7 @@ class Root(Tk):
 if __name__ == "__main__":
     root = Root()
     root.mainloop()
-    #log = IMELog("C:\\test\\\ime reboot\\IntuneManagementExtension-20210713-102822.log")
+    #log = IMELog("C:\\Users\\kufang\\Downloads\\autopilot 1103\\IntuneManagementExtension-20211102-044845.log")
     #log = IMELog("C:\\Users\\kufang\\Downloads\\Autopilot Logs from 001\\001\\Autopilot-001\\IntuneManagementExtension.log")
     #print(log.generate_win32_app_log())
     # start_process_by_log_path("C:\\Users\\kufang\\Downloads\\IntuneManagementExtension-20210704-211516.log")
