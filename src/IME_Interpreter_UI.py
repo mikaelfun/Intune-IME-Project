@@ -1,6 +1,25 @@
-# break logs into lines and return list of lines as loaded logs
-# IME log are mixed with multiple threads
-# It is important to separate logs into each thread processing
+'''
+Developing plan:
+
+install/availability deadline
+reboot behavior and log continuity
+restart grace period
+dependency with auto install                done
+dependency with detect only
+precedency
+assignment filter
+UI scroll bar
+UI with fonts style
+
+WPJ and user context payload skip           done
+Display DO and CDN download timeout         partly done
+Display Install time out                    done
+Remember last opened directory              done
+Display download URL
+
+multi-file IME log analysis
+
+'''
 
 from tkinter import *
 from tkinter import ttk
@@ -11,7 +30,7 @@ from Win32_log_processing import *
 class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
-        self.title("IME log Interpreter  V1.0")
+        self.title("IME log Interpreter  V2.0")
         self.minsize(640, 400)
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
@@ -23,6 +42,8 @@ class Root(Tk):
         self.button_analyze()
         self.button_clear()
         self.text_output()
+
+        self.filename = ""
 
     def button(self):
         self.button = ttk.Button(self.labelFrame, text="Browse IME log File", command=self.fileDialog)
@@ -45,8 +66,12 @@ class Root(Tk):
         self.text_output.delete("1.0","end")
 
     def fileDialog(self):
-        self.filename = filedialog.askopenfilename(initialdir="/", title="Select A File",
+        if not self.filename:
+            self.filename = filedialog.askopenfilename(initialdir="/", title="Select A File",
                                                    filetype=(("IME log files", "*.log"), ("all files", "*.*")))
+        else:
+            self.filename = filedialog.askopenfilename(initialdir= self.filename, title="Select A File",
+                                                       filetype=(("IME log files", "*.log"), ("all files", "*.*")))
         self.label.configure(text="")
         self.label.configure(text=self.filename)
 
@@ -60,8 +85,12 @@ class Root(Tk):
 if __name__ == "__main__":
     root = Root()
     root.mainloop()
-    #log = IMELog("C:\\Users\\kufang\\Downloads\\autopilot 1103\\IntuneManagementExtension-20211102-044845.log")
-    #log = IMELog("C:\\Users\\kufang\\Downloads\\Autopilot Logs from 001\\001\\Autopilot-001\\IntuneManagementExtension.log")
-    #print(log.generate_win32_app_log())
-    # start_process_by_log_path("C:\\Users\\kufang\\Downloads\\IntuneManagementExtension-20210704-211516.log")
 
+    #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\DO fail CDN mode download success.log")
+    #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Incomplete Application Poller without stop1.log")
+    #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Incomplete Application Poller without stop2.log")
+    #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Device Setup with restart 20 apps log only 3 showed.log")
+    #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Extended requirement script not met.log")
+    #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Download directly via CDN, Exit code, empty poller, incomplete apps.log")
+
+    #print(log.generate_win32_app_log())

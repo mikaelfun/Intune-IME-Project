@@ -1,117 +1,98 @@
 import Preprocessing as pp
 
+log_output = ""
 
-def process_each_app_log(win32_app_log):
-    log_output = ""
-    if not win32_app_log:
-        return log_output
-    # i = 0
+
+def add_line(new_line):
+    global log_output
+    log_output = log_output + "\n"
+    log_output = log_output + new_line
+
+
+def process_standalone_app(win32_app_log, intent):
     current_index = 0
-    intent = "REQUIRED INSTALL"
     pre_process_detect = False
     post_process_detect = False
-    if not win32_app_log[0].startswith('<![LOG[[Win32App] ExecManager: processing targeted app'):  # exception and stop
+
+    # log skip due to WPJ and user context payload
+    locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:], "<![LOG[[Win32App] Device is WPJ, and payload context is user, report not applicable]")
+    if locate_result >= 0:  # exception and stop
+        time_now = pp.get_timestamp_by_line(win32_app_log[locate_result])
+        add_line(time_now + " Device is WPJ, and payload context is user, report not applicable!")
+        add_line(time_now + " App Installation Result: NOT APPLICABLE")
         return log_output
-
-    intent_index = win32_app_log[0].find("intent=")
-    intent_number = win32_app_log[0][intent_index + 7]
-    if intent_number == "4":
-        intent = "UNINSTALL"
-    elif intent_number == "3":
-        intent = "REQUIRED INSTALL"
-    elif intent_number == "1":
-        intent = "AVAILABLE INSTALL"
-    else:
-        intent = "UNKNOWN"
-
-    locate_result = pp.locate_line_startswith_keyword(win32_app_log, '<![LOG[---->>[Win32App] Processing app (id=')
-    if locate_result < 0:  # exception and stop
-        return ""
-
-    # log app name and intent - mandatory
-    log_output = log_output + "\n"
-    name_index = win32_app_log[locate_result].find("name = ")
-    name_index_stop = win32_app_log[locate_result].find(") with mode")
-    line_time = pp.get_timestamp_by_line(win32_app_log[locate_result])
-    log_output = log_output + line_time[0] + " " + line_time[1] + " Processing app: [" + \
-                 win32_app_log[locate_result][name_index + 7:name_index_stop] + "] with intent " + intent
-    log_output += '\n'
-    current_index = locate_result
 
     # log pre detection - mandatory
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] ===Step=== Detection rules]')
     if locate_result < 0:  # exception and stop
-        return ""
-    current_index += locate_result
-
-    locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
-                                                   '<![LOG[[Win32App] Completed detectionManager')
-    if locate_result < 0:  # exception and stop
-        return ""
-    current_index += locate_result
-    line_time = pp.get_timestamp_by_line(win32_app_log[current_index])
-    start_place = win32_app_log[current_index].find("applicationDetectedByCurrentRule") + 34
-    end_place = win32_app_log[current_index].find("]LOG]!")
-    if win32_app_log[current_index][start_place:end_place] == "True":
-        app_found = "App is installed"
-        pre_process_detect = True
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " Error locating pre-install detection line!")
     else:
-        app_found = "App is NOT installed"
-    log_output = log_output + line_time[0] + " " + line_time[1] + " Detect app before processing: " + app_found
-    log_output += '\n'
+        current_index += locate_result
 
-    if intent == "UNINSTALL":
-        if not pre_process_detect:
-            log_output = log_output + line_time[0] + " " + line_time[
-                1] + " Intent is UNINSTALL and app is not detected."
-            log_output += '\n'
-            log_output = log_output + line_time[0] + " " + line_time[1] + " App Un-installation Result: SUCCESS "
-            log_output += '\n'
-            return log_output
-    elif intent == "REQUIRED INSTALL" or intent == "AVAILABLE INSTALL":
-        if pre_process_detect:
-            log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: SUCCESS "
-            log_output += '\n'
-            return log_output
-    else:
-        pass
+        locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
+                                                       '<![LOG[[Win32App] Completed detectionManager')
+        if locate_result < 0:  # exception and stop
+            time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+            add_line(time_now + " Error locating pre-install detection result!")
+        else:
+            current_index += locate_result
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
+            start_place = win32_app_log[current_index].find("applicationDetectedByCurrentRule") + 34
+            end_place = win32_app_log[current_index].find("]LOG]!")
+            if win32_app_log[current_index][start_place:end_place] == "True":
+                app_found = "App is installed"
+                pre_process_detect = True
+            else:
+                app_found = "App is NOT installed"
+            add_line(time_now + " Detect app before processing: " + app_found)
+
+        if intent == "UNINSTALL":
+            if not pre_process_detect:
+                add_line(time_now + " Intent is UNINSTALL and app is not detected.")
+                add_line(time_now + " App Un-installation Result: SUCCESS ")
+                return log_output
+        elif intent == "REQUIRED INSTALL" or intent == "AVAILABLE INSTALL":
+            if pre_process_detect:
+                add_line(time_now + " App Installation Result: SUCCESS ")
+                return log_output
+        else:
+            pass
 
     # log applicability check - mandatory
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] ===Step=== Check applicability')
     if locate_result < 0:  # exception and stop
-        return ""
-    current_index += locate_result
-    line_time = pp.get_timestamp_by_line(win32_app_log[current_index])
-    if "intent is to un-install, skip applicability check" in win32_app_log[current_index + 1]:
-        log_output = log_output + line_time[0] + " " + line_time[
-            1] + " Intent is UNINSTALL and app is NOT detected."
-        log_output += '\n'
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Un-installation Result: SUCCESS "
-        log_output += '\n'
-        return log_output
-    elif "intent is to install, skip applicability check" in win32_app_log[current_index + 1]:
-        log_output = log_output + line_time[0] + " " + line_time[
-            1] + " Intent is INSTALL and app is detected."
-        log_output += '\n'
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: SUCCESS "
-        log_output += '\n'
-        return log_output
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " Error locating Applicability check!")
+    else:
+        current_index += locate_result
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
+        if "intent is to un-install, skip applicability check" in win32_app_log[current_index + 1]:
+            add_line(
+                time_now + " Intent is UNINSTALL and app is NOT detected.")
+
+            add_line(time_now + " App Un-installation Result: SUCCESS ")
+            return log_output
+        elif "intent is to install, skip applicability check" in win32_app_log[current_index + 1]:
+            add_line(time_now + " Intent is INSTALL and app is detected.")
+            add_line(time_now + " App Installation Result: SUCCESS ")
+            return log_output
 
     # log extended applicability check - optional
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] ===Step=== Check Extended requirement rules')
     if locate_result < 0:
-        # should be always able to find this line as otherwise it would be returned before
-        pass
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " Error locating Extended requirement check!")
     else:
         basic_applicability = True
         basic_applicability_reason = ""
         extended_applicability = False
         extended_applicability_reason = ""
 
-        line_time = pp.get_timestamp_by_line(win32_app_log[current_index])
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
 
         for applicability_index in range(current_index + 1, current_index + locate_result):
             if win32_app_log[applicability_index].startswith("<![LOG[[Win32App]") and "skip check." not in win32_app_log[applicability_index] and \
@@ -121,98 +102,79 @@ def process_each_app_log(win32_app_log):
                 basic_applicability_reason = win32_app_log[applicability_index][49:end_place - 2]
 
         if not basic_applicability:
-            log_output = log_output + line_time[0] + " " + line_time[
-                1] + " Basic Applicability Check: Not Applicable, reason is: " + basic_applicability_reason
-            log_output += '\n'
+            add_line(time_now + " Basic Applicability Check: Not Applicable, reason is: " + basic_applicability_reason)
             if intent == "UNINSTALL":
-                log_output = log_output + line_time[0] + " " + line_time[
-                    1] + " App Un-installation Result: NOT APPLICABLE"
+                add_line(time_now + " App Un-installation Result: NOT APPLICABLE")
             else:
-                log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: NOT APPLICABLE"
-            log_output += '\n'
+                add_line(
+                    time_now + " App Installation Result: NOT APPLICABLE")
             return log_output
         else:
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Basic Applicability Check: Applicable"
-            log_output += '\n'
+            add_line(time_now + " Basic Applicability Check: Applicable")
         current_index = current_index + locate_result + 1
         if win32_app_log[current_index].startswith(
                 '<![LOG[[Win32App] No ExtendedRequirementRules for this App. Skipping Check Extended requirement rule'):
             extended_applicability = True
         else:
-
             locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                            '<![LOG[[Win32App] Extended requirement rules processing complete. isApplicationApplicable: ')
             if locate_result < 0:
-                # should be always able to find this line as otherwise it would be returned before
-                pass
-            current_index += locate_result
-            if win32_app_log[current_index].startswith('<![LOG[[Win32App] Extended requirement rules processing complete. isApplicationApplicable: Applicable'):
-                extended_applicability = True
+                time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+                add_line(time_now + " Error locating Extended requirement result!")
             else:
-                end_place = win32_app_log[current_index].find("]LOG]!")
-                extended_applicability_reason = win32_app_log[current_index][91:end_place]
+                current_index += locate_result
+                if win32_app_log[current_index].startswith('<![LOG[[Win32App] Extended requirement rules processing complete. isApplicationApplicable: Applicable'):
+                    extended_applicability = True
+                else:
+                    end_place = win32_app_log[current_index].find("]LOG]!")
+                    extended_applicability_reason = win32_app_log[current_index][91:end_place]
 
-        line_time = pp.get_timestamp_by_line(win32_app_log[current_index])
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
         if not extended_applicability:
-            log_output = log_output + line_time[0] + " " + line_time[
-                1] + " Extended Applicability Check: Not Applicable, reason is: " + extended_applicability_reason
-            log_output += '\n'
+            add_line(time_now + " Extended Applicability Check: Not Applicable, reason is: " + extended_applicability_reason)
             if intent == "UNINSTALL":
-                log_output = log_output + line_time[0] + " " + line_time[
-                    1] + " App Un-installation Result: NOT APPLICABLE"
+                add_line(time_now + " App Un-installation Result: NOT APPLICABLE")
             else:
-                log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: NOT APPLICABLE"
-            log_output += '\n'
+                add_line(time_now + " App Installation Result: NOT APPLICABLE")
             return log_output
         else:
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Extended Applicability Check: Applicable"
-            log_output += '\n'
+            add_line(time_now + " Extended Applicability Check: Applicable")
 
     # log detection without existing AppResult (GRS) - optional
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] ===Step=== Check detection without existing AppResult')
     current_index += locate_result
-    line_time = pp.get_timestamp_by_line(win32_app_log[current_index])
+
+    time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
     if locate_result < 0:
-        log_output = log_output + line_time[0] + " " + line_time[1] + " ===Step=== Check detection without existing AppResult MISSING!"
-        log_output += '\n'
-        return log_output
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " ===Step=== Check detection without existing AppResult MISSING!")
+
 
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index+1:],
                                                    '<![LOG[[Win32App] ===Step===')
     if locate_result <= 0: # check if GRS situation
         for grs_index in range(current_index, len(win32_app_log)):
-            line_time = pp.get_timestamp_by_line(win32_app_log[grs_index])
+            time_now = pp.get_timestamp_by_line(win32_app_log[grs_index])
             if win32_app_log[grs_index].startswith(
                     '<![LOG[[Win32App] Tried in last 24 hours, No need to exec. skip execution'):
-                log_output = log_output + line_time[0] + " " + line_time[
-                    1] + " Still in GRS, tried in last 24 hours, skip execution."
-                log_output += '\n'
-                log_output = log_output + line_time[0] + " " + line_time[
-                    1] + " App Installation Result: SKIP due to GRS"
-                log_output += '\n'
+                add_line(time_now + " Still in GRS, tried in last 24 hours, skip execution.")
+                add_line(time_now + " App Installation Result: SKIP due to GRS")
                 return log_output
             elif win32_app_log[grs_index].startswith('<![LOG[[Win32App] GRS is expired. kick off download & install'):
-                log_output = log_output + line_time[0] + " " + line_time[
-                    1] + " GRS is expired. kick off download & install."
-                log_output += '\n'
+                add_line(time_now + " GRS is expired. kick off download & install.")
                 break
             else:
                 pass
 
     for grs_index in range(current_index, current_index + locate_result):
-        line_time = pp.get_timestamp_by_line(win32_app_log[grs_index])
+        time_now = pp.get_timestamp_by_line(win32_app_log[grs_index])
         if win32_app_log[grs_index].startswith('<![LOG[[Win32App] Tried in last 24 hours, No need to exec. skip execution'):
-            log_output = log_output + line_time[0] + " " + line_time[
-                1] + " Still in GRS, tried in last 24 hours, skip execution."
-            log_output += '\n'
-            log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: SKIP due to GRS"
-            log_output += '\n'
+            add_line(time_now + " Still in GRS, tried in last 24 hours, skip execution.")
+            add_line(time_now + " App Installation Result: SKIP due to GRS")
             return log_output
         elif win32_app_log[grs_index].startswith('<![LOG[[Win32App] GRS is expired. kick off download & install'):
-            log_output = log_output + line_time[0] + " " + line_time[
-                1] + " GRS is expired. kick off download & install."
-            log_output += '\n'
+            add_line(time_now + " GRS is expired. kick off download & install.")
             break
         else:
             pass
@@ -241,285 +203,474 @@ def process_each_app_log(win32_app_log):
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] ===Step=== Download]LOG]!')
     if locate_result < 0:
-        return ""  # abort this app log
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " Error locating Download step!")
 
     current_index += locate_result
     locate_result_1 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
-                                                   '<![LOG[Starting job ')
+                                                   '<![LOG[Starting job ') # sign of DO download
     locate_result_2 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
-                                                    '<![LOG[[StatusService] Downloading app')
+                                                    '<![LOG[[Win32App] ExternalCDN mode, content raw URL is') # sign of CDN mode
     locate_result_3 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                         '<![LOG[[Win32App] Content cache found for app')
+
+    locate_result_4 = pp.locate_line_startswith_keyword(win32_app_log[current_index:], '<![LOG[[Win32App DO] DO Job set priority is ')
+
     if locate_result_1 < 0 and locate_result_2 < 0 and locate_result_3 < 0:
-        return ""  # abort this app log
-    elif locate_result_1 >= 0:
-        line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_1])
-        log_output = log_output + line_time[0] + " " + line_time[1] + " Start downloading app."
-        log_output += '\n'
+        add_line(time_now + " Error locating Downloading status!")
+    elif locate_result_1 >= 0: #DO mode
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_1])
+        if locate_result_4 >= 0:
+            end_place = win32_app_log[current_index+locate_result_4].find(']LOG]!')
+            DO_priority = win32_app_log[current_index+locate_result_4][44:end_place]
+            if DO_priority == "BG_JOB_PRIORITY_NORMAL":
+                DO_time_out = "10 minutes"
+                DO_priority_converted = "Content Download in Background"
+            elif DO_priority == "BG_JOB_PRIORITY_FOREGROUND":
+                DO_time_out = "12 hours"
+                DO_priority_converted = "Content Download in Foreground"
+
+            add_line(time_now + " Start downloading app using DO.")
+            add_line(time_now + " DO Download priority is: " + DO_priority_converted + ", Time out is: "+DO_time_out)
+            '''
+            <![LOG[[Win32App DO] DO Job set priority is BG_JOB_PRIORITY_NORMAL == time out is 600000 ms
+            <![LOG[[Win32App DO] DO Job set priority is BG_JOB_PRIORITY_FOREGROUND == time out is 43200000 ms
+            '''
+        else:
+            add_line(time_now + " Error locating DO priority!")
+            add_line(time_now + " Start downloading app using DO.")
 
         current_index += locate_result_1
+        locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:], '<![LOG[Job has failed.')
+        if locate_result >= 0: # DO fail
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
+            add_line(time_now + " DO Download Job failed. Trying CDN mode.")
 
-        if pp.locate_line_startswith_keyword(win32_app_log[current_index:], '<![LOG[Job has failed.') >= 0:
-            locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:], '<![LOG[Job has failed.')
-            line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
-            log_output = log_output + line_time[0] + " " + line_time[1] + " DO Download Job failed. Trying CDN mode."
-            log_output += '\n'
-            locate_result_3 = pp.locate_line_startswith_keyword(win32_app_log[current_index:], '<![LOG[[Win32App] CDN mode, content raw URL is')
+            locate_result_3 = pp.locate_line_startswith_keyword(win32_app_log[current_index:], '<![LOG[[Win32App] ExternalCDN mode, content raw URL is')
             locate_result_4 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
-                                                             '<![LOG[[Win32App] CDN mode, download completes.]')
+                                                             '<![LOG[[Win32App] CDN mode, download completes.')
             if locate_result_3 < 0 or locate_result_4 < 0:
-                log_output = log_output + line_time[0] + " " + line_time[
-                    1] + " CDN mode failed."
-                log_output += '\n'
-                log_output = log_output + line_time[0] + " " + line_time[1] + " Error downloading app."
-                log_output += '\n'
-                log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL"
-                log_output += '\n'
+                add_line(time_now + " CDN mode failed.")
+
+                add_line(time_now + " Error downloading app.")
+                bytes_downloaded_line_index = pp.locate_line_startswith_keyword_backward(win32_app_log[current_index:],
+                                                                                         "<![LOG[[StatusService] Downloading app (id = ")
+                if bytes_downloaded_line_index >= 0:
+                    start_place = win32_app_log[current_index + bytes_downloaded_line_index].find("via CDN, ") + 9
+                    end_place = win32_app_log[current_index + bytes_downloaded_line_index].find("]LOG]!>")
+                    bytes_downloaded = win32_app_log[current_index + bytes_downloaded_line_index][start_place:end_place]
+                    time_now = pp.get_timestamp_by_line(win32_app_log[current_index + bytes_downloaded_line_index])
+                    add_line(time_now + " Downloaded size: " + bytes_downloaded)
+                else:
+                    add_line(time_now + " Error locating downloaded size!")
+
+                add_line(time_now + " App Installation Result: FAIL")
+
                 return log_output
 
-            line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_3])
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Start CDN mode download."
-            log_output += '\n'
-            line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_4])
-            log_output = log_output + line_time[0] + " " + line_time[1] + " CDN mode download completes."
-            log_output += '\n'
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_3])
+            add_line(time_now + " Start CDN mode download.")
+
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_4])
+            add_line(time_now + " CDN mode download completes.")
+
             current_index += locate_result_4
-        else:
+        else: # DO success
             locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                          '<![LOG[Completing job ')
             if locate_result < 0:  # error downloading
-                log_output = log_output + line_time[0] + " " + line_time[1] + " Error downloading app."
-                log_output += '\n'
-                log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL"
-                log_output += '\n'
+                time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+                add_line(time_now + " Error downloading app via DO!")
+                bytes_downloaded_line_index = pp.locate_line_startswith_keyword_backward(win32_app_log[current_index:], "<![LOG[[StatusService] Downloading app (id = ")
+                if bytes_downloaded_line_index >= 0:
+                    start_place = win32_app_log[current_index + bytes_downloaded_line_index].find("via DO, ") + 8
+                    end_place = win32_app_log[current_index + bytes_downloaded_line_index].find("]LOG]!>")
+                    bytes_downloaded = win32_app_log[current_index + bytes_downloaded_line_index][start_place:end_place]
+                    time_now = pp.get_timestamp_by_line(win32_app_log[current_index + bytes_downloaded_line_index])
+                    add_line(time_now + " Downloaded size: " + bytes_downloaded)
+                else:
+                    add_line(time_now + " Error locating downloaded size!")
+
+                add_line(time_now + " App Installation Result: FAIL")
                 return log_output
 
-            line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Download completed."
-            log_output += '\n'
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
+            add_line(time_now + " DO mode download completed.")
+
             current_index += locate_result
 
         locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                        '<![LOG[[Win32App] file hash validation')
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
         if locate_result < 0:
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Error hash validating app."
-            log_output += '\n'
-            log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL"
-            log_output += '\n'
+            time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+            add_line(time_now + " Error hash validating app!")
+
+            add_line(time_now + " App Installation Result: FAIL")
+
             return log_output
 
-        line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
         if win32_app_log[current_index + locate_result].startswith(
                 '<![LOG[[Win32App] file hash validation pass, starts decrypting]'):
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Hash validation pass."
-            log_output += '\n'
+            add_line(time_now + " Hash validation pass.")
+
         else:
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Hash validation failed."
-            log_output += '\n'
+            add_line(time_now + " Hash validation failed.")
+
 
         current_index += locate_result
         locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                        '<![LOG[[Win32App] Decryption')
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
         if locate_result < 0:
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Error Decrypting app."
-            log_output += '\n'
-            log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL"
-            log_output += '\n'
+            time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+            add_line(time_now + " Error Decrypting app!")
+
+            add_line(time_now + " App Installation Result: FAIL")
+
             return log_output
 
-        line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
         if win32_app_log[current_index + locate_result].startswith(
                 '<![LOG[[Win32App] Decryption is done successfully.'):
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Decryption is done successfully."
-            log_output += '\n'
+            add_line(time_now + " Decryption is done successfully.")
+
         else:
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Decryption failed."
-            log_output += '\n'
+            add_line(time_now + " Decryption failed!")
+            add_line(time_now + " App Installation Result: FAIL")
+
+            return log_output
 
         current_index += locate_result
 
         locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                        '<![LOG[[Win32App] Start unzipping.')
-        line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
 
         if locate_result < 0:
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Error Unzipping app."
-            log_output += '\n'
-            log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL"
-            log_output += '\n'
+            time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+            add_line(time_now + " Error Unzipping app!")
+
+            add_line(time_now + " App Installation Result: FAIL")
+
             return log_output
 
-        log_output = log_output + line_time[0] + " " + line_time[1] + " Start unzipping."
-        log_output += '\n'
+        add_line(time_now + " Start unzipping.")
 
-    elif locate_result_2 >= 0:
-        line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_2])
-        log_output = log_output + line_time[0] + " " + line_time[1] + " Start downloading app."
-        log_output += '\n'
+
+    elif locate_result_2 >= 0: # CDN mode
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_2])
+        add_line(time_now + " Start downloading app via CDN.")
+
 
         current_index += locate_result_2
+        # Edge download via CDN will have this line
         locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                          '<![LOG[[ExternalCDN] ExternalCDN App Content downloaded and verified')
 
         if locate_result < 0:  # error downloading
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Error downloading app."
-            log_output += '\n'
-            log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL"
-            log_output += '\n'
+            time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+            add_line(time_now + " Error downloading app using CDN!")
+            bytes_downloaded_line_index = pp.locate_line_startswith_keyword_backward(win32_app_log[current_index:],
+                                                                                     "<![LOG[[StatusService] Downloading app (id = ")
+            if bytes_downloaded_line_index >= 0:
+                start_place = win32_app_log[current_index + bytes_downloaded_line_index].find("via CDN, ") + 9
+                end_place = win32_app_log[current_index + bytes_downloaded_line_index].find("]LOG]!>")
+                bytes_downloaded = win32_app_log[current_index + bytes_downloaded_line_index][start_place:end_place]
+                time_now = pp.get_timestamp_by_line(win32_app_log[current_index + bytes_downloaded_line_index])
+                add_line(time_now + " Downloaded size: " + bytes_downloaded)
+            else:
+                add_line(time_now + " Error locating downloaded size!")
+
+            add_line(time_now + " App Installation Result: FAIL")
+
             return log_output
 
-        line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
-        log_output = log_output + line_time[0] + " " + line_time[1] + " Download completed."
-        log_output += '\n'
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_2])
+        add_line(time_now + " Download completed using CDN.")
 
-        log_output = log_output + line_time[0] + " " + line_time[
-            1] + " ExternalCDN App Content downloaded and verified, skip unzipping."
-        log_output += '\n'
+        add_line(time_now + " ExternalCDN App Content downloaded and verified, skip unzipping.") #
 
         current_index += locate_result
 
     elif locate_result_3 >= 0:
-        line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_3])
-        log_output = log_output + line_time[0] + " " + line_time[1] + " Content cache found, skip Downloading."
-        log_output += '\n'
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_3])
+        add_line(time_now + " Content cache found, skip Downloading.")
+
         current_index += locate_result_3
 
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] ===Step=== ExecuteWithRetry]LOG]')
     if locate_result < 0:
-        return ""  # abort this app log
-    current_index += locate_result
-
-    locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
-                                                   '<![LOG[[Win32App] SetCurrentDirectory:')
-    if locate_result < 0:
-        return ""  # abort this app log
-    current_index += locate_result
-
-    app_context_index = current_index + 1
-    install_command_index = current_index - 1
-    line_time = pp.get_timestamp_by_line(win32_app_log[app_context_index])
-
-    if win32_app_log[app_context_index].startswith('<![LOG[[Win32App] Launch Win32AppInstaller in machine session'):
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Install Context is SYSTEM"
-    elif win32_app_log[app_context_index].startswith('<![LOG[[Win32App] Trying to get elevated token for user.]'):
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Install Context is USER"
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " Error locating Install log!")
+        return log_output
     else:
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Install Context is UNKNOWN"
-    log_output += '\n'
+        current_index += locate_result
 
-    end_place = win32_app_log[install_command_index].find("]LOG]!")
-    if intent == "UNINSTALL":
-        log_output = log_output + line_time[0] + " " + line_time[1] + " UNINSTALL command: " \
-                     + win32_app_log[install_command_index][7:end_place]
-    else:
-        log_output = log_output + line_time[0] + " " + line_time[1] + " Install command: " \
-                     + win32_app_log[install_command_index][7:end_place]
-    log_output += '\n'
+        locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
+                                                       '<![LOG[[Win32App] SetCurrentDirectory:')
+        if locate_result < 0:
+            time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+            add_line(time_now + " Error locating install directory!")
+        else:
+            current_index += locate_result
 
+            app_context_index = current_index + 1
+            install_command_index = current_index - 1
+            time_now = pp.get_timestamp_by_line(win32_app_log[app_context_index])
+
+            if win32_app_log[app_context_index].startswith('<![LOG[[Win32App] Launch Win32AppInstaller in machine session'):
+                add_line(time_now + " App Install Context is SYSTEM")
+            elif win32_app_log[app_context_index].startswith('<![LOG[[Win32App] Trying to get elevated token for user.]'):
+                add_line(time_now + " App Install Context is USER")
+            else:
+                add_line(time_now + " App Install Context is UNKNOWN")
+
+            end_place = win32_app_log[install_command_index].find("]LOG]!")
+            if intent == "UNINSTALL":
+                add_line(time_now + " UNINSTALL command: " \
+                             + win32_app_log[install_command_index][7:end_place])
+            else:
+                add_line(time_now + " Install command: " \
+                             + win32_app_log[install_command_index][7:end_place])
 
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] Create installer process successfully.')
+    time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
+
     if locate_result < 0:
-        log_output = log_output + line_time[0] + " " + line_time[1] + " Error creating installer process."
-        log_output += '\n'
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL"
-        log_output += '\n'
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " Error creating installer process.")
+
+        add_line(time_now + " App Installation Result: FAIL")
+
         return log_output
+
     current_index += locate_result
 
-    line_time = pp.get_timestamp_by_line(win32_app_log[current_index])
-    log_output = log_output + line_time[0] + " " + line_time[1] + " Installer process created successfully."
-    log_output += '\n'
+    time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
+    add_line(time_now + " Installer process created successfully. Installer time out is 60 minutes.")
 
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] Installation is done, collecting result]')
     if locate_result < 0:
-        log_output = log_output + line_time[0] + " " + line_time[1] + " Error Installing app."
-        log_output += '\n'
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL"
-        log_output += '\n'
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " Error Installing app.")
+
+        add_line(time_now + " App Installation Result: FAIL")
+
         return log_output
     current_index += locate_result
 
-    line_time = pp.get_timestamp_by_line(win32_app_log[current_index])
-    log_output = log_output + line_time[0] + " " + line_time[1] + " Installation is done."
-    log_output += '\n'
+    time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
+    add_line(time_now + " Installation is done.")
 
     locate_result_1 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] lpExitCode is defined as')
     locate_result_2 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
-                                                   '<![LOG[[Win32App] Admin did NOT set any return codes for app')
+                                                   '<![LOG[[Win32App] Admin did NOT set mapping for lpExitCode: ')
+    locate_result_3 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
+                                                   '<![LOG[[Win32App] Admin did NOT set any return codes for app:')
 
-    if locate_result_1 < 0 and locate_result_2 < 0:
-        pass
+    if locate_result_1 < 0 and locate_result_2 < 0 and locate_result_3 < 0:
+        add_line(time_now + " Error locating install exit code!")
     elif locate_result_1 >= 0:
-        line_time = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_1])
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_1])
         end_place = win32_app_log[current_index + locate_result_1].find("]LOG]!")
         if intent == "UNINSTALL":
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Un-installation Result is " + \
-                         win32_app_log[current_index + locate_result_1][43:end_place]
+            add_line(time_now + " Un-installation Result is " + \
+                         win32_app_log[current_index + locate_result_1][43:end_place])
         else:
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Installation result is " + \
-                         win32_app_log[current_index + locate_result_1][43:end_place]
-        log_output += '\n'
+            add_line(time_now + " Installation result is " + \
+                         win32_app_log[current_index + locate_result_1][43:end_place])
+
         current_index += locate_result_1
 
-    elif locate_result_2 >= 0:
-        result_index = locate_result_2 + current_index + 1
-        line_time = pp.get_timestamp_by_line(win32_app_log[result_index])
+    elif locate_result_2 >= 0 or locate_result_3 >= 0:
+        if locate_result_3 >= 0:
+            result_index = locate_result_3 + current_index + 1
+        elif locate_result_2 >= 0:
+            result_index = locate_result_2 + current_index + 1
+        time_now = pp.get_timestamp_by_line(win32_app_log[result_index])
         end_place = win32_app_log[result_index].find("]LOG]!")
         if intent == "UNINSTALL":
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Un-installation Result is " + \
-                         win32_app_log[result_index][47:end_place]
+            add_line(time_now + " Result is " + \
+                         win32_app_log[result_index][47:end_place])
         else:
-            log_output = log_output + line_time[0] + " " + line_time[1] + " Installation result is " + \
-                         win32_app_log[result_index][47:end_place]
-        log_output += '\n'
-        current_index += locate_result_2
+            add_line(time_now + " Installation result is " + \
+                         win32_app_log[result_index][47:end_place])
+
+        if locate_result_3 >= 0:
+            current_index += locate_result_3
+        elif locate_result_2 >= 0:
+            current_index += locate_result_2
 
     # log post detection - mandatory
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] ===Step=== Detection rules after Execution')
     if locate_result < 0:
-        log_output = log_output + line_time[0] + " " + line_time[1] + " Error detecting after execution."
-        log_output += '\n'
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL"
-        log_output += '\n'
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " Error detecting after execution.")
+
+        add_line(time_now + " App Installation Result: FAIL")
+
         return log_output
 
     current_index += locate_result
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] Completed detectionManager')
-    if locate_result < 0:  # exception and stop
-        log_output = log_output + line_time[0] + " " + line_time[1] + " Error detecting after execution."
-        log_output += '\n'
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL"
-        log_output += '\n'
-        return log_output
-    current_index += locate_result
-    line_time = pp.get_timestamp_by_line(win32_app_log[current_index])
-    start_place = win32_app_log[current_index].find("applicationDetectedByCurrentRule") + 34
-    end_place = win32_app_log[current_index].find("]LOG]!")
-    if win32_app_log[current_index][start_place:end_place] == "True":
-        app_found = "App is installed"
-        post_process_detect = True
-    else:
-        app_found = "App is NOT installed"
-    log_output = log_output + line_time[0] + " " + line_time[1] + " Detect app after installation: " + app_found
-    log_output += '\n'
 
-    if (intent == "REQUIRED INSTALL" or intent == "AVAILABLE INSTALL") and post_process_detect:
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: SUCCESS "
-        log_output += '\n'
-    elif intent == "UNINSTALL" and not post_process_detect:
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Un-installation Result: SUCCESS "
-        log_output += '\n'
-    elif intent == "UNINSTALL" and post_process_detect:
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Un-installation Result: FAIL "
-        log_output += '\n'
+    if locate_result < 0:  # exception and stop
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " Failed to locate detection result after execution!")
+
+        add_line(time_now + " App Installation Result: FAIL")
+
+        return log_output
     else:
-        log_output = log_output + line_time[0] + " " + line_time[1] + " App Installation Result: FAIL "
-        log_output += '\n'
+        current_index += locate_result
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
+        start_place = win32_app_log[current_index].find("applicationDetectedByCurrentRule") + 34
+        end_place = win32_app_log[current_index].find("]LOG]!")
+        if win32_app_log[current_index][start_place:end_place] == "True":
+            app_found = "App is installed"
+            post_process_detect = True
+        else:
+            app_found = "App is NOT installed"
+        add_line(time_now + " Detect app after installation: " + app_found)
+
+        if (intent == "REQUIRED INSTALL" or intent == "AVAILABLE INSTALL") and post_process_detect:
+            add_line(time_now + " App Installation Result: SUCCESS ")
+
+        elif intent == "UNINSTALL" and not post_process_detect:
+            add_line(time_now + " App Un-installation Result: SUCCESS ")
+
+        elif intent == "UNINSTALL" and post_process_detect:
+            add_line(time_now + " App Un-installation Result: FAIL ")
+
+        else:
+            add_line(time_now + " App Installation Result: FAIL ")
+
+    return log_output
+
+
+def get_dependent_apps_start_stop_lines(win32_app_log):
+    dependent_apps_start_lines = []
+    dependent_apps_stop_lines = []
+    for line_index in range(len(win32_app_log)):
+        if win32_app_log[line_index].startswith("<![LOG[[Win32App] Aggregated result for ("):
+            start_place = 41
+            end_place = 77
+            app_id = win32_app_log[line_index][start_place: end_place]
+            search_string = "<![LOG[[Win32App] added new report for " + app_id
+            app_result_line = pp.locate_line_startswith_keyword(win32_app_log[line_index:], search_string)
+
+            if app_result_line > 0:
+                dependent_apps_start_lines.append(line_index+1)
+                dependent_apps_stop_lines.append(app_result_line + line_index)
+            else:
+                pass  # dump invalid app log
+
+    return dependent_apps_start_lines, dependent_apps_stop_lines
+
+
+def process_dependency_apps(win32_app_log, dependent_apps_start_lines, dependent_apps_stop_lines):
+    for each_dependent_app_index in range(len(dependent_apps_start_lines)):
+        name_start_index = win32_app_log[dependent_apps_start_lines[each_dependent_app_index]].find("name = ") + 7
+        name_end_index = win32_app_log[dependent_apps_start_lines[each_dependent_app_index]].find(") with mode =")
+        id_start_index = win32_app_log[dependent_apps_start_lines[each_dependent_app_index]].find("Processing app (id=") + 19
+        id_stop_index = win32_app_log[dependent_apps_start_lines[each_dependent_app_index]].find(", name =")
+        current_dependent_app_name = win32_app_log[dependent_apps_start_lines[each_dependent_app_index]][name_start_index:name_end_index]
+        current_dependent_app_id = win32_app_log[dependent_apps_start_lines[each_dependent_app_index]][id_start_index: id_stop_index]
+        time_now = pp.get_timestamp_by_line(win32_app_log[dependent_apps_start_lines[each_dependent_app_index]])
+        add_line("")
+        add_line(time_now + " Processing Dependent app [" + current_dependent_app_name + "]")
+        process_standalone_app(win32_app_log[dependent_apps_start_lines[each_dependent_app_index]: dependent_apps_stop_lines[each_dependent_app_index]], "REQUIRED INSTALL")
+        add_line("")
+
+
+def process_each_app_log(win32_app_log):
+    add_line("\n")
+    global log_output
+    log_output = ""
+    if not win32_app_log:
+        return log_output
+    # i = 0
+    intent = "UNKNOWN"
+    current_index = 0
+    pre_process_detect = False
+    post_process_detect = False
+
+
+    time_now = pp.get_timestamp_by_line(win32_app_log[0])
+    if not win32_app_log[0].startswith('<![LOG[[Win32App] ExecManager: processing targeted app'):  # exception and stop
+        add_line(time_now + " Error locating App intent info!")
+    else:
+        intent_index = win32_app_log[0].find("intent=")
+        intent_number = win32_app_log[0][intent_index + 7]
+        if intent_number == "4":
+            intent = "UNINSTALL"
+        elif intent_number == "3":
+            intent = "REQUIRED INSTALL"
+        elif intent_number == "1":
+            intent = "AVAILABLE INSTALL"
+        else:
+            intent = "UNKNOWN"
+        name_index = win32_app_log[0].find("name='")
+        name_index_stop = win32_app_log[0].find("', id='")
+        app_name = win32_app_log[0][name_index+6:name_index_stop]
+        if win32_app_log[2].startswith("<![LOG[[Win32App] This is a standalone app,") or win32_app_log[1].startswith("<![LOG[[Win32App] ProcessAppWithoutDependency"):
+            # standalone flow
+            add_line(time_now + " Processing Standalone app: [" + \
+                     app_name + "] with intent " + intent)
+            process_standalone_app(win32_app_log[3:], intent)
+        # Dependency flow
+        elif win32_app_log[2].startswith("<![LOG[[Win32App] ProcessDetectionRules starts]LOG]"):
+            # dependency flow, first check target app detection
+            add_line(time_now + " Processing app with dependency: [" + \
+                     app_name + "] with intent " + intent)
+            locate_result = pp.locate_line_startswith_keyword(win32_app_log,
+                                                              '<![LOG[[Win32App] Completed detectionManager')
+            if locate_result < 0:  # exception and stop
+                time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+                add_line(time_now + " Failed to locate pre-dependency app detection result!")
+                add_line(time_now + " App Installation Result: FAIL")
+
+                return log_output
+            else:
+                current_index += locate_result
+                time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
+                start_place = win32_app_log[current_index].find("applicationDetectedByCurrentRule: ") + 34
+                end_place = win32_app_log[current_index].find("]LOG]!")
+                if win32_app_log[current_index][start_place:end_place] == "True":
+                    app_found = "App is installed"
+                    pre_process_detect = True
+                else:
+                    app_found = "App is NOT installed"
+                add_line(time_now + " Detect app before installation: " + app_found)
+
+                if intent == "UNINSTALL":
+                    if not pre_process_detect:
+                        add_line(time_now + " Intent is UNINSTALL and app is not detected.")
+                        add_line(time_now + " App Un-installation Result: SUCCESS ")
+                        return log_output
+                elif intent == "REQUIRED INSTALL" or intent == "AVAILABLE INSTALL":
+                    if pre_process_detect:
+                        add_line(time_now + " App Installation Result: SUCCESS ")
+                        return log_output
+            if win32_app_log[current_index+1].startswith("<![LOG[[Win32App] starts processing the app chain for app"):
+                add_line(time_now + " Processing Dependent app chain.")
+                add_line("")
+                dependent_app_lines_start, dependent_app_lines_stop = get_dependent_apps_start_stop_lines(win32_app_log[current_index+1:])
+
+                process_dependency_apps(win32_app_log[current_index+1:], dependent_app_lines_start, dependent_app_lines_stop)
+
+                add_line("")
+                add_line(time_now + " All dependent apps processed, processing target app [" + app_name + "] now.")
+                add_line("")
+
+                process_standalone_app(win32_app_log[dependent_app_lines_stop[-1]:], intent)
 
     return log_output

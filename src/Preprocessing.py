@@ -17,7 +17,8 @@ def get_timestamp_by_line(log_line):
     component_index = log_line.find("component=")
     line_date = log_line[date_index:component_index - 2]
     line_time = log_line[time_index:date_index - 8]
-    return line_date, line_time
+
+    return line_date + " " + line_time
 
 
 def locate_line_startswith_keyword(win32_app_log, keyword):
@@ -26,6 +27,13 @@ def locate_line_startswith_keyword(win32_app_log, keyword):
             return index
     return -1
 
+
+def locate_line_startswith_keyword_backward(win32_app_log, keyword):
+    loglen = len(win32_app_log)
+    for index in range(len(win32_app_log)):
+        if win32_app_log[loglen - 1 - index].startswith(keyword):
+            return loglen - 1 - index
+    return -1
 
 def locate_line_contains_keyword(win32_app_log, keyword):
     for index in range(len(win32_app_log)):
@@ -99,17 +107,43 @@ class Win32AppPollerLog:
         app_processing_line_stop = []
         for log_line_index in range(self.length):
             eachline = self.log_content[log_line_index]
+            '''
+            App with dependency auto install:
+            
+            <![LOG[[Win32App] ExecManager: processing targeted app (name='Copy Json v3', id='48054978-39bd-40da-8d45-0d28004b4960') with intent=3, appApplicabilityStateDueToAssginmentFilters= for user session 0]LOG]!><time="15:32:57.0285627" date="11-11-2021" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+            <![LOG[[Win32App] ProcessAppWithDependencies starts for 48054978-39bd-40da-8d45-0d28004b4960 with name Copy Json v3]LOG]!><time="15:32:57.0285627" date="11-11-2021" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+            
+            <![LOG[[Win32App] Completed detectionManager SideCarFileDetectionManager, applicationDetectedByCurrentRule: False]LOG]!><time="15:32:57.0375387" date="11-11-2021" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+            <![LOG[[Win32App] starts processing the app chain for app 48054978-39bd-40da-8d45-0d28004b4960, name = Copy Json v3]LOG]!><time="15:32:57.0375387" date="11-11-2021" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+            <![LOG[[Win32App] Aggregated result for (9e309cc3-fc69-4906-a73b-c692aec58fa5,Cisco AnyConnect Secure Mobility Client - 4.10) is Success]LOG]!><time="15:32:57.0534964" date="11-11-2021" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+            <![LOG[---->>[Win32App] Processing app (id=9e309cc3-fc69-4906-a73b-c692aec58fa5, name = Cisco AnyConnect Secure Mobility Client - 4.10) with mode = DetectInstall]LOG]!><time="15:32:57.0544943" date="11-11-2021" component="IntuneManagementExtension" context="" type="2" thread="5" file="">
+                        
+            <![LOG[[Win32App] added new report for 9e309cc3-fc69-4906-a73b-c692aec58fa5, Cisco AnyConnect Secure Mobility Client - 4.10]LOG]!><time="15:33:34.3799461" date="11-11-2021" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+            <![LOG[[Win32App] Aggregated result for (6b563018-53fa-4857-9156-cfb0ba1e87da,Cisco AnyConnect Umbrella Roaming Security Module - 4.10) is Success]LOG]!><time="15:33:34.3839452" date="11-11-2021" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+            <![LOG[---->>[Win32App] Processing app (id=6b563018-53fa-4857-9156-cfb0ba1e87da, name = Cisco AnyConnect Umbrella Roaming Security Module - 4.10) with mode = DetectInstall]LOG]!><time="15:33:34.3839452" date="11-11-2021" component="IntuneManagementExtension" context="" type="2" thread="5" file="">
+            <![LOG[----[Win32App] app with name = Cisco AnyConnect Umbrella Roaming Security Module - 4.10 dependency detect only is False]LOG]!><time="15:33:34.3839452" date="11-11-2021" component="IntuneManagementExtension" context="" type="2" thread="5" file="">
+            <![LOG[[Win32App] ===Step=== Start to Present app 6b563018-53fa-4857-9156-cfb0ba1e87da]LOG]!><time="15:33:34.3839452" date="11-11-2021" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+            
+            <![LOG[[Win32App] added new report for 6b563018-53fa-4857-9156-cfb0ba1e87da, Cisco AnyConnect Umbrella Roaming Security Module - 4.10]LOG]!><time="15:34:02.9804236" date="11-11-2021" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+            <![LOG[---->>[Win32App] Processing app (id=48054978-39bd-40da-8d45-0d28004b4960, name = Copy Json v3) with mode = DetectInstall]LOG]!><time="15:34:02.9804236" date="11-11-2021" component="IntuneManagementExtension" context="" type="2" thread="5" file="">
+            <![LOG[----[Win32App] app with name = Copy Json v3 dependency detect only is False]LOG]!><time="15:34:02.9804236" date="11-11-2021" component="IntuneManagementExtension" context="" type="2" thread="5" file="">
+            <![LOG[[Win32App] ===Step=== Start to Present app 48054978-39bd-40da-8d45-0d28004b4960]LOG]!><time="15:34:02.9804236" date="11-11-2021" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+
+'''
             if eachline.startswith('<![LOG[[Win32App] ExecManager: processing targeted app'):
-                if len(app_processing_line_start) == len(app_processing_line_stop):  # start app processing
+                start_place = eachline.find("id='")
+                end_place = eachline.find("') with intent")
+                app_id = eachline[start_place + 4: end_place]
+                search_string = "<![LOG[[Win32App] app result (id = " + app_id
+                app_result_line = locate_line_startswith_keyword(self.log_content[log_line_index:], search_string)
+                app_stop_line = app_result_line  + log_line_index
+                if app_result_line > 0:
                     app_processing_line_start.append(log_line_index)
-                elif len(app_processing_line_start) == len(app_processing_line_stop) + 1:  # dump incomplete app log
-                    del app_processing_line_start[-1]
+                    app_processing_line_stop.append(app_stop_line + 1)
+                else: #add incomplete app log
                     app_processing_line_start.append(log_line_index)
-                else:
-                    del app_processing_line_start[len(app_processing_line_stop):]
-                    app_processing_line_start.append(log_line_index)
-            elif eachline.startswith('<![LOG[[Win32App] app result (id ='):
-                app_processing_line_stop.append(log_line_index + 1)
+                    app_processing_line_stop.append(self.length)
+
         return app_processing_line_start, app_processing_line_stop
 
 
@@ -158,10 +192,12 @@ class IMELog:
                         if this_thread == poller_start_thread[len(win32_poller_stop_lines)]:
                             win32_poller_stop_lines.append(i)
 
-        while len(win32_poller_stop_lines) < len(win32_poller_lines):
+        while len(win32_poller_stop_lines) < len(win32_poller_lines) - 1:
             del win32_poller_lines[-1]
             del poller_start_thread[-1]
 
+        if len(win32_poller_stop_lines) == len(win32_poller_lines) - 1:
+            win32_poller_stop_lines.append(len(loadedLog) - 1)
         return win32_poller_lines, win32_poller_stop_lines, poller_start_thread
 
     def separate_win32_poller_logs(self):
@@ -187,7 +223,7 @@ class IMELog:
 
                 poller_result = self.process_win32_poller(each_log)
                 win32_app_log_report = win32_app_log_report + poller_result
-                win32_app_log_report = win32_app_log_report + "\n"
+                win32_app_log_report = win32_app_log_report + "\n\n"
                 #thisdate, thistime = each_log.stop_time
                 #win32_app_log_report = win32_app_log_report + "Application Poller " + thisdate + " " + thistime + " Ends"
                 win32_app_log_report = win32_app_log_report + "---------------------------------------------------Application Poller Stops-------------------------------------------------------------"
@@ -197,13 +233,14 @@ class IMELog:
         return win32_app_log_report
 
     def process_win32_poller(self, win32_poller_log):
-        log_output = ""
+        output = ""
         # win32_poller_log = Win32AppPollerLog
         for app_processing_index in range(win32_poller_log.number_of_apps_processed):
             result = process_each_app_log(win32_poller_log.log_content[win32_poller_log.app_processing_line_start[app_processing_index]:win32_poller_log.app_processing_line_stop[app_processing_index]])
             if result:
-                log_output += result
-        return log_output
+                output += result
+                output += "\n"
+        return output
 
 def get_powershell_poller_lines(loadedLog):
     powershell_poller_lines = []
@@ -215,4 +252,3 @@ def get_powershell_poller_lines(loadedLog):
         if loadedLog[i].startswith('<![LOG[[PowerShell] Polling thread starts.]'):
             powershell_poller_lines.append(i)
     return powershell_poller_lines, powershell_poller_stop_lines
-
