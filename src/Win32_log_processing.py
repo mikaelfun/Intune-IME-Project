@@ -358,18 +358,15 @@ def process_standalone_app(win32_app_log, intent):
 
         add_line(time_now + " Start unzipping.")
 
-
     elif locate_result_2 >= 0: # CDN mode
         time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_2])
         add_line(time_now + " Start downloading app via CDN.")
 
-
         current_index += locate_result_2
-        # Edge download via CDN will have this line
         locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                          '<![LOG[[ExternalCDN] ExternalCDN App Content downloaded and verified')
-
-        if locate_result < 0:  # error downloading
+        locate_result_5 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],"<![LOG[[Win32App] CDN mode, download completes.")
+        if locate_result < 0 and locate_result_5 < 0:  # error downloading
             time_now = pp.get_timestamp_by_line(win32_app_log[-1])
             add_line(time_now + " Error downloading app using CDN!")
             bytes_downloaded_line_index = pp.locate_line_startswith_keyword_backward(win32_app_log[current_index:],
@@ -386,13 +383,71 @@ def process_standalone_app(win32_app_log, intent):
             add_line(time_now + " App Installation Result: FAIL")
 
             return log_output
+        elif locate_result_5 >= 0:  # normal CDN mode
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_5])
+            add_line(time_now + " Download completed using CDN.")
 
-        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_2])
-        add_line(time_now + " Download completed using CDN.")
+            current_index += locate_result_5
+            locate_result_6 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
+                                                              '<![LOG[[Win32App] file hash validation')
+            if locate_result_6 < 0:
+                time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+                add_line(time_now + " Error hash validating app!")
+                add_line(time_now + " App Installation Result: FAIL")
+                return log_output
 
-        add_line(time_now + " ExternalCDN App Content downloaded and verified, skip unzipping.") #
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_6])
+            if win32_app_log[current_index + locate_result_6].startswith(
+                    '<![LOG[[Win32App] file hash validation pass, starts decrypting]'):
+                add_line(time_now + " Hash validation pass.")
 
-        current_index += locate_result
+            else:
+                add_line(time_now + " Hash validation failed.")
+
+            current_index += locate_result_6
+            locate_result_7 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
+                                                              '<![LOG[[Win32App] Decryption')
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index])
+            if locate_result_7 < 0:
+                time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+                add_line(time_now + " Error Decrypting app!")
+                add_line(time_now + " App Installation Result: FAIL")
+                return log_output
+
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_7])
+            if win32_app_log[current_index + locate_result_7].startswith(
+                    '<![LOG[[Win32App] Decryption is done successfully.'):
+                add_line(time_now + " Decryption is done successfully.")
+
+            else:
+                add_line(time_now + " Decryption failed!")
+                add_line(time_now + " App Installation Result: FAIL")
+
+                return log_output
+
+            current_index += locate_result_7
+
+            locate_result_8 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
+                                                              '<![LOG[[Win32App] Start unzipping.')
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_8])
+
+            if locate_result_8 < 0:
+                time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+                add_line(time_now + " Error Unzipping app!")
+                add_line(time_now + " App Installation Result: FAIL")
+                return log_output
+
+            add_line(time_now + " Start unzipping.")
+            current_index += locate_result_8
+
+        elif locate_result >= 0:  # Edge CDN mode
+
+            time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_2])
+            add_line(time_now + " Download completed using CDN.")
+
+            add_line(time_now + " ExternalCDN App Content downloaded and verified, skip unzipping.")
+
+            current_index += locate_result
 
     elif locate_result_3 >= 0:
         time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_3])
@@ -471,10 +526,8 @@ def process_standalone_app(win32_app_log, intent):
                                                    '<![LOG[[Win32App] lpExitCode is defined as')
     locate_result_2 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] Admin did NOT set mapping for lpExitCode: ')
-    locate_result_3 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
-                                                   '<![LOG[[Win32App] Admin did NOT set any return codes for app:')
 
-    if locate_result_1 < 0 and locate_result_2 < 0 and locate_result_3 < 0:
+    if locate_result_1 < 0 and locate_result_2 < 0:
         add_line(time_now + " Error locating install exit code!")
     elif locate_result_1 >= 0:
         time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result_1])
@@ -488,11 +541,8 @@ def process_standalone_app(win32_app_log, intent):
 
         current_index += locate_result_1
 
-    elif locate_result_2 >= 0 or locate_result_3 >= 0:
-        if locate_result_3 >= 0:
-            result_index = locate_result_3 + current_index + 1
-        elif locate_result_2 >= 0:
-            result_index = locate_result_2 + current_index + 1
+    elif locate_result_2 >= 0:
+        result_index = locate_result_2 + current_index + 1
         time_now = pp.get_timestamp_by_line(win32_app_log[result_index])
         end_place = win32_app_log[result_index].find("]LOG]!")
         if intent == "UNINSTALL":
@@ -502,10 +552,7 @@ def process_standalone_app(win32_app_log, intent):
             add_line(time_now + " Installation result is " + \
                          win32_app_log[result_index][47:end_place])
 
-        if locate_result_3 >= 0:
-            current_index += locate_result_3
-        elif locate_result_2 >= 0:
-            current_index += locate_result_2
+        current_index += locate_result_2
 
     # log post detection - mandatory
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
@@ -621,7 +668,7 @@ def process_each_app_log(win32_app_log):
         name_index = win32_app_log[0].find("name='")
         name_index_stop = win32_app_log[0].find("', id='")
         app_name = win32_app_log[0][name_index+6:name_index_stop]
-        if win32_app_log[2].startswith("<![LOG[[Win32App] This is a standalone app,") or win32_app_log[1].startswith("<![LOG[[Win32App] ProcessAppWithoutDependency"):
+        if win32_app_log[2].startswith("<![LOG[[Win32App] This is a standalone app,"):
             # standalone flow
             add_line(time_now + " Processing Standalone app: [" + \
                      app_name + "] with intent " + intent)

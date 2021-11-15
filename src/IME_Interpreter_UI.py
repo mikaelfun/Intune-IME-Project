@@ -17,8 +17,6 @@ Display Install time out                    done
 Remember last opened directory              done
 Display download URL
 
-multi-file IME log analysis
-
 '''
 
 from tkinter import *
@@ -91,6 +89,5 @@ if __name__ == "__main__":
     #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Incomplete Application Poller without stop2.log")
     #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Device Setup with restart 20 apps log only 3 showed.log")
     #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Extended requirement script not met.log")
-    #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Download directly via CDN, Exit code, empty poller, incomplete apps.log")
 
     #print(log.generate_win32_app_log())
