@@ -90,4 +90,11 @@ if __name__ == "__main__":
     #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Device Setup with restart 20 apps log only 3 showed.log")
     #log = IMELog("G:\\Storage\\Document\\Projects\\2021 IME Interpreter Project\\Test Cases\\Extended requirement script not met.log")
 
+
+    #log = IMELog("C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\test case logs\\15 apps filtered but only 3, Missing device setup apps.log")
+    #log = IMELog("C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\test case logs\\Device setup softreboot.log")
+    #log = IMELog("C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\test case logs\\IntuneforceHardreboot DeviceRestartBehavior 3.log")
+    #log = IMELog("C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\test case logs\\Intuneforcehardreboot with restart grace period, after restart.log")
+    #log = IMELog("C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\test case logs\\Incomplete Application Poller without stop1.log")
+
     #print(log.generate_win32_app_log())

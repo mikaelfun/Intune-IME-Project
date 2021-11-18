@@ -554,6 +554,27 @@ def process_standalone_app(win32_app_log, intent):
 
         current_index += locate_result_2
 
+    # log restart behavior
+    locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
+                                                   '<![LOG[[Win32App] DeviceRestartBehavior: ')
+    if locate_result < 0:
+        time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+        add_line(time_now + " Error detecting restart behavior.")
+    else:
+        time_now = pp.get_timestamp_by_line(win32_app_log[current_index + locate_result])
+        restart_behavior_index = win32_app_log[current_index + locate_result][41:42]
+        if restart_behavior_index == "0":
+            add_line(time_now + " Restart behavior: [Restart determined by return codes]")
+        elif restart_behavior_index == "1":
+            add_line(time_now + " Restart behavior: [App may force a device restart]")
+        elif restart_behavior_index == "2":
+            add_line(time_now + " Restart behavior: [No specific action]")
+        elif restart_behavior_index == "3":
+            add_line(time_now + " Restart behavior: [Intune will force restart]")
+        else:
+            add_line(time_now + " Restart behavior: Unknown code: " + restart_behavior_index)
+
+
     # log post detection - mandatory
     locate_result = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
                                                    '<![LOG[[Win32App] ===Step=== Detection rules after Execution')

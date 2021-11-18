@@ -49,6 +49,8 @@ class Win32AppPollerLog:
             line_thread = locate_thread(source_log[log_line_index])
             if thread_string == line_thread:
                 self.log_content.append(source_log[log_line_index])
+            if source_log[log_line_index].startswith('<![LOG[EMS Agent Started]LOG]'):
+                self.log_content.append(source_log[log_line_index])
 
         self.thread_id = thread_string
         self.length = len(self.log_content)
@@ -176,7 +178,7 @@ class IMELog:
                 win32_poller_lines.append(i)
                 poller_start_thread.append(locate_thread(loadedLog[i]))
 
-            if loadedLog[i].startswith(
+            elif loadedLog[i].startswith(
                     '<![LOG[[Win32App] ----------------------------------------------------- application poller stopped.'):
                 if len(win32_poller_stop_lines) <= len(win32_poller_lines) - 1:
                     this_thread = locate_thread(loadedLog[i])
@@ -191,6 +193,9 @@ class IMELog:
                             continue
                         if this_thread == poller_start_thread[len(win32_poller_stop_lines)]:
                             win32_poller_stop_lines.append(i)
+            elif loadedLog[i].startswith('<![LOG[EMS Agent Started]'): # reboot will let application poller session end prematurely. Add reboot line as end of previous poller if exists
+                if len(win32_poller_stop_lines) <= len(win32_poller_lines) - 1:
+                    win32_poller_stop_lines.append(i)
 
         while len(win32_poller_stop_lines) < len(win32_poller_lines) - 1:
             del win32_poller_lines[-1]
@@ -226,7 +231,13 @@ class IMELog:
                 win32_app_log_report = win32_app_log_report + "\n\n"
                 #thisdate, thistime = each_log.stop_time
                 #win32_app_log_report = win32_app_log_report + "Application Poller " + thisdate + " " + thistime + " Ends"
-                win32_app_log_report = win32_app_log_report + "---------------------------------------------------Application Poller Stops-------------------------------------------------------------"
+                # print("debug: " + each_log.log_content[-1])
+                if each_log.log_content[-1].startswith('<![LOG[[Win32App] ----------------------------------------------------- application poller stopped.'):
+                    win32_app_log_report = win32_app_log_report + "---------------------------------------------------Application Poller Stops-------------------------------------------------------------"
+                elif each_log.log_content[-1].startswith('<![LOG[EMS Agent Started]LOG'):
+                    win32_app_log_report = win32_app_log_report + "-------------------------------------------------------Device Rebooted------------------------------------------------------------------"
+                else:
+                    win32_app_log_report = win32_app_log_report + "------------------------------------------------------IME Log Truncated-----------------------------------------------------------------"
                 win32_app_log_report = win32_app_log_report + "\n\n\n"
         if win32_app_log_report == "":
             win32_app_log_report = "No App Processing Log found."
@@ -241,6 +252,7 @@ class IMELog:
                 output += result
                 output += "\n"
         return output
+
 
 def get_powershell_poller_lines(loadedLog):
     powershell_poller_lines = []
