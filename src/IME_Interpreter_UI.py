@@ -96,5 +96,6 @@ if __name__ == "__main__":
     #log = IMELog("C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\test case logs\\IntuneforceHardreboot DeviceRestartBehavior 3.log")
     #log = IMELog("C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\test case logs\\Intuneforcehardreboot with restart grace period, after restart.log")
     #log = IMELog("C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\test case logs\\Incomplete Application Poller without stop1.log")
+    #log = IMELog("C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\test case logs\\IntuneManagementExtension (7) not working.log")
 
     #print(log.generate_win32_app_log())

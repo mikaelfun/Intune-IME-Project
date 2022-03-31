@@ -689,13 +689,17 @@ def process_each_app_log(win32_app_log):
         name_index = win32_app_log[0].find("name='")
         name_index_stop = win32_app_log[0].find("', id='")
         app_name = win32_app_log[0][name_index+6:name_index_stop]
-        if win32_app_log[2].startswith("<![LOG[[Win32App] This is a standalone app,"):
-            # standalone flow
+
+        locate_result1 = pp.locate_line_startswith_keyword(win32_app_log,
+                                                          '<![LOG[[Win32App] This is a standalone app,')
+        locate_result2 = pp.locate_line_startswith_keyword(win32_app_log,
+                                                          '<![LOG[[Win32App] ProcessDetectionRules starts]LOG]')
+        if locate_result1 > 0:
             add_line(time_now + " Processing Standalone app: [" + \
                      app_name + "] with intent " + intent)
-            process_standalone_app(win32_app_log[3:], intent)
+            process_standalone_app(win32_app_log[locate_result1:], intent)
         # Dependency flow
-        elif win32_app_log[2].startswith("<![LOG[[Win32App] ProcessDetectionRules starts]LOG]"):
+        elif locate_result2 > 0:
             # dependency flow, first check target app detection
             add_line(time_now + " Processing app with dependency: [" + \
                      app_name + "] with intent " + intent)
