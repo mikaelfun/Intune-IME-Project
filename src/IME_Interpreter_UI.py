@@ -31,9 +31,19 @@ class Root(Tk):
         self.minsize(640, 400)
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
-        self.labelFrame.grid(column=0, row=1, padx=20, pady=20)
+        self.labelFrame.grid(column=0, row=0, padx=5, pady=5)
+
+        #self.topleftFrame = ttk.Frame(self.labelFrame, height=12, width=152,)
+        #self.topleftFrame.grid(column=0, row=0, padx=20, pady=20,  sticky=NW)
+
+        self.logFrame = ttk.LabelFrame(self.labelFrame, text="Converted Log", height=35, width=152,)
+        self.logFrame.grid(column=0, row=2, padx=0, pady=10)
+
+        self.ActionFrame = ttk.LabelFrame(self, text="Actions")
+        self.ActionFrame.grid(column=1, row=0, padx=5, pady=5, sticky=NS)
+
         self.label = ttk.Label(self.labelFrame, text="")
-        self.label.grid(column=1, row=2)
+        self.label.grid(column=0, row=1, sticky=W)
 
         self.button()
         self.button_analyze()
@@ -42,22 +52,26 @@ class Root(Tk):
 
         self.filename = ""
 
+        self.scrollbar = ttk.Scrollbar(self.logFrame, orient='vertical', command=self.text_output.yview)
+        self.scrollbar.grid(row=0, column=1, sticky=NS)
+        self.text_output['yscrollcommand'] = self.scrollbar.set
+
     def button(self):
         self.button = ttk.Button(self.labelFrame, text="Browse IME log File", command=self.fileDialog)
-        self.button.grid(column=1, row=1)
+        self.button.grid(column=0, row=0, sticky=NW)
 
     def button_analyze(self):
-        self.button_analyze = ttk.Button(self.labelFrame, text="Start Analyzing", command=lambda: self.start_analyze(self.filename))
-        self.button_analyze.grid(column=2, row=1)
+        self.button_analyze = ttk.Button(self.ActionFrame, text="Start Analyzing", command=lambda: self.start_analyze(self.filename))
+        self.button_analyze.grid(column=0, row=0,sticky=NE)
 
     def button_clear(self):
-        self.button_clear = ttk.Button(self.labelFrame, text="Clear Result", command=self.clear_result)
-        self.button_clear.grid(column=2, row=2)
+        self.button_clear = ttk.Button(self.ActionFrame, text="Clear Result", command=self.clear_result)
+        self.button_clear.grid(column=0, row=1 ,sticky=NE)
 
     def text_output(self):
         # Create text widget and specify size.
-        self.text_output = Text(self.labelFrame, height=35, width=152, font=('Times New Roman',12))
-        self.text_output.grid(column=1, row=3)
+        self.text_output = Text(self.logFrame, height=35, width=152, font=('Times New Roman',12))
+        self.text_output.grid(column=0, row=0)
 
     def clear_result(self):
         self.text_output.delete("1.0","end")
