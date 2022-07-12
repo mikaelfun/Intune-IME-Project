@@ -628,7 +628,7 @@ def get_dependent_apps_start_stop_lines(win32_app_log):
     dependent_apps_start_lines = []
     dependent_apps_stop_lines = []
     for line_index in range(len(win32_app_log)):
-        if win32_app_log[line_index].startswith("<![LOG[[Win32App] Aggregated result for ("):
+        if win32_app_log[line_index].startswith("<![LOG[[Win32App] Aggregated result for"):
             start_place = 41
             end_place = 77
             app_id = win32_app_log[line_index][start_place: end_place]
@@ -732,12 +732,26 @@ def process_each_app_log(win32_app_log):
                     if pre_process_detect:
                         add_line(time_now + " App Installation Result: SUCCESS ")
                         return log_output
-            if win32_app_log[current_index+1].startswith("<![LOG[[Win32App] starts processing the app chain for app"):
+
+            locate_result_3 = pp.locate_line_startswith_keyword(win32_app_log[current_index:],
+                                                              '<![LOG[[Win32App] starts processing the app chain for app')
+            if locate_result_3 < 0:  # exception and stop
+                time_now = pp.get_timestamp_by_line(win32_app_log[-1])
+                add_line(time_now + " Failed to locate dependency app chain start!")
+                add_line(time_now + " App Installation Result: FAIL")
+
+                return log_output
+            else:
+                current_index += locate_result_3
                 add_line(time_now + " Processing Dependent app chain.")
                 add_line("")
-                dependent_app_lines_start, dependent_app_lines_stop = get_dependent_apps_start_stop_lines(win32_app_log[current_index+1:])
+                dependent_app_lines_start, dependent_app_lines_stop = get_dependent_apps_start_stop_lines(win32_app_log[current_index:])
+                if not dependent_app_lines_start or not dependent_app_lines_stop:
+                    add_line(time_now + " Failed to locate dependency app chain lines!")
+                    add_line(time_now + " App Installation Result: FAIL")
 
-                process_dependency_apps(win32_app_log[current_index+1:], dependent_app_lines_start, dependent_app_lines_stop)
+                    return log_output
+                process_dependency_apps(win32_app_log[current_index:], dependent_app_lines_start, dependent_app_lines_stop)
 
                 add_line("")
                 add_line(time_now + " All dependent apps processed, processing target app [" + app_name + "] now.")
