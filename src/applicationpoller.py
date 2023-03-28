@@ -39,7 +39,7 @@ class ApplicationPoller:
         # self.number_of_apps_processed = len(self.app_processing_line_start)
         self.esp_phase = ""
         self.user_session = ""
-        self.poller_apps_got = '-1'
+        self.poller_apps_got = '0'
         self.comanagement_workload = ""
         self.app_type = ""
         self.is_throttled = False
@@ -93,7 +93,7 @@ class ApplicationPoller:
                 elif each_line.find(" for ESP]") > 0:
                     end_place = each_line.find(" for ESP]")
                 self.app_type = each_line[29:end_place]
-            elif self.poller_apps_got == '-1' and each_line.startswith(
+            elif self.poller_apps_got == '0' and each_line.startswith(
                     '<![LOG[[Win32App] Got ') and 'Win32App(s) for user' in each_line:
                 end_place = each_line.find(" Win32App(s) for user")
                 self.poller_apps_got = each_line[22:end_place]
@@ -210,6 +210,10 @@ class ApplicationPoller:
             # skipped because this is available app check in, not useful
             return interpreted_log_output
 
+        # Skip poller log if 0 expired subgraph number in this poller
+        if not show_not_expired_subgraph and self.expired_subgraph_num_actual == 0:
+            return interpreted_log_output
+
         first_line = self.log_content[0]
         if first_line.startswith(
                 '<![LOG[[Win32App] ----------------------------------------------------- application poller starts.'):
@@ -228,7 +232,7 @@ class ApplicationPoller:
         interpreted_log_output += "\n"
 
         if self.is_throttled:
-            interpreted_log_output += 'App Check in is throttled due to too many request. Please check in again in the next hour.\n\n'
+            interpreted_log_output += 'App Check in is throttled due to too many requests. Please check in again in the next hour.\n\n'
             # return interpreted_log_output
         else:
             if self.poller_apps_got == '0':

@@ -73,6 +73,7 @@ class Win32App:
         self.subgraph_is_standalone = subgraph_is_standalone
         self.start_time = get_timestamp_by_line(self.full_log[0])
         self.end_time = get_timestamp_by_line(self.full_log[-1])
+        # default to last line, in dependency flow, change to current app ending index line
         self.intent = -1
         '''
             0. Dependent app
@@ -293,10 +294,12 @@ class Win32App:
                             self.pre_install_detection = True if \
                                 cur_line[detection_index_start:detection_index_end] == 'Detected' else False
                         applicability_index_start = detection_index_end + 20
-                        applicability_index_end = cur_line.find(' | Reboot = Clean')
+                        applicability_index_end = cur_line.find(' | Reboot')
                         applicability_string = cur_line[applicability_index_start:applicability_index_end]
-                        self.applicability = True if \
-                            applicability_string == 'Applicable' else False
+                        if applicability_string == 'Applicable':
+                            self.applicability = True
+                        else:
+                            self.applicability = False
                         if self.applicability_time == "":
                             self.applicability_time = cur_time
                     else:
@@ -396,6 +399,8 @@ class Win32App:
         self.decryption_success_time = self.pre_install_detection_time
         self.unzipping_success_time = self.pre_install_detection_time
 
+        # Initialize cur_app_log_end_index to end of log as UWP app has 1 app per subgraph
+        self.cur_app_log_end_index = len(self.full_log) - 1
         # UWP app don't need to download to uninstall
         if self.intent == 4:
             self.download_success = True
@@ -498,8 +503,10 @@ class Win32App:
                 elif 0 < self.cur_app_log_end_index < cur_line_index:
                     break
                 elif cur_line.startswith('<![LOG[[Win32App][ActionProcessor] Calculating desired states for all subgraphs.'):
+                    # This applies to Dependency Chain only
                     if self.cur_app_log_end_index < self.cur_app_log_start_index:
                         self.cur_app_log_end_index = cur_line_index
+                        self.end_time = cur_time
                 elif cur_line.startswith('<![LOG[Waiting '):
                     if cur_line.startswith('<![LOG[Waiting 600000 ms for 1 jobs to complete'):
                         if self.download_do_mode == "":
@@ -929,15 +936,15 @@ class Win32App:
         '''
         if self.device_restart_behavior == 0:
             interpreted_log_output += (
-                    self.install_finish_time + ' Reboot Status: [Restart determined by return codes]\n')
+                    self.install_finish_time + ' Reboot Behavior: [Restart determined by return codes]\n')
         elif self.device_restart_behavior == 1:
             interpreted_log_output += (
-                    self.install_finish_time + ' Reboot Status: [App install may force a device restart]\n')
+                    self.install_finish_time + ' Reboot Behavior: [App install may force a device restart]\n')
         elif self.device_restart_behavior == 2:
             interpreted_log_output += (self.install_finish_time + ' Reboot Status: [No specific action]\n')
         elif self.device_restart_behavior == 3:
             interpreted_log_output += (
-                    self.install_finish_time + ' Reboot Status: [Intune will force a mandatory device restart]\n')
+                    self.install_finish_time + ' Reboot Behavior: [Intune will force a mandatory device restart]\n')
         else:
             interpreted_log_output += (self.install_finish_time + ' Reboot Status: [Unknown]\n')
 

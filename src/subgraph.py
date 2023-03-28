@@ -60,6 +60,9 @@ class SubGraph:
     def process_subgraph_meta(self):
         id_start_index = 65
         id_stop_index = self.log_content[0].find(']LOG]!')
+        """
+        Need to put the root app of dependency chain in first one.
+        """
         self.app_id_list = list(
             (self.log_content[0][id_start_index:id_stop_index]).split(', '))
         # print(cur_subgraph.app_id_list)
@@ -208,6 +211,10 @@ class SubGraph:
         if self.is_stand_alone_subgraph:
             if len(self.win32app_object_list) == 1:
                 # Add subgraph meta to log
+                """
+                The first app in the line below is not necessarily the root app.
+<![LOG[[Win32App][V3Processor] Processing subgraph with app ids: 1f4b773e-53ed-4cd8-b12b-16c336bba549, b3aa3d56-d0f5-47a0-8240-ae85ed050a6b, 3dde4e19-3a18-4dec-b60e-720b919e1790]LOG]
+                """
                 interpreted_log_output += self.win32app_object_list[0].generate_standalone_win32_app_meta_log_output()
                 interpreted_log_output += '\n'
                 if not self.reevaluation_expired:
