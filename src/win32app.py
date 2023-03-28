@@ -52,6 +52,20 @@ class Win32App:
         self.grs_expiry = grs_expiry
         self.subgraph_hash = subgraph_hash
         self.full_log = subgraph_log
+        """
+        Used to differentiate different Win32 apps logs in same subgraph in depdendency chain
+        Each Win32 app own download+process+detect log part will be separeted by:
+        
+        Start: <![LOG[[Win32App] Downloading app on session
+        End: <![LOG[[Win32App][ActionProcessor] Calculating desired states for all subgraphs
+        
+        Logic： 
+        if start find, store index to cur_app_log_start_index
+        If end find and index > cur_app_log_start_index, store index to cur_app_log_end_index
+        If index > cur_app_log_end_index: skip processing rest logs.
+        """
+        self.cur_app_log_start_index = 99999
+        self.cur_app_log_end_index = -99999
         self.is_root_app = False
         if len(subgraph_log) < 3:
             print("Error! Invalid Win32App log length. Exit 5001")
@@ -473,12 +487,20 @@ class Win32App:
                 cur_app_id = cur_line[app_id_index_start:app_id_index_end]
                 if cur_app_id != self.app_id:
                     continue
-                self.download_start_time = cur_time
 
-            elif self.download_start_time == "":
-                continue  # wrong app id
+                self.cur_app_log_start_index = cur_line_index
+
+                if self.download_start_time == "":
+                    self.download_start_time = cur_time
             else:
-                if cur_line.startswith('<![LOG[Waiting '):
+                if cur_line_index < self.cur_app_log_start_index:
+                    continue  # wrong app id
+                elif 0 < self.cur_app_log_end_index < cur_line_index:
+                    break
+                elif cur_line.startswith('<![LOG[[Win32App][ActionProcessor] Calculating desired states for all subgraphs.'):
+                    if self.cur_app_log_end_index < self.cur_app_log_start_index:
+                        self.cur_app_log_end_index = cur_line_index
+                elif cur_line.startswith('<![LOG[Waiting '):
                     if cur_line.startswith('<![LOG[Waiting 600000 ms for 1 jobs to complete'):
                         if self.download_do_mode == "":
                             self.download_do_mode = "BACKGROUND(10 min timeout)"
@@ -519,14 +541,18 @@ class Win32App:
                     download_finish_time = datetime.datetime.strptime(self.download_finish_time[:-4],
                                                                       '%m-%d-%Y %H:%M:%S')
                     download_start_time = datetime.datetime.strptime(self.download_start_time[:-4], '%m-%d-%Y %H:%M:%S')
+                    download_average_speed_raw = self.download_file_size * 1.0 / (download_finish_time - download_start_time).total_seconds()
+                    download_average_speed_converted = ""
                     if self.download_average_speed == "":
-                        self.download_average_speed = \
-                            str(int(self.download_file_size * 1.0 / 1000
-                                / (download_finish_time - download_start_time).total_seconds())) + " KB/s"
-                        # print(self.download_average_speed)
+                        if download_average_speed_raw > 1000000:
+                            download_average_speed_converted = str(round(download_average_speed_raw / 1000000, 1)) + " MB/s"
+                        elif download_average_speed_raw > 1000:
+                            download_average_speed_converted = str(round(download_average_speed_raw / 1000, 1)) + " KB/s"
+                        else:
+                            download_average_speed_converted = str(round(download_average_speed_raw, 1)) + " B/s"
+                        self.download_average_speed = download_average_speed_converted
                     else:
                         continue  # Means this is the line for other dependent apps
-
                 elif cur_line.startswith('<![LOG[Cleaning up staging content'):
                     if self.unzipping_success_time == "":
                         self.unzipping_success_time = cur_time
@@ -559,11 +585,12 @@ class Win32App:
                     else:
                         continue  # Means this is the line for other dependent apps
                 elif cur_line.startswith('<![LOG[[Win32App] lpExitCode '):
-                    self.installer_exit_success = True
+
                     if cur_line.startswith('<![LOG[[Win32App] lpExitCode is defined as '):
                         installation_result_index_start = len('<![LOG[[Win32App] lpExitCode is defined as ')
                         installation_result_index_stop = cur_line.find(']LOG]!')
                         if self.installation_result == "":
+                            self.installer_exit_success = True
                             self.installation_result = cur_line[
                                                    installation_result_index_start:installation_result_index_stop]
                         else:
@@ -572,6 +599,7 @@ class Win32App:
                         exit_code_index_start = len('<![LOG[[Win32App] lpExitCode')
                         exit_code_index_stop = cur_line.find(']LOG]!')
                         if self.install_exit_code == -10000:
+                            self.installer_exit_success = True
                             self.install_exit_code = int(cur_line[exit_code_index_start:exit_code_index_stop])
                         else:
                             continue  # Means this is the line for other dependent apps
@@ -579,6 +607,7 @@ class Win32App:
                     installation_result_index_start = len('<![LOG[[Win32App] ')
                     installation_result_index_stop = cur_line.find('of app: ')
                     if self.installation_result == "":
+                        self.installer_exit_success = True
                         self.installation_result = \
                             cur_line[installation_result_index_start:installation_result_index_stop]
                     else:
@@ -622,7 +651,7 @@ class Win32App:
         interpreted_log_output += write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string)
 
         left_string = 'Has Dependent Apps:'
-        right_string = 'None'
+        right_string = 'No'
         interpreted_log_output += write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string)
 
         left_string = 'GRS time:'
@@ -683,7 +712,7 @@ class Win32App:
                                                                                                        right_string)
 
         left_string = 'Has Dependent Apps:'
-        right_string = str(len(self.dependent_apps_list))
+        right_string = 'Yes'
         interpreted_log_output += write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                                        right_string)
         # List Dependent apps
@@ -718,16 +747,19 @@ class Win32App:
     def generate_msfb_uwp_post_download_log_output(self):
         # This works for MSFB UWP
         interpreted_log_output = ""
-        interpreted_log_output += (self.download_start_time + ' Start downloading app using WinGet.\n')
+        if self.intent != 4:
+            interpreted_log_output += (self.download_start_time + ' Start downloading app using WinGet.\n')
         if self.download_success:
-            interpreted_log_output += (self.download_finish_time + ' WinGet mode download completed.\n')
+            if self.intent != 4:
+                interpreted_log_output += (self.download_finish_time + ' WinGet mode download completed.\n')
             # interpreted_log_output += (
             #         self.download_finish_time + ' Average download speed is: ' + self.download_average_speed + '\n')
         else:
-            interpreted_log_output += (self.end_time + ' WinGet mode download FAILED! \n')
-            result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-            interpreted_log_output += (self.end_time + ' App Installation Result: ' + result + '\n')
-            return interpreted_log_output
+            if self.intent != 4:
+                interpreted_log_output += (self.end_time + ' WinGet mode download FAILED! \n')
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
+                interpreted_log_output += (self.end_time + ' App Installation Result: ' + result + '\n')
+                return interpreted_log_output
         if self.install_context == 1:
             interpreted_log_output += (self.download_finish_time + ' Install Context: User\n')
         elif self.install_context == 2:
@@ -807,6 +839,19 @@ class Win32App:
                 self.download_start_time + ' DO Download priority is: ' + self.download_do_mode + '\n')
         if self.download_success:
             interpreted_log_output += (self.download_finish_time + ' DO mode download completed.\n')
+            if self.download_file_size > 1000000000:
+                interpreted_log_output += (
+                        self.download_finish_time + ' Downloaded file size is: ' + str(self.download_file_size // 1000000000) + ' GB\n')
+            elif self.download_file_size > 1000000:
+                interpreted_log_output += (
+                        self.download_finish_time + ' Downloaded file size is: ' + str(self.download_file_size // 1000000) + ' MB\n')
+            elif self.download_file_size > 1000:
+                interpreted_log_output += (
+                        self.download_finish_time + ' Downloaded file size is: ' + str(self.download_file_size // 1000) + ' KB\n')
+            else:
+                interpreted_log_output += (
+                        self.download_finish_time + ' Downloaded file size is: ' + str(self.download_file_size) + ' B\n')
+
             interpreted_log_output += (
                     self.download_finish_time + ' Average download speed is: ' + self.download_average_speed + '\n')
         else:

@@ -154,12 +154,12 @@ class EMSLifeCycle:
             self.app_poller_object_list.append(ApplicationPoller(app_poller_log_list[index_app_poller_log],
                                                                  app_poller_thread_list[index_app_poller_log]))
 
-    def generate_ems_lifecycle_log_output(self):
+    def generate_ems_lifecycle_log_output(self, show_not_expired_subgraph):
         interpreted_log_output = ""
         for cur_app_poller_log_index in range(self.poller_num):
             cur_app_poller_log = self.app_poller_object_list[cur_app_poller_log_index]
-            ems_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output()
+            ems_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_not_expired_subgraph)
             if ems_lifecycle_log_output != "":
-                interpreted_log_output += cur_app_poller_log.generate_application_poller_log_output()
+                interpreted_log_output += ems_lifecycle_log_output
                 interpreted_log_output += '\n'
         return interpreted_log_output

@@ -157,29 +157,35 @@ class SubGraph:
         if not has_dependent_apps:
             interpreted_log_output += app_object.generate_standalone_win32_app_meta_log_output()
             interpreted_log_output += '\n'
-
-            interpreted_log_output += app_object.generate_standalone_win32app_log_output()
-            interpreted_log_output += '\n'
+            if self.reevaluation_expired:
+                interpreted_log_output += app_object.generate_standalone_win32app_log_output()
+                interpreted_log_output += '\n'
         else:
             interpreted_log_output += app_object.generate_dependency_win32_app_meta_log_output()
             interpreted_log_output += '\n'
 
-            interpreted_log_output += app_object.generate_win32app_first_line_log_output()
-            temp_log, processing_stop = app_object.generate_win32app_pre_download_log_output()
-            interpreted_log_output += temp_log
-            interpreted_log_output += '\n'
+            if self.reevaluation_expired:
+                interpreted_log_output += app_object.generate_win32app_first_line_log_output()
+                temp_log, processing_stop = app_object.generate_win32app_pre_download_log_output()
+                interpreted_log_output += temp_log
+                interpreted_log_output += '\n'
+                interpreted_log_output += 'Processing dependent apps start\n\n'
 
             dependency_app_id_list = [each_dependency_dic['ChildId'] for each_dependency_dic in app_object.dependent_apps_list]
             dependency_app_object_list = [each_app for each_app in self.win32app_object_list if each_app.app_id in dependency_app_id_list]
+
             for each_app_object in dependency_app_object_list:
                 app_index = app_index + 1
                 interpreted_log_output += self.generate_subgraph_dependent_app_processing_log_output(each_app_object, app_index)
 
-            interpreted_log_output += 'All dependent apps processed, processing app root [' + app_object.app_name + ']\n\n'
-            if processing_stop:
-                interpreted_log_output += "No action required for this app"
+            if self.reevaluation_expired:
+                interpreted_log_output += 'All dependent apps processed, processing root app [' + app_object.app_name + ']\n\n'
+                if processing_stop:
+                    interpreted_log_output += "No action required for this app"
+                else:
+                    interpreted_log_output += app_object.generate_win32app_post_download_log_output()
             else:
-                interpreted_log_output += app_object.generate_win32app_post_download_log_output()
+                pass
 
             # if each_app_object.app_id not in self.actual_app_id_to_install_list:
             #     # interpreted_log_output += each_app_object.generate_win32app_first_part_log_output()
@@ -222,6 +228,10 @@ class SubGraph:
                     self.generate_subgraph_dependent_app_processing_log_output(self.win32app_object_list[0], app_index))
                 interpreted_log_output += '\n'
 
+            interpreted_log_output += '\n'
+            if not self.reevaluation_expired:
+                interpreted_log_output += "Subgraph will be reevaluated after last reevaluation time + 8 hours\n\n"
+                return interpreted_log_output
             """
             If SubGraph reevaluation expired, it will process all inside apps' detection results and applicability.
             First output the last_enforcement_state for all apps in this subgraph

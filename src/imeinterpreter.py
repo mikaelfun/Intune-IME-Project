@@ -43,7 +43,7 @@ class ImeInterpreter:
         current_log_file.close()
 
         dir_list = os.listdir(self.log_folder_path)
-        dir_list = [i for i in dir_list if i.startswith('IntuneManagementExtension')]
+        dir_list = [i for i in dir_list if i.startswith('IntuneManagementExtension') and i.endswith('.log')]
         dir_list.remove('IntuneManagementExtension.log')
         #print(dir_list)
         sorted(dir_list)
@@ -205,7 +205,7 @@ class ImeInterpreter:
             self.life_cycle_list.append(EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],
                                         ems_agent_restart_reasons[index_lifecycle_log]))
 
-    def generate_ime_interpreter_log_output(self):
+    def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=True):
         interpreted_log_output = ""
         for cur_lifecycle_log_index in range(self.life_cycle_num):
             cur_lifecycle_log = self.life_cycle_list[cur_lifecycle_log_index]
@@ -216,7 +216,7 @@ class ImeInterpreter:
             """
             interpreted_log_output += write_ime_service_start_by_reason(cur_lifecycle_log.boot_reason)
             interpreted_log_output += '\n'
-            interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output()
+            interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
 
         return interpreted_log_output
 

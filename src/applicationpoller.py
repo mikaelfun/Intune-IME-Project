@@ -44,11 +44,13 @@ class ApplicationPoller:
         self.app_type = ""
         self.is_throttled = False
         self.sub_graph_list = []
+        self.expired_sub_graph_list = []  # Expired subgraph list
         self.sub_graph_reevaluation_time_list = dict()
         self.poller_reevaluation_check_in_time = ""
         self.get_policy_json = {}
         self.subgraph_num_expected = -1
         self.subgraph_num_actual = -1
+        self.expired_subgraph_num_actual = 0
         self.index_list_subgraph_processing_start = []
         self.index_list_subgraph_processing_stop = []
         self.last_enforcement_json_dict = dict()
@@ -198,8 +200,11 @@ class ApplicationPoller:
                 # Overwrite from object initialized value to poller subgraph reeval time stored.
                 self.sub_graph_reevaluation_time_list[cur_subgraph.hash_key] = cur_subgraph.reevaluation_time
             self.sub_graph_list.append(cur_subgraph)
+            if cur_subgraph.reevaluation_expired:
+                self.expired_subgraph_num_actual = self.expired_subgraph_num_actual + 1
+                self.expired_sub_graph_list.append(cur_subgraph)
 
-    def generate_application_poller_log_output(self):
+    def generate_application_poller_log_output(self, show_not_expired_subgraph):
         interpreted_log_output = ""
         if self.poller_apps_got == '0' and self.app_type == 'available':
             # skipped because this is available app check in, not useful
@@ -230,25 +235,52 @@ class ApplicationPoller:
                 interpreted_log_output += "No Apps to be processed. Poller stops.\n"
                 # return interpreted_log_output
             else:
-                if self.subgraph_num_actual < self.subgraph_num_expected:
-                    interpreted_log_output += ("Expected " + str(self.subgraph_num_expected) + " Subgraph to read, found only "
-                                               + str(self.subgraph_num_actual) + " from this log.\n\n")
+                if show_not_expired_subgraph:
+                    if self.subgraph_num_actual < self.subgraph_num_expected:
+                        interpreted_log_output += ("Expected " + str(self.subgraph_num_expected) + " Subgraph to read, found only "
+                                                   + str(self.subgraph_num_actual) + " from this log.\n\n")
+                    else:
+                        interpreted_log_output += ("Processing " + str(self.subgraph_num_expected) + " Subgraph(s)\n")
+
+                    interpreted_log_output += '\n'
+                    for cur_subgraph_log_index in range(self.subgraph_num_actual):
+                        cur_subgraph_log = self.sub_graph_list[cur_subgraph_log_index]
+
+                        mid_string = ("Subgraph " + str(cur_subgraph_log_index + 1))
+                        interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                        mid_string = "Subgraph Expired" if cur_subgraph_log.reevaluation_expired else "Subgraph NOT Expired"
+                        interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                        mid_string = "Subgraph Last Evaluation Time: " + cur_subgraph_log.reevaluation_time
+                        interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                        interpreted_log_output += '\n'
+
+                        interpreted_log_output += cur_subgraph_log.generate_subgraph_log_output()
+                        interpreted_log_output += '\n'
                 else:
-                    interpreted_log_output += ("Processing " + str(self.subgraph_num_expected) + " Subgraph(s)\n")
+                    if self.expired_subgraph_num_actual == 0:
+                        interpreted_log_output += "All Subgraphs are NOT expired. Poller stops.\n"
+                    else:
+                        interpreted_log_output += ("Processing " + str(self.expired_subgraph_num_actual) + " expired Subgraph(s)\n")
 
-                interpreted_log_output += '\n'
-                for cur_subgraph_log_index in range(self.subgraph_num_actual):
-                    cur_subgraph_log = self.sub_graph_list[cur_subgraph_log_index]
-                    mid_string = ("Subgraph " + str(cur_subgraph_log_index + 1))
-                    interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
-                    mid_string = "Subgraph Expired" if cur_subgraph_log.reevaluation_expired else "Subgraph NOT Expired"
-                    interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
-                    mid_string = "Subgraph Last Evaluation Time: " + cur_subgraph_log.reevaluation_time
-                    interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
-                    interpreted_log_output += '\n'
+                        for cur_subgraph_log_index in range(self.expired_subgraph_num_actual):
+                            cur_subgraph_log = self.expired_sub_graph_list[cur_subgraph_log_index]
+                            if show_not_expired_subgraph:
+                                mid_string = ("Subgraph " + str(cur_subgraph_log_index + 1))
+                                interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                                mid_string = "Subgraph Expired" if cur_subgraph_log.reevaluation_expired else "Subgraph NOT Expired"
+                                interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                                mid_string = "Subgraph Last Evaluation Time: " + cur_subgraph_log.reevaluation_time
+                                interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                            else:
+                                # interpreted_log_output += write_empty_plus_to_log_output()
+                                mid_string = ("Subgraph " + str(cur_subgraph_log_index + 1))
+                                interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                                interpreted_log_output += write_empty_plus_to_log_output()
 
-                    interpreted_log_output += cur_subgraph_log.generate_subgraph_log_output()
-                    interpreted_log_output += '\n'
+                            interpreted_log_output += '\n'
+
+                            interpreted_log_output += cur_subgraph_log.generate_subgraph_log_output()
+                            interpreted_log_output += '\n'
 
         interpreted_log_output += "\n"
         last_line = self.log_content[-1]
