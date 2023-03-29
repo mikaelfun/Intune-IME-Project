@@ -1,35 +1,26 @@
 # Intune-IME-Project
 IME tool to analyze IntuneManagementExtension.log
 
+Tool screenshots:
+![image](https://user-images.githubusercontent.com/31831389/228565269-f2b08a4a-3e87-43ed-8d9b-d915995b86cd.png)
+![image](https://user-images.githubusercontent.com/31831389/228565381-b60acd01-c6fd-4ef4-95a6-fc5f6407ed18.png)
+![image](https://user-images.githubusercontent.com/31831389/228565459-05127184-1b62-4824-82db-7677ada66b8e.png)
+![image](https://user-images.githubusercontent.com/31831389/228565541-d9ce516e-29e6-4b58-8393-7b26c8c57e91.png)
+![image](https://user-images.githubusercontent.com/31831389/228565788-38ebfe67-b4ef-4736-b3cf-b9ddb4b0d5e8.png)
+
+
+
+
+
 Currently supported scenarios:
 
 App poller meta: EspPhase, user session, Comgt app workload status, required/available/selected apps mode, app number after filter
-![image](https://user-images.githubusercontent.com/31831389/141607785-d874fd56-5c0e-4893-91d6-6614f0eee0b1.png)
-
-Required App processing flow:
-![image](https://user-images.githubusercontent.com/31831389/141607804-c220c328-1589-4b9c-95fa-8ad3f34bb657.png)
-
-Available App processing flow:
-![image](https://user-images.githubusercontent.com/31831389/141608190-5b44d2c8-799c-49fb-864e-1a3278fd615c.png)
-
-App Uninstallation flow:
-![image](https://user-images.githubusercontent.com/31831389/141607869-c27b2767-fa26-435e-af5d-eb0d7fcb3ea2.png)
-
-Not Applicable:
-![image](https://user-images.githubusercontent.com/31831389/141607886-77b531a9-3dff-4f94-8646-92123c3dd140.png)
-
-Dependent App processing flow:
-![image](https://user-images.githubusercontent.com/31831389/141607828-85e48329-f644-4cea-896f-908f4ee8f15f.png)
-![image](https://user-images.githubusercontent.com/31831389/141607834-bdac0d08-2e72-4115-8b57-b87698b09033.png)
-
-DO download priority, switch to CDN flow:
-![image](https://user-images.githubusercontent.com/31831389/141607905-2c22b128-bcc8-4670-9e7a-5b49a024e775.png)
-
-DO/CDN Download failure downloaded size:
-![image](https://user-images.githubusercontent.com/31831389/141608238-2c5ef23e-4af7-4b91-80bd-0de74df1d6a8.png)
-
-GRS skip flow:
-![image](https://user-images.githubusercontent.com/31831389/141607918-c3bdba01-c899-41bf-96b0-b3420db05ef7.png)
-
+Required App processing flow
+Available App processing flow
+App Uninstallation flow
+Not Applicable
+Dependent App processing flow
+DO download priority
+GRS skip flow
 Incomplete Application Poller/Win32 app processing flow
-
+MSFB UWP app flow
