@@ -74,14 +74,14 @@ Later when Intune supports MSFB Win32 app, it may also support dependency then. 
 """
 
 from imeinterpreter import *
-from ime_interpreter_tkinter_ui import *
+from tkinterui import *
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # test_log_folder = "Z:\\文档\\Projects\\2021 IME Interpreter Project\\2023 test cases\\newnew"
+    #test_log_folder = "C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\IMEintepreter Pycharm\\src\\test cases"
     # test_log_folder = "D:\\Kun\\Documents\\PyCharm\\IME Interpreter 3.0\\test_logs\\test complex dependency"
-    # a = ImeInterpreter(test_log_folder)
-    # print(a.generate_ime_interpreter_log_output(False))
+    #a = ImeInterpreter(test_log_folder)
+    #print(a.generate_ime_interpreter_log_output(False))
     root = Root()
     root.mainloop()
 

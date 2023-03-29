@@ -36,7 +36,8 @@ class ImeInterpreter:
         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
         if not (os.path.isfile(ime_log_file_path)):
             print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
-            exit(1100)
+            return None
+            #exit(1100)
         current_log_file = open(ime_log_file_path, mode='r', encoding='utf-8-sig')
         current_ime_log_as_lines = current_log_file.readlines()
         full_log = []
@@ -102,7 +103,8 @@ class ImeInterpreter:
                 ems_agent_stop_lines.append(full_log_len)
             else:
                 print("Error Invalid log structure! Exit 1201")
-                exit(1101)
+                return None
+                #exit(1101)
         elif start_lines_len == stop_lines_len:
             if last_start_time < last_stop_time:
                 # This would mean that upon log collection, IME service is stopped
@@ -155,7 +157,8 @@ class ImeInterpreter:
                 ems_agent_start_lines.append(0)
             else:
                 print("Error Invalid log structure! Exit 1202")
-                exit(1102)
+                return None
+                #exit(1102)
         elif start_lines_len > stop_lines_len + 1:
             '''
             Like this structure:
@@ -196,11 +199,14 @@ class ImeInterpreter:
         return ems_agent_lifecycle_log_list, agent_life_ending_reason
 
     def initialize_life_cycle_list(self):
+        if self.full_log is None:
+            return None
         ems_agent_lifecycle_log_list, ems_agent_restart_reasons = \
             self.separate_log_into_service_lifecycle()
         if len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons):
             print("Error len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons)")
-            exit(1000)
+            return None
+            # exit(1000)
         for index_lifecycle_log in range(len(ems_agent_lifecycle_log_list)):
             self.life_cycle_list.append(EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],
                                         ems_agent_restart_reasons[index_lifecycle_log]))

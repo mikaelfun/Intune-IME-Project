@@ -248,40 +248,50 @@ class SubGraph:
         interpreted_log_output += '\n'
 
     # Recursive function to handle dependency chain
-    def generate_subgraph_dependent_app_processing_log_output(self, app_object, app_index):
+    def generate_subgraph_dependent_app_processing_log_output(self, app_object, app_index, depth=0):
         interpreted_log_output = ""
-        interpreted_log_output += str(app_index) + '.\n'
+        interpreted_log_output += write_log_output_line_with_indent_depth(str(app_index) + '.\n', depth)
         has_dependent_apps = True if app_object.dependent_apps_list is not None else False
         if not has_dependent_apps:
-            interpreted_log_output += app_object.generate_standalone_win32_app_meta_log_output()
+            interpreted_log_output += app_object.generate_standalone_win32_app_meta_log_output(depth)
             interpreted_log_output += '\n'
             if self.reevaluation_expired:
-                interpreted_log_output += app_object.generate_standalone_win32app_log_output()
-                interpreted_log_output += '\n'
+                if not app_object.app_id in self.actual_app_id_to_install_list:
+                    interpreted_log_output += app_object.generate_win32app_first_line_log_output(depth)
+                    temp_log, stop_processing_log = app_object.generate_win32app_pre_download_log_output(depth)
+                    interpreted_log_output += temp_log
+                    interpreted_log_output += write_log_output_line_with_indent_depth((app_object.pre_install_detection_time + ' No action required as Subgraph may be missing required intent in dependency chain. Current app effective intent: ' + app_object.effective_intent + '\n\n'), depth)
+                else:
+                    interpreted_log_output += app_object.generate_standalone_win32app_log_output(depth)
+                    interpreted_log_output += '\n'
         else:
-            interpreted_log_output += app_object.generate_dependency_win32_app_meta_log_output()
+            interpreted_log_output += app_object.generate_dependency_win32_app_meta_log_output(depth)
             interpreted_log_output += '\n'
 
             if self.reevaluation_expired:
-                interpreted_log_output += app_object.generate_win32app_first_line_log_output()
-                temp_log, processing_stop = app_object.generate_win32app_pre_download_log_output()
+                interpreted_log_output += app_object.generate_win32app_first_line_log_output(depth)
+                temp_log, processing_stop = app_object.generate_win32app_pre_download_log_output(depth)
                 interpreted_log_output += temp_log
                 interpreted_log_output += '\n'
-                interpreted_log_output += 'Processing dependent apps start\n\n'
+                interpreted_log_output += write_log_output_line_with_indent_depth('Processing dependent apps start\n\n', depth)
 
             dependency_app_id_list = [each_dependency_dic['ChildId'] for each_dependency_dic in app_object.dependent_apps_list]
             dependency_app_object_list = [each_app for each_app in self.win32app_object_list if each_app.app_id in dependency_app_id_list]
 
             for each_app_object in dependency_app_object_list:
                 app_index = app_index + 1
-                interpreted_log_output += self.generate_subgraph_dependent_app_processing_log_output(each_app_object, app_index)
+                interpreted_log_output += self.generate_subgraph_dependent_app_processing_log_output(each_app_object, app_index, depth + 1)
 
             if self.reevaluation_expired:
-                interpreted_log_output += 'All dependent apps processed, processing root app [' + app_object.app_name + ']\n\n'
+                interpreted_log_output += write_log_output_line_with_indent_depth('All dependent apps processed, processing root app [' + app_object.app_name + ']\n\n', depth)
                 if processing_stop:
-                    interpreted_log_output += 'No action required for this app [' + app_object.app_name + ']\n\n'
+                    interpreted_log_output += write_log_output_line_with_indent_depth('No action required for this app [' + app_object.app_name + ']\n\n', depth)
                 else:
-                    interpreted_log_output += app_object.generate_win32app_post_download_log_output()
+                    if app_object.app_id not in self.actual_app_id_to_install_list:
+                        interpreted_log_output += write_log_output_line_with_indent_depth(
+                            app_object.pre_install_detection_time + ' No action required as Subgraph may be missing required intent in dependency chain. Current app effective intent: ' + app_object.effective_intent + '\n\n', depth)
+                    else:
+                        interpreted_log_output += app_object.generate_win32app_post_download_log_output(depth)
             else:
                 pass
 
