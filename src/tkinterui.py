@@ -49,15 +49,15 @@ class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
         self.title("IME log Interpreter  V3.0")
-        self.minsize(640, 400)
+        self.minsize(1920, 850)
 
-        self.labelFrame = ttk.LabelFrame(self, text="Log folder loaded")
+        self.labelFrame = ttk.LabelFrame(self, text="Log folder loaded", height=48, width=190)
         self.labelFrame.grid(column=0, row=0, padx=5, pady=5)
 
-        self.log_frame = ttk.LabelFrame(self.labelFrame, text="Converted Log", height=35, width=CONST_LOGGING_LENGTH, )
+        self.log_frame = ttk.LabelFrame(self.labelFrame, text="Converted Log", height=48, width=190)
         self.log_frame.grid(column=0, row=2, padx=0, pady=10)
 
-        self.action_frame = ttk.LabelFrame(self, text="Actions", height=15, width=60, )
+        self.action_frame = ttk.LabelFrame(self, text="Actions", height=48, width=60)
         # self.action_frame = ttk.Frame(self, height=15, width=100, )
         self.action_frame.grid(column=1, row=0, padx=5, pady=5, sticky=NS)
 
@@ -77,7 +77,7 @@ class Root(Tk):
         self.enable_full_log = BooleanVar()
         self.enable_full_log.set(False)
 
-        self.enable_full_log_label_frame = ttk.LabelFrame(self.action_frame, text="Enable full log", height=15, width=30, )
+        self.enable_full_log_label_frame = ttk.LabelFrame(self.action_frame, text="Enable full log", height=15, width=30)
 
         self.on_off_button = OnOffButton(self.enable_full_log_label_frame)
         self.full_log_button_init()
@@ -111,7 +111,7 @@ class Root(Tk):
 
     def text_output_init(self):
         # Create text widget and specify size.
-        self.text_output = Text(self.log_frame, height=35, width=CONST_LOGGING_LENGTH, font=('Consolas', 12))
+        self.text_output = Text(self.log_frame, height=48, width=190, font=('Consolas', 12))
         # Times New Roman
         self.text_output.grid(column=0, row=0)
 
