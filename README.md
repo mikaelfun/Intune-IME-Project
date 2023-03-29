@@ -14,13 +14,13 @@ Tool screenshots:
 
 Currently supported scenarios:
 
-App poller meta: EspPhase, user session, Comgt app workload status, required/available/selected apps mode, app number after filter
-Required App processing flow
-Available App processing flow
-App Uninstallation flow
-Not Applicable
-Dependent App processing flow
-DO download priority
-GRS skip flow
-Incomplete Application Poller/Win32 app processing flow
-MSFB UWP app flow
+1. App poller meta: EspPhase, user session, Comgt app workload status, required/available/selected apps mode, app number after filter
+2. Required App processing flow
+3. Available App processing flow
+4. App Uninstallation flow
+5. Not Applicable
+6. Dependent App processing flow
+7. DO download priority
+8. GRS skip flow
+9. Incomplete Application Poller/Win32 app processing flow
+10. MSFB UWP app flow
