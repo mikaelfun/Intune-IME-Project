@@ -103,11 +103,11 @@ class Root(Tk):
 
     def button_analyze_init(self):
         self.button_analyze = ttk.Button(self.action_frame, text="Start Analyzing", command=lambda: self.start_analyze(self.log_folder_name))
-        self.button_analyze.grid(column=0, row=1, sticky=W)
+        self.button_analyze.grid(column=0, row=3, sticky=W)
 
     def button_clear_init(self):
         self.button_clear = ttk.Button(self.action_frame, text="Clear Result", command=self.clear_result)
-        self.button_clear.grid(column=0, row=2, sticky=W)
+        self.button_clear.grid(column=0, row=1, sticky=W)
 
     def text_output_init(self):
         # Create text widget and specify size.
@@ -116,7 +116,7 @@ class Root(Tk):
         self.text_output.grid(column=0, row=0)
 
     def full_log_button_init(self):
-        self.enable_full_log_label_frame.grid(column=0, row=3, sticky=W)
+        self.enable_full_log_label_frame.grid(column=0, row=2, sticky=W)
         self.on_off_button.grid(column=0, row=0, sticky=W)
 
     def clear_result(self):

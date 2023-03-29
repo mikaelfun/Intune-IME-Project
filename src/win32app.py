@@ -60,6 +60,8 @@ class Win32App:
         3. Intent Uninstall and not detected
         """
         self.has_enforcement = False
+        self.no_enforcement_reason = ""
+        self.reason_need_output = False
         """
         Used to differentiate different Win32 apps logs in same subgraph in depdendency chain
         Each Win32 app own download+process+detect log part will be separeted by:
@@ -219,6 +221,27 @@ class Win32App:
         self.interpret_app_log()
         # loaded after interpreting app log
         self.load_current_enforcement_state()
+        self.determine_no_enforcement_reason()
+
+    def determine_no_enforcement_reason(self):
+        if not self.grs_expiry:
+            self.no_enforcement_reason = "Win32 app GRS is not expired."
+        elif self.pre_install_detection and self.intent != 4:
+            self.no_enforcement_reason = "Intent is install and app is detected."
+        elif not self.pre_install_detection and self.intent == 4:
+            self.no_enforcement_reason = "Intent is uninstall and app is not detected."
+        elif self.subgraph_is_standalone:
+            self.no_enforcement_reason = self.cur_enforcement_state
+            self.reason_need_output = True
+        elif not self.subgraph_is_standalone:
+            if self.cur_enforcement_state == "IN_PROGRESS_PENDING_REBOOT":
+                self.no_enforcement_reason = "App pending reboot."
+            else:
+                self.no_enforcement_reason = "Subgraph may be missing required intent in dependency chain."
+            self.reason_need_output = True
+        else:
+            self.no_enforcement_reason = self.cur_enforcement_state
+            self.reason_need_output = True
 
     def load_current_enforcement_state(self):
         if self.current_enforcement_status_report is not None and self.current_enforcement_status_report[
@@ -402,6 +425,8 @@ class Win32App:
         pass
 
     def process_uwp_app_log(self):
+        if not self.grs_expiry:
+            return None
         # UWP app don't need to hash validate, decrypt, unzip
         self.hash_validate_success = True
         self.decryption_success = True
@@ -420,6 +445,7 @@ class Win32App:
                 self.download_finish_time = self.pre_install_detection_time
             else:
                 self.download_finish_time = self.download_start_time
+            self.has_enforcement = True
 
         post_install = False
         for cur_line_index in range(len(self.full_log)):
@@ -537,6 +563,8 @@ class Win32App:
                 if cur_app_id != self.app_id:
                     continue
                 # Stop without enforcement
+                self.has_enforcement = False
+                self.cur_app_log_end_index = cur_line_index
                 break
             elif cur_line.startswith('<![LOG[[Win32App] Downloading app on session'):
                 """
@@ -676,11 +704,13 @@ class Win32App:
                 cur_app_id = self.find_app_id_with_starting_string(cur_line, "app with id: ")
                 if cur_app_id != self.app_id:
                     continue
+
             elif cur_line.startswith('<![LOG[[Win32App][ActionProcessor] No action required for app with id:'):
                 cur_app_id = self.find_app_id_with_starting_string(cur_line, "app with id: ")
                 if cur_app_id != self.app_id:
                     continue
                 # Stop without enforcement
+                self.cur_app_log_end_index = cur_line_index
                 break
             elif cur_line.startswith('<![LOG[[Win32App] Downloading app on session'):
                 """
@@ -797,6 +827,7 @@ class Win32App:
                 if self.install_finish_time == "":
                     self.install_finish_time = cur_time
                     post_install = True
+
                 else:
                     continue  # Means this is the line for other dependent apps
             elif cur_line.startswith('<![LOG[[Win32App] lpExitCode '):
@@ -983,6 +1014,11 @@ class Win32App:
     def generate_msfb_uwp_post_download_log_output(self, depth=0):
         # This works for MSFB UWP
         interpreted_log_output = ""
+        if not self.has_enforcement:
+            if self.reason_need_output:
+                interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + " No action required for this app. " + self.no_enforcement_reason + '\n', depth)
+            return interpreted_log_output
+
         if self.intent != 4:
             interpreted_log_output += write_log_output_line_with_indent_depth(self.download_start_time + ' Start downloading app using WinGet.\n',)
         if self.download_success:
@@ -1070,6 +1106,8 @@ class Win32App:
         # This works for Win32, not MSFB UWP
         interpreted_log_output = ""
         if not self.has_enforcement:
+            if self.reason_need_output:
+                interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + " No action required for this app. " + self.no_enforcement_reason + '\n', depth)
             return interpreted_log_output
 
         interpreted_log_output += write_log_output_line_with_indent_depth(self.download_start_time + ' Start downloading app using DO.\n', depth)
@@ -1217,7 +1255,7 @@ class Win32App:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
                 interpreted_log_output += write_log_output_line_with_indent_depth(
                             self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
-                return interpreted_log_output, True
+                return interpreted_log_output
         else:
             interpreted_log_output += write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
@@ -1225,13 +1263,13 @@ class Win32App:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
                 interpreted_log_output += write_log_output_line_with_indent_depth(
                             self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
-                return interpreted_log_output, True
+                return interpreted_log_output
 
         if not self.grs_expiry:
             # Output detection results only
             interpreted_log_output += write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + " Win32 app GRS is not expired. App will be detected only and NOT enforced.\n", depth)
-            return interpreted_log_output, True
+            return interpreted_log_output
 
         if self.applicability:
             interpreted_log_output += write_log_output_line_with_indent_depth(self.applicability_time + ' Applicability Check: Applicable \n', depth)
@@ -1239,9 +1277,9 @@ class Win32App:
             interpreted_log_output += write_log_output_line_with_indent_depth(self.applicability_time + ' Applicability Check: NOT Applicable \n', depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "NOT Applicable"
             interpreted_log_output += write_log_output_line_with_indent_depth(self.applicability_time + ' App Installation Result: ' + result + '\n', depth)
-            return interpreted_log_output, True
+            return interpreted_log_output
 
-        return interpreted_log_output, False
+        return interpreted_log_output
 
     def generate_win32app_first_line_log_output(self, depth):
         interpreted_log_output = ""
@@ -1284,14 +1322,12 @@ class Win32App:
     def generate_standalone_win32app_log_output(self, depth=0):
         interpreted_log_output = ""
         interpreted_log_output += self.generate_win32app_first_line_log_output(depth)
-        temp_log, stop_processing_log = self.generate_win32app_pre_download_log_output(depth)
-        interpreted_log_output += temp_log
-        if stop_processing_log:
-            return interpreted_log_output
-        else:
-            if self.app_type == "Win32":
-                interpreted_log_output += self.generate_win32app_post_download_log_output(depth)
-            elif self.app_type == "UWP":
-                interpreted_log_output += self.generate_msfb_uwp_post_download_log_output()
+        interpreted_log_output += self.generate_win32app_pre_download_log_output(depth)
+
+        if self.app_type == "Win32":
+            interpreted_log_output += self.generate_win32app_post_download_log_output(depth)
+        elif self.app_type == "UWP":
+            interpreted_log_output += self.generate_msfb_uwp_post_download_log_output()
+
         return interpreted_log_output
 
