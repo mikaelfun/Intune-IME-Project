@@ -57,6 +57,99 @@ class SubGraph:
             self.app_names[self.app_id_list[cur_app_index]] = cur_app_name
             # print(cur_app_name)
 
+    class DependencyTree:
+        def __init__(self, root_node):
+            self.root_node = root_node
+
+    class DependencyTreeNode:
+        """
+        Used to identify the root in the tree and put its id at top of the self.app_id_list
+        """
+        def __init__(self, app_id, root_node):
+            self.leafs = []
+            self.root = root_node
+            self.app_id = app_id
+            self.auto_install = False
+
+        def is_leaf(self):
+            return True if len(self.leafs) == 0 else False
+
+        def is_root(self):
+            return True if self.root is None else False
+
+        def set_root(self, root_node):
+            self.root = root_node
+
+        def set_leaf(self, leaf_node):
+            self.leafs.append(leaf_node)
+
+        def set_auto_install(self, auto_install):
+            self.auto_install = auto_install
+
+    def find_app_dict_json_from_policy_json(self, app_id):
+        cur_app_dict = {}
+        for each_dic in self.policy_json:
+            if each_dic['Id'] == app_id:
+                cur_app_dict = each_dic
+                break
+        if not cur_app_dict:
+            print("Fatal! Win32App not found in get policy json!")
+            return None
+        return cur_app_dict
+
+    def sort_app_id_list_top_root_app(self):
+        """
+        Defining a dictionary of app ids, loop through all app ids and FlatDependencies to insert to dictionary
+        key: each app id
+        value: all of its root apps ids
+
+        In one subgraph, the top root app is an app without any root apps above it.
+        So it is the app not found in the dictionary
+
+        :return: None
+        """
+        root_id = ""
+        leaf_to_root_dic = {}
+        root_to_leaf_dic = {}
+        new_app_id_list = []
+        for each_app_id in self.app_id_list:
+            cur_app_dict = self.find_app_dict_json_from_policy_json(each_app_id)
+            cur_app_dependent_apps_list = cur_app_dict['FlatDependencies']
+            """
+            [{"Action":10,"AppId":"b3aa3d56-d0f5-47a0-8240-ae85ed050a6b","ChildId":"3dde4e19-3a18-4dec-b60e-720b919e1790","Type":0,"Level":0},{"Action":0,"AppId":"b3aa3d56-d0f5-47a0-8240-ae85ed050a6b","ChildId":"1f4b773e-53ed-4cd8-b12b-16c336bba549","Type":0,"Level":0}]
+            """
+            if cur_app_dependent_apps_list:
+                for each_dependency_relationship_dict in cur_app_dependent_apps_list:
+                    # each_dependency_relationship_json = json.loads(each_dependency_relationship_string)
+                    if each_dependency_relationship_dict["ChildId"] in leaf_to_root_dic.keys():
+                        leaf_to_root_dic[each_dependency_relationship_dict["ChildId"]].append(each_app_id)
+                    else:
+                        leaf_to_root_dic[each_dependency_relationship_dict["ChildId"]] = [each_app_id]
+                    if each_app_id in root_to_leaf_dic.keys():
+                        root_to_leaf_dic[each_app_id].append(each_dependency_relationship_dict["ChildId"])
+                    else:
+                        root_to_leaf_dic[each_app_id] = [each_dependency_relationship_dict["ChildId"]]
+
+        for each_app_id in self.app_id_list:
+            if each_app_id not in leaf_to_root_dic.keys():
+                root_id = each_app_id
+                # self.app_id_list.remove(each_app_id)
+                # self.app_id_list.insert(0, each_app_id)
+                break
+
+        new_app_id_list = self.recursive_add_dependent_app_id(root_id, root_to_leaf_dic)
+        self.app_id_list = new_app_id_list
+
+    # depth first list to format list of all dependent apps
+    def recursive_add_dependent_app_id(self, app_id, root_to_leaf_dic):
+        if app_id not in root_to_leaf_dic:
+            return [app_id]
+        else:
+            temp_list = [app_id]
+            for each_leaf_app in root_to_leaf_dic[app_id]:
+                temp_list += self.recursive_add_dependent_app_id(each_leaf_app, root_to_leaf_dic)
+            return temp_list
+
     def process_subgraph_meta(self):
         id_start_index = 65
         id_stop_index = self.log_content[0].find(']LOG]!')
@@ -65,6 +158,8 @@ class SubGraph:
         """
         self.app_id_list = list(
             (self.log_content[0][id_start_index:id_stop_index]).split(', '))
+        self.sort_app_id_list_top_root_app()
+
         # print(cur_subgraph.app_id_list)
         self.app_num = len(self.app_id_list)
         if self.app_num > 1:
@@ -184,7 +279,7 @@ class SubGraph:
             if self.reevaluation_expired:
                 interpreted_log_output += 'All dependent apps processed, processing root app [' + app_object.app_name + ']\n\n'
                 if processing_stop:
-                    interpreted_log_output += "No action required for this app"
+                    interpreted_log_output += 'No action required for this app [' + app_object.app_name + ']\n\n'
                 else:
                     interpreted_log_output += app_object.generate_win32app_post_download_log_output()
             else:
