@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folder Browser and Text Output</title>
+    <style>
+        body {
+            font-family: Consolas, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f6f8fa;
+            color: #24292e;
+        }
+        .container {
+            display: flex;
+            padding: 20px;
+        }
+        .folder-browser {
+            width: 95%;
+            margin-right: 20px;
+        }
+        .text-line {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .output {
+            width: 98%;
+            height: 700px;
+            border: 1px solid #e1e4e8;
+            background-color: #ffffff;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 10%;
+        }
+        button {
+            cursor: pointer;
+            background-color: #fafbfc;
+            border: 1px solid rgba(27,31,35,0.15);
+            border-radius: 6px;
+            color: #24292e;
+            padding: 14px 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+        button:hover {
+            background-color: #f3f4f6;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .slider.round {
+            border-radius: 34px;
+        }
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+    </style>
+    <script>
+        function browseFolder() {
+            document.getElementById('folderInput').click();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="folder-browser">
+            <div class="text-line">Converted log</div>
+            <div class="output"></div>
+        </div>
+        <div class="buttons">
+            <button onclick="browseFolder()">Browse Folder</button>
+            <input type="file" id="folderInput" webkitdirectory style="display:none;">
+            <div class="text-line">Enable Full Log</div>
+            <div class="switch-container">
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <button>Clear result</button>
+            <button>Start Analyzing</button>
+        </div>
+    </div>
+</body>
+</html>
