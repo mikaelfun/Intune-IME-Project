@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folder Browser and File Upload</title>
+    <style>
+        body {
+            font-family: Consolas;
+            margin: 0;
+            padding: 0;
+            background-color: #f6f8fa;
+            color: #24292e;
+        }
+        .container {
+            display: flex;
+            padding: 20px;
+        }
+        .top-text-lines-and-browse {
+            width: 100%;
+            margin-right: 10px;
+        }
+        .text-line-loaded-title {
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .text-line-loaded-path {
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+        .text-line-output-title {
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .output-content {
+            width: 97%;
+            height: 700px;
+            border: 1px solid #e1e4e8;
+            background-color: #ffffff;
+            overflow-y: scroll;
+            padding: 10px;
+            font-size: 15px;
+        }
+        .output-and-buttons {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 10%;
+        }
+        .custom-button {
+            cursor: pointer;
+            background-color: #fafbfc;
+            border: 1px solid rgba(27,31,35,0.15);
+            border-radius: 6px;
+            color: #24292e;
+            padding: 14px 30px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            margin-top: 10px;
+            width: 100%;
+            height: 40px;
+        }
+        .custom-button:hover {
+            background-color: #f3f4f6;
+        }
+        .switch-container {
+            display: flex;
+            align-items: center;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 58px;
+            height: 28px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 14px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        .slider-text {
+            position: absolute;
+            margin-left: 70px;
+            margin-top: 4px;
+            width: 80px;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+    <script>
+        function browseFolder() {
+            document.getElementById('folderInput').click();
+        }
+        async function handleFolderChange(event) {
+            const processFiles = async () => {
+                const files = event.target.files;
+                const formData = new FormData();
+                //const outputContent = document.querySelector('.output-content');
+                let rootFolder = "";
+                for (const file of files) {
+                    const relativePath = file.webkitRelativePath || file.name;
+                    rootFolder = relativePath.split('/')[0];
+                    formData.append('files', file, relativePath);
+                }
+                //outputContent.textContent = rootFolder;
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    const fullPath = result.sessionFolder + "\\" + rootFolder;
+                    document.querySelector('.text-line-loaded-path').textContent = rootFolder;
+                    document.querySelector('.session-folder-input').value = fullPath;
+                } else {
+                    alert('Error uploading files: ' + response.statusText);
+                }
+            };
+
+            processFiles();
+        }
+        async function startAnalyzing() {
+            const sessionFolderInput = document.querySelector('.session-folder-input');
+            const outputContent = document.querySelector('.output-content');
+            const slider = document.querySelector('.switch input');
+            const sliderState = slider.checked;
+            outputContent.textContent = sliderState;
+            if (sessionFolderInput.value) {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sessionFolder: sessionFolderInput.value, sliderState: sliderState })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    outputContent.textContent = result.output;
+                } else {
+                    outputContent.textContent = 'Error: ' + response.statusText;
+                }
+            } else {
+                outputContent.textContent = 'Please upload files first.';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="top-text-lines-and-browse">
+            <div class="text-line-loaded-title">Loaded log folder</div>
+            <div class="text-line-loaded-path"></div>
+            <div class="text-line-output-title">Converted log</div>
+            <div class="output-content"></div>
+        </div>
+        <div class="output-and-buttons">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <button type="button" class="custom-button" onclick="browseFolder()">Browse Folder</button>
+                <input type="hidden" class="session-folder-input" name="sessionFolder">
+                <input type="file" id="folderInput" name="files" webkitdirectory style="display: none;" onchange="handleFolderChange(event)">
+            </form>
+            <div class="switch-container">
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider">
+                        <span class="slider-text">Full log OFF</span>
+                        <span class="slider-text" style="display:none;">Full log ON</span>
+                    </span>
+                </label>
+                <span class="slider-text"></span>
+            </div>
+            <button class="custom-button" onclick="clearResult()">Clear result</button>
+            <button class="custom-button start-analyzing-button">Start Analyzing</button>
+        </div>
+    </div>
+    <script>
+        document.querySelector('.switch input').addEventListener('change', function() {
+            var sliderTexts = document.querySelectorAll('.slider-text');
+            sliderTexts[0].style.display = this.checked ? 'none' : '';
+            sliderTexts[1].style.display = this.checked ? '' : 'none';
+        });
+        document.querySelector('.start-analyzing-button').addEventListener('click', startAnalyzing);
+        // Add an event listener to the "Start Analyzing" button
+        function clearResult() {
+            document.querySelector('.output-content').textContent = '';
+        }
+    </script>
+    
+</body>
+</html>
