@@ -220,6 +220,9 @@ class ImeInterpreter:
 
     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=True):
         interpreted_log_output = ""
+        if self.full_log is None:
+            interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
+            return interpreted_log_output
         for cur_lifecycle_log_index in range(self.life_cycle_num):
             cur_lifecycle_log = self.life_cycle_list[cur_lifecycle_log_index]
             """

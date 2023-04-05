@@ -108,6 +108,7 @@ class Win32App:
         self.applicability_time = ""
         self.extended_applicability = True
         self.extended_applicability_time = ""
+        self.proxy_url = ""
         self.download_do_mode = ""  # Foreground 12 hours, Background 10 minutes
         self.download_start_time = ""
         self.download_finish_time = ""
@@ -579,6 +580,10 @@ class Win32App:
                 if self.download_start_time == "":
                     self.download_start_time = cur_time
                 self.has_enforcement = True
+            elif cur_line.startswith('<![LOG[[SendWebRequestInternal] Sending network request...  Current proxy is '):
+                proxy_start_index = len('<![LOG[[SendWebRequestInternal] Sending network request...  Current proxy is ')
+                proxy_end_index = cur_line.find(']LOG]!><')
+                self.proxy_url = cur_line[proxy_start_index:proxy_end_index]
             elif cur_line.startswith('<![LOG[Waiting '):
                 if cur_line.startswith('<![LOG[Waiting 600000 ms for 1 jobs to complete'):
                     if self.download_do_mode == "":
@@ -728,6 +733,10 @@ class Win32App:
                 if self.download_start_time == "":
                     self.download_start_time = cur_time
                 self.has_enforcement = True
+            elif cur_line.startswith('<![LOG[[SendWebRequestInternal] Sending network request...  Current proxy is '):
+                proxy_start_index = len('<![LOG[[SendWebRequestInternal] Sending network request...  Current proxy is ')
+                proxy_end_index = cur_line.find(']LOG]!><')
+                self.proxy_url = cur_line[proxy_start_index:proxy_end_index]
             elif cur_line_index < self.cur_app_log_enforcement_start_index:
                 continue
             elif 0 < self.cur_app_log_end_index < cur_line_index:
@@ -1128,8 +1137,12 @@ class Win32App:
             return interpreted_log_output
 
         interpreted_log_output += write_log_output_line_with_indent_depth(self.download_start_time + ' Start downloading app using DO.\n', depth)
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        if self.download_do_mode != "":
+            interpreted_log_output += write_log_output_line_with_indent_depth(
                 self.download_start_time + ' DO Download priority is: ' + self.download_do_mode + '\n', depth)
+        if self.proxy_url != "":
+            interpreted_log_output += write_log_output_line_with_indent_depth(
+                self.download_start_time + ' Current Proxy is: ' + self.proxy_url + '\n', depth)
         if self.download_success:
             interpreted_log_output += write_log_output_line_with_indent_depth(self.download_finish_time + ' DO mode download completed.\n', depth)
             if self.download_file_size > 1000000000:
