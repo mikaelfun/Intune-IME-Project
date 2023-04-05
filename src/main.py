@@ -79,9 +79,9 @@ from tkinterui import *
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     #test_log_folder = "C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\IMEintepreter Pycharm\\src\\test cases"
-    # test_log_folder = "D:\\Kun\\Documents\\PyCharm\\IME Interpreter 3.0\\test_logs\\test complex dependency"
-    #a = ImeInterpreter(test_log_folder)
-    #print(a.generate_ime_interpreter_log_output(False))
+    # test_log_folder = "D:\\Kun\\Documents\\PyCharm\\IME Interpreter 3.0 - Test cases\\autopilot\\IMELogWhole35249329"
+    # a = ImeInterpreter(test_log_folder)
+    # print(a.generate_ime_interpreter_log_output(False))
     root = Root()
     root.mainloop()
 

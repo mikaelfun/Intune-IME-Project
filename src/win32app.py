@@ -103,6 +103,7 @@ class Win32App:
         self.post_install = False
         self.post_install_detection = False
         self.post_install_detection_time = ""
+        self.skip_installation = False
         self.applicability = False
         self.applicability_time = ""
         self.extended_applicability = True
@@ -803,7 +804,22 @@ class Win32App:
                     self.unzipping_success_time = cur_time
                     self.unzipping_success = True
                 else:
-                    continue  # Means this is the line for other dependent apps
+                    continue  # Means this is the line for other dependent apps\
+            elif cur_line.startswith('<![LOG[[Win32App][ActionProcessor] Encountered unexpected state for app with id: '):
+                """
+                There is pre-install detection after download happens.
+                Sometimes dependent app installation will also make the root app detected. But it will not know that until
+                the root app is downloaded and ready to install.
+                In this case, it will abort execution and mark as succeeded.
+                
+                <![LOG[[Win32App][ActionProcessor] Encountered unexpected state for app with id: 7e8adb8b-2ddc-45c0-90af-018a565aed0e. Expected the detection state to be "NotDetected" but found "Detected". Aborting processing for the current subgraph.]LOG]!><time="13:01:00.6450399" date="2-27-2023" component="IntuneManagementExtension" context="" type="1" thread="14" file="">
+
+                
+                """
+                cur_app_id = self.find_app_id_with_starting_string(cur_line, '<![LOG[[Win32App][ActionProcessor] Encountered unexpected state for app with id: ')
+                if cur_app_id != self.app_id:
+                    continue
+                self.skip_installation = True
             elif cur_line.startswith('<![LOG[[Win32App] ===Step=== Execute retry '):
                 if self.current_attempt_num == "0":
                     self.current_attempt_num = cur_line[42:43] + '1'
@@ -1032,6 +1048,7 @@ class Win32App:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
                 interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' App Installation Result: ' + result + '\n')
                 return interpreted_log_output
+
         if self.install_context == 1:
             interpreted_log_output += write_log_output_line_with_indent_depth(self.download_finish_time + ' Install Context: User\n')
         elif self.install_context == 2:
@@ -1117,13 +1134,13 @@ class Win32App:
             interpreted_log_output += write_log_output_line_with_indent_depth(self.download_finish_time + ' DO mode download completed.\n', depth)
             if self.download_file_size > 1000000000:
                 interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str(self.download_file_size // 1000000000) + ' GB\n', depth)
+                        self.download_finish_time + ' Downloaded file size is: ' + str((self.download_file_size // 100000000) / 10.0) + ' GB\n', depth)
             elif self.download_file_size > 1000000:
                 interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str(self.download_file_size // 1000000) + ' MB\n', depth)
+                        self.download_finish_time + ' Downloaded file size is: ' + str((self.download_file_size // 100000) / 10.0) + ' MB\n', depth)
             elif self.download_file_size > 1000:
                 interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str(self.download_file_size // 1000) + ' KB\n', depth)
+                        self.download_finish_time + ' Downloaded file size is: ' + str((self.download_file_size // 100) / 10.0) + ' KB\n', depth)
             else:
                 interpreted_log_output += write_log_output_line_with_indent_depth(
                         self.download_finish_time + ' Downloaded file size is: ' + str(self.download_file_size) + ' B\n', depth)
@@ -1153,6 +1170,11 @@ class Win32App:
             interpreted_log_output += write_log_output_line_with_indent_depth(self.decryption_success_time + ' Unzipping success.\n', depth)
         else:
             interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' Unzipping FAILED!\n', depth)
+            result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
+            interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' App Installation Result: ' + result + '\n', depth)
+            return interpreted_log_output
+        if self.skip_installation:
+            interpreted_log_output += write_log_output_line_with_indent_depth(self.decryption_success_time + ' Aborting installation as app is detected.\n', depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
             interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output

@@ -51,8 +51,6 @@ class EMSLifeCycle:
             self.full_log,
             '<![LOG[[Win32App] ----------------------------------------------------- application poller stopped.')
 
-
-
         '''
         Consecutive start stop should have same thread ID. Dropping if thread ID is not match
          <![LOG[[Win32App] ----------------------------------------------------- application poller starts. ----------------------------------------------------- ]LOG]!><time="07:04:15.4880472" date="3-25-2023" component="IntuneManagementExtension" context="" type="2" thread="47" file="">
@@ -75,6 +73,7 @@ class EMSLifeCycle:
                     break
                 elif self.full_log[line_index_iter].startswith('<![LOG') and "-1" == locate_thread(
                         self.full_log[line_index_iter]):
+                    # breaking log start line
                     temp_log = process_breaking_line_log(self.full_log[line_index_iter:])
 
                     if temp_log != "" and locate_thread(temp_log) == cur_poller_thread:

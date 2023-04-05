@@ -89,15 +89,22 @@ class ImeInterpreter:
             last_stop_time = get_timestamp_by_line(self.full_log[ems_agent_stop_lines[-1]])
 
         if start_lines_len == stop_lines_len + 1:
-            '''
-            Most ideal structure:
-            <![LOG[EMS Agent Started]
-            ...
-            <![LOG[EMS Agent Stopped]
-            ...
-            <![LOG[EMS Agent Started]
-            '''
-            if last_start_time > last_stop_time:
+            if start_lines_len == 1:
+                """
+                Autopilot without reboot structure:
+                <![LOG[EMS Agent Started]
+                ...
+                """
+                ems_agent_stop_lines.append(full_log_len)
+            elif last_start_time > last_stop_time:
+                '''
+                Most ideal structure:
+                <![LOG[EMS Agent Started]
+                ...
+                <![LOG[EMS Agent Stopped]
+                ...
+                <![LOG[EMS Agent Started]
+                '''
                 # This would mean that upon log collection, IME service is up and running,
                 # so there is 1 more start than stop
                 ems_agent_stop_lines.append(full_log_len)
