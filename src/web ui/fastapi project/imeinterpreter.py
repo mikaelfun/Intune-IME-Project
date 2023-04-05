@@ -17,7 +17,6 @@ import os
 from logprocessinglibrary import *
 from emslifecycle import *
 from constructinterpretedlog import *
-import sys
 
 
 class ImeInterpreter:
@@ -90,15 +89,22 @@ class ImeInterpreter:
             last_stop_time = get_timestamp_by_line(self.full_log[ems_agent_stop_lines[-1]])
 
         if start_lines_len == stop_lines_len + 1:
-            '''
-            Most ideal structure:
-            <![LOG[EMS Agent Started]
-            ...
-            <![LOG[EMS Agent Stopped]
-            ...
-            <![LOG[EMS Agent Started]
-            '''
-            if last_start_time > last_stop_time:
+            if start_lines_len == 1:
+                """
+                Autopilot without reboot structure:
+                <![LOG[EMS Agent Started]
+                ...
+                """
+                ems_agent_stop_lines.append(full_log_len)
+            elif last_start_time > last_stop_time:
+                '''
+                Most ideal structure:
+                <![LOG[EMS Agent Started]
+                ...
+                <![LOG[EMS Agent Stopped]
+                ...
+                <![LOG[EMS Agent Started]
+                '''
                 # This would mean that upon log collection, IME service is up and running,
                 # so there is 1 more start than stop
                 ems_agent_stop_lines.append(full_log_len)
@@ -228,15 +234,6 @@ class ImeInterpreter:
         return interpreted_log_output
 
 
-def get_args(name='default', first_argument='', second_argument=False):
-    return first_argument,second_argument
 
 
-if __name__ == '__main__':
-    arguments = get_args(*sys.argv)
-    a = ImeInterpreter(arguments[0])
-    if arguments[1] == "True":
-        print(a.generate_ime_interpreter_log_output(True))
-    else:
-        print(a.generate_ime_interpreter_log_output(False))
 

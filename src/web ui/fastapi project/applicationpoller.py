@@ -62,6 +62,10 @@ class ApplicationPoller:
     def get_poller_meta_data(self):
         for log_line_index in range(self.log_len):
             each_line = self.log_content[log_line_index]
+            if locate_thread(each_line) != self.thread_id:
+                # ignoring log not belonging to this poller thread. All these metadata are not related to UWP special case with new thread ID on installing.
+                continue
+
             if not self.esp_phase and each_line.startswith('<![LOG[[Win32App] The EspPhase:'):  # get ESP phase
                 end_place = each_line.find(".]LOG]!")
                 self.esp_phase = each_line[32:end_place]
