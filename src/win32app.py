@@ -14,15 +14,25 @@ Class hierarchy:
 
 Note:
     TargetType:
-    0. Dependent app
+    0. Not targeted to any group, could be Dependent app
     1. user group
     2. device group
 
     Intent:
-    0. Dependent app
+    0. Not targeted, could be Dependent app
     1. Available
     3. Required
     4. Uninstall
+
+    to differentiate dependent app and assignment filtered app:
+    "AppApplicabilityStateDueToAssginmentFilters":1010
+    "AppApplicabilityStateDueToAssginmentFilters":0
+    If 1010:
+    filtered and not applicable
+    elif 0:
+    filtered and applicable
+    elif null: dependent app
+
 
     TargetingMethod:
     0. Direct assignment
@@ -77,7 +87,7 @@ class Win32App:
         self.cur_app_log_enforcement_start_index = 99999
         self.cur_app_log_end_index = -99999
         self.is_root_app = False
-        if len(subgraph_log) < 3:
+        if len(subgraph_log) < 2:
             print("Error! Invalid Win32App log length. Exit 5001")
             return None
         self.subgraph_is_standalone = subgraph_is_standalone
@@ -106,6 +116,7 @@ class Win32App:
         self.skip_installation = False
         self.applicability = False
         self.applicability_time = ""
+        self.filter_state = None
         self.extended_applicability = True
         self.extended_applicability_time = ""
         self.proxy_url = ""
@@ -292,6 +303,17 @@ class Win32App:
         # print(cur_app_dict["InstallContext"])
         install_ex_as_json = json.loads(cur_app_dict['InstallEx'])
         self.device_restart_behavior = install_ex_as_json['DeviceRestartBehavior']
+
+        """
+            "AppApplicabilityStateDueToAssginmentFilters":1010
+            "AppApplicabilityStateDueToAssginmentFilters":0
+            If 1010:
+            filtered and not applicable
+            elif 0:
+            filtered and applicable
+            elif null: dependent app 
+        """
+        self.filter_state = cur_app_dict['AppApplicabilityStateDueToAssginmentFilters']
 
     def process_app_common_log(self):
         """
@@ -897,7 +919,7 @@ class Win32App:
         left_string = 'Target Type:'
         right_string = ""
         if self.target_type == 0:
-            right_string = 'Dependent App'
+            right_string = 'Not Assigned'
         elif self.target_type == 1:
             right_string = 'User Group'
         elif self.target_type == 2:
@@ -907,7 +929,10 @@ class Win32App:
         left_string = 'App Intent:'
         right_string = ""
         if self.intent == 0:
-            right_string = "Dependent app"
+            if self.subgraph_is_standalone:
+                right_string = "Filtered by Assignment filter"
+            else:
+                right_string = "Dependent app"
         elif self.intent == 1:
             right_string = "Available Install"
         elif self.intent == 3:
@@ -1131,6 +1156,13 @@ class Win32App:
     def generate_win32app_post_download_log_output(self, depth=0):
         # This works for Win32, not MSFB UWP
         interpreted_log_output = ""
+
+        """
+        Handled in pre-download log output
+        """
+        if self.filter_state == 1010:
+            return interpreted_log_output
+
         if not self.has_enforcement:
             if self.reason_need_output:
                 interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + " No action required for this app. " + self.no_enforcement_reason + '\n', depth)
@@ -1283,6 +1315,17 @@ class Win32App:
         # including predetection, grs, applicability logging.
         # This works for Win32, MSFB UWP apps
         interpreted_log_output = ""
+
+        """
+        Filtered app does not have pre detection.
+        """
+        if self.filter_state == 1010:
+            interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + " App is not Applicable due to assignment filter.\n", depth)
+            interpreted_log_output += write_log_output_line_with_indent_depth(
+                self.end_time + ' App Installation Result: Not Applicable\n', depth)
+            self.has_enforcement = False
+            return interpreted_log_output
+
         if self.pre_install_detection:
             interpreted_log_output += write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)

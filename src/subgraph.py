@@ -43,7 +43,7 @@ class SubGraph:
         After dependency apps targeting evaluation, it will be reflected in this line to check whether each app should be processed.
         If not processed, it means some dependent app is not targeted or dependent app itself is not targeted
         """
-        if self.log_len < 3:
+        if self.log_len < 2:
             print("Error creating SubGraph Object!")
             print(subgraph_processing_log)
             return None

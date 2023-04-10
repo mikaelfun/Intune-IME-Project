@@ -167,6 +167,8 @@ class ApplicationPoller:
                 self.index_list_subgraph_processing_start.append(log_line_index)
             elif cur_line.startswith('<![LOG[[Win32App][V3Processor] Done processing subgraph.'):
                 self.index_list_subgraph_processing_stop.append(log_line_index)
+            elif cur_line.startswith('<![LOG[[Win32App][V3Processor] All apps in the subgraph are not applicable due'):
+                self.index_list_subgraph_processing_stop.append(log_line_index)
 
         if self.subgraph_num_expected <= 0:
             print("Info. Cannot find V3Processor subgraph number line.")
@@ -193,7 +195,7 @@ class ApplicationPoller:
 
         for subgraph_index in range(len(self.index_list_subgraph_processing_start)):
             cur_subgraph_start_line_index = self.index_list_subgraph_processing_start[subgraph_index]
-            cur_subgraph_stop_line_index = self.index_list_subgraph_processing_stop[subgraph_index]
+            cur_subgraph_stop_line_index = self.index_list_subgraph_processing_stop[subgraph_index] + 1
             cur_subgraph = SubGraph(self.log_content[cur_subgraph_start_line_index:cur_subgraph_stop_line_index],
                                     self.get_policy_json, self.last_enforcement_json_dict)
 
