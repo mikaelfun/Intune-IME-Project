@@ -374,8 +374,11 @@ class Win32App:
                                                                    'company portal based on report: {"ApplicationId":"')
                 if cur_app_id != self.app_id:
                     continue
-                self.current_enforcement_status_report = json.loads(
-                    cur_line[cur_enforcement_index_start:cur_enforcement_index_end])
+                app_json = cur_line[cur_enforcement_index_start:cur_enforcement_index_end]
+                try:
+                    self.current_enforcement_status_report = json.loads(app_json)
+                except ValueError:
+                    print("Json invalid, dropping")
             elif cur_line.startswith('<![LOG[[StatusService] Downloading app (id = '):
                 """
                 Win32 app and MSFB UWP downloading start indicator
@@ -469,7 +472,8 @@ class Win32App:
                 self.download_finish_time = self.pre_install_detection_time
             else:
                 self.download_finish_time = self.download_start_time
-            self.has_enforcement = True
+            if self.pre_install_detection:
+                self.has_enforcement = True
 
         post_install = False
         for cur_line_index in range(len(self.full_log)):
