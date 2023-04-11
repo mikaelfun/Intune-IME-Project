@@ -394,7 +394,8 @@ class Win32App:
                     self.download_start_time = cur_time
                 else:
                     continue
-            elif cur_line.startswith('<![LOG[[Win32App] ===Step=== Execute retry'):
+            elif cur_line.startswith('<![LOG[[Win32App] ===Step=== Execute retry') or \
+                    cur_line.startswith('<![LOG[[Win32App][WinGetApp][WinGetAppExecutionExecutor] Completed execution for app with id: '):
                 post_install = True
 
     def interpret_app_log(self):
