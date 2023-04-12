@@ -43,10 +43,14 @@ class ImeInterpreter:
         full_log = []
         current_log_file.close()
 
+        # Listing older IME logs
         dir_list = os.listdir(self.log_folder_path)
+        # filtering IME logs only
         dir_list = [i for i in dir_list if i.startswith('IntuneManagementExtension') and i.endswith('.log')]
+        # Remove Current IME log, which is most recent
         dir_list.remove('IntuneManagementExtension.log')
         #print(dir_list)
+        # Sorting based on date in file name, first log should be the oldest log
         sorted(dir_list)
         #print(dir_list)
         for each_log in dir_list:

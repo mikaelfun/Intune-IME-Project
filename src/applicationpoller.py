@@ -55,11 +55,11 @@ class ApplicationPoller:
         self.index_list_subgraph_processing_stop = []
         self.last_enforcement_json_dict = dict()
 
-        self.get_poller_meta_data()
+        self.init_app_poller_meta_data()
         if not self.is_throttled and self.poller_apps_got > '0':
             self.initialize_subgraph_list()
 
-    def get_poller_meta_data(self):
+    def init_app_poller_meta_data(self):
         for log_line_index in range(self.log_len):
             each_line = self.log_content[log_line_index]
             if locate_thread(each_line) != self.thread_id:
