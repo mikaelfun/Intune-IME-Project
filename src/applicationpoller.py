@@ -66,60 +66,60 @@ class ApplicationPoller:
                 # ignoring log not belonging to this poller thread. All these metadata are not related to UWP special case with new thread ID on installing.
                 continue
 
-            if not self.esp_phase and each_line.startswith('<![LOG[[Win32App] The EspPhase:'):  # get ESP phase
-                end_place = each_line.find(".]LOG]!")
-                self.esp_phase = each_line[32:end_place]
+            if not self.esp_phase and each_line.startswith(LOG_ESP_INDICATOR):  # get ESP phase
+                end_place = each_line.find(LOG_ENDING_STRING) - 1
+                self.esp_phase = each_line[len(LOG_ESP_INDICATOR):end_place]
                 '''
                 <![LOG[[Win32App] The EspPhase: NotInEsp.]LOG]!
                 <![LOG[[Win32App] The EspPhase: DevicePreparation.]LOG]!
                 <![LOG[[Win32App] The EspPhase: DeviceSetup.]LOG]!
                 <![LOG[[Win32App] The EspPhase: AccountSetup.]LOG]!
                 '''
-            elif not self.user_session and each_line.startswith(
-                    '<![LOG[After impersonation:'):  # get current user session
-                end_place = each_line.find("]LOG]!")
-                self.user_session = each_line[28:end_place]
-            elif not self.comanagement_workload and each_line.startswith('<![LOG[Comgt app workload status '):
-                end_place = each_line.find("]LOG]!")
-                if each_line[33:end_place] == "False":
+            elif not self.user_session and each_line.startswith(LOG_USER_INDICATOR):  # get current user session
+                end_place = each_line.find(LOG_ENDING_STRING)
+                self.user_session = each_line[len(LOG_USER_INDICATOR):end_place]
+            elif not self.comanagement_workload and each_line.startswith(LOG_CO_MA_INDICATOR):
+                end_place = each_line.find(LOG_ENDING_STRING)
+                if each_line[len(LOG_CO_MA_INDICATOR):end_place] == "False":
                     self.comanagement_workload = "Intune"
-                elif each_line[33:end_place] == "True":
+                elif each_line[len(LOG_CO_MA_INDICATOR):end_place] == "True":
                     self.comanagement_workload = "SCCM"
                 else:
                     self.comanagement_workload = "Unknown"
-            elif not self.app_type and each_line.startswith('<![LOG[[Win32App] Requesting ') and (
+            elif not self.app_type and each_line.startswith(LOG_APP_MODE_INDICATOR) and (
                     'available apps only]' in each_line or 'required apps]' in each_line or 'for ESP]' in each_line):
-                end_place = 29
+                start_place = len(LOG_APP_MODE_INDICATOR)
                 if each_line.find("available apps only]LOG]!") > 0:
                     end_place = each_line.find(" apps only]LOG]!")
                 elif each_line.find("required apps]LOG]!") > 0:
                     end_place = each_line.find(" apps]LOG]!")
                 elif each_line.find(" for ESP]") > 0:
                     end_place = each_line.find(" for ESP]")
-                self.app_type = each_line[29:end_place]
+                self.app_type = each_line[start_place:end_place]
             elif self.poller_apps_got == '0' and each_line.startswith(
-                    '<![LOG[[Win32App] Got ') and 'Win32App(s) for user' in each_line:
-                end_place = each_line.find(" Win32App(s) for user")
-                self.poller_apps_got = each_line[22:end_place]
-            elif each_line.startswith('<![LOG[Required app check in is throttled.'):
+                    LOG_POLLER_APPS_1_INDICATOR) and LOG_POLLER_APPS_2_INDICATOR in each_line:
+                end_place = each_line.find(LOG_POLLER_APPS_2_INDICATOR)
+                self.poller_apps_got = each_line[len(LOG_POLLER_APPS_1_INDICATOR):end_place]
+            elif each_line.startswith(LOG_THROTTLED_INDICATOR):
                 self.is_throttled = True
-            elif each_line.startswith('<![LOG[[Win32App][ReevaluationScheduleManager] Found previous reevaluation check-in time value: '):
-                index_start = 96
-                index_end = each_line.find('.]LOG]!>')
+            elif each_line.startswith(LOG_RE_EVAL_INDICATOR):
+                index_start = len(LOG_RE_EVAL_INDICATOR)
+                index_end = each_line.find(LOG_ENDING_STRING) - 1  # dropping .
                 self.poller_reevaluation_check_in_time = each_line[index_start:index_end]
-            elif each_line.startswith('<![LOG[[Win32App][ReevaluationScheduleManager] Found previous subgraph reevaluation time value: '):
-                index_start = 96
-                index_end = each_line.find(' at key')
+            elif each_line.startswith(LOG_SUBGRAPH_RE_EVAL_INDICATOR):
+                index_start = len(LOG_SUBGRAPH_RE_EVAL_INDICATOR)
+                log_subgraph_hash_indicator = ' at key '
+                index_end = each_line.find(log_subgraph_hash_indicator)
                 sub_graph_reeval_time = each_line[index_start:index_end]
-                index_start = index_end + 8
-                index_end = each_line.find('.]LOG]')
+                index_start = index_end + len(log_subgraph_hash_indicator)
+                index_end = each_line.find(LOG_ENDING_STRING) - 1  # dropping .
                 sub_graph_hash = each_line[index_start:index_end]
                 # print(sub_graph_reeval_time)
                 # print(sub_graph_hash)
                 self.sub_graph_reevaluation_time_list[sub_graph_hash] = sub_graph_reeval_time
-            elif each_line.startswith('<![LOG[Get policies = '):
-                json_start_index = 22
-                json_end_index = each_line.find(']LOG]!><time')
+            elif each_line.startswith(LOG_POLICY_JSON_INDICATOR):
+                json_start_index = len(LOG_POLICY_JSON_INDICATOR)
+                json_end_index = each_line.find(LOG_ENDING_STRING)
                 json_string = each_line[json_start_index:json_end_index]
                 self.get_policy_json = json.loads(json_string)
                 """
@@ -142,32 +142,28 @@ class ApplicationPoller:
 
         so the common element should be the target line we are looking at. and it should only contain 1 element.
         """
+
         for log_line_index in range(self.log_len):
             cur_line = self.log_content[log_line_index]
-            if self.subgraph_num_expected == -1 and cur_line.startswith('<![LOG[[Win32App][V3Processor] Processing') \
-                    and ' subgraphs.]LOG]!' in cur_line:  # get ESP phase
-                subgraph_num_expected_index_start = 42
-                subgraph_num_expected_index_end = cur_line.find(' subgraphs.]')
+            if self.subgraph_num_expected == -1 and cur_line.startswith(LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR) \
+                    and LOG_V3_PROCESSOR_ALL_SUBGRAPH_2_INDICATOR in cur_line:  # get ESP phase
+                subgraph_num_expected_index_start = len(LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR)
+                subgraph_num_expected_index_end = cur_line.find(LOG_V3_PROCESSOR_ALL_SUBGRAPH_2_INDICATOR)
                 subgraph_number = int(cur_line[subgraph_num_expected_index_start:subgraph_num_expected_index_end])
                 self.subgraph_num_expected = subgraph_number
-            elif cur_line.startswith('<![LOG[[Win32App][ReportingManager] App with id: ') and \
-                    ('and prior AppAuthority: V3 has been loaded and reporting state initialized' in cur_line
-                     or
-                     'could not be loaded from store. Reporting state initialized with initial values. ReportingState: '
-                     in cur_line):
+            elif cur_line.startswith(LOG_REPORTING_STATE_1_INDICATOR) and \
+                    (LOG_REPORTING_STATE_2_INDICATOR in cur_line or LOG_REPORTING_STATE_3_INDICATOR in cur_line):
 
-                app_id_index_start = cur_line.find('App with id: ') + 13
-                app_id_index_end = app_id_index_start + CONST_APP_ID_LEN
-                cur_app_id = cur_line[app_id_index_start:app_id_index_end]
-                reporting_state_start_index = cur_line.find('ReportingState: ') + 16
-                reporting_state_end_index = cur_line.find(']LOG]!')
+                cur_app_id = find_app_id_with_starting_string(cur_line, LOG_REPORTING_STATE_1_INDICATOR)
+                reporting_state_start_index = cur_line.find('ReportingState: ') + len('ReportingState: ')
+                reporting_state_end_index = cur_line.find(LOG_ENDING_STRING)
                 reporting_state_json_string = cur_line[reporting_state_start_index:reporting_state_end_index]
                 self.last_enforcement_json_dict[cur_app_id] = json.loads(reporting_state_json_string)
-            elif cur_line.startswith('<![LOG[[Win32App][V3Processor] Processing subgraph with app ids: '):
+            elif cur_line.startswith(LOG_SUBGRAPH_PROCESSING_START_INDICATOR):
                 self.index_list_subgraph_processing_start.append(log_line_index)
-            elif cur_line.startswith('<![LOG[[Win32App][V3Processor] Done processing subgraph.'):
+            elif cur_line.startswith(LOG_SUBGRAPH_PROCESSING_END_INDICATOR):
                 self.index_list_subgraph_processing_stop.append(log_line_index)
-            elif cur_line.startswith('<![LOG[[Win32App][V3Processor] All apps in the subgraph are not applicable due'):
+            elif cur_line.startswith(LOG_SUBGRAPH_PROCESSING_NOT_APPLICABLE_INDICATOR):
                 self.index_list_subgraph_processing_stop.append(log_line_index)
 
         if self.subgraph_num_expected <= 0:
@@ -222,7 +218,7 @@ class ApplicationPoller:
 
         first_line = self.log_content[0]
         if first_line.startswith(
-                '<![LOG[[Win32App] ----------------------------------------------------- application poller starts.'):
+                LOG_APP_POLLER_START_STRING):
             interpreted_log_output += write_application_poller_start_to_log_output(
                 "Application Poller Starts",
                 self.esp_phase, self.user_session,
@@ -294,8 +290,7 @@ class ApplicationPoller:
 
         interpreted_log_output += "\n"
         last_line = self.log_content[-1]
-        if last_line.startswith(
-                '<![LOG[[Win32App] ----------------------------------------------------- application poller stopped.'):
+        if last_line.startswith(LOG_APP_POLLER_START_STRING):
             interpreted_log_output += write_string_in_middle_with_dash_to_log_output('Application Poller Stops')
             interpreted_log_output += write_empty_dash_to_log_output()
         else:

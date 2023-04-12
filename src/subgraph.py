@@ -37,7 +37,6 @@ class SubGraph:
         self.win32app_object_list = []
         self.is_stand_alone_subgraph = True
         self.last_enforcement_json_dict = last_enforcement_json_dict  # key: app id string, value: last_enforcement_json
-        self.actual_app_id_to_install_list = []
         """ 
         <![LOG[[Win32App][ActionProcessor] Found: 1 apps with intent to install: [1f4b773e-53ed-4cd8-b12b-16c336bba549].]LOG]
         After dependency apps targeting evaluation, it will be reflected in this line to check whether each app should be processed.
@@ -118,12 +117,16 @@ class SubGraph:
         else:
             temp_list = [app_id]
             for each_leaf_app in root_to_leaf_dic[app_id]:
-                temp_list += self.recursive_add_dependent_app_id(each_leaf_app, root_to_leaf_dic)
+                """
+                Fix issue with double dependency
+                """
+                temp_result = self.recursive_add_dependent_app_id(each_leaf_app, root_to_leaf_dic)
+                temp_list += [each_id for each_id in temp_result if each_id not in temp_list]
             return temp_list
 
     def process_subgraph_meta(self):
-        id_start_index = 65
-        id_stop_index = self.log_content[0].find(']LOG]!')
+        id_start_index = len(LOG_SUBGRAPH_PROCESSING_START_INDICATOR)
+        id_stop_index = self.log_content[0].find(LOG_ENDING_STRING)
         """
         Need to put the root app of dependency chain in first one.
         """
@@ -138,58 +141,51 @@ class SubGraph:
             # print(self.log_content)
         for each_line_index in range(1, self.log_len):
             cur_line = self.log_content[each_line_index]
-            if cur_line.startswith('<![LOG[[Win32App][GRSManager] Found GRS value:'):
+            if cur_line.startswith(LOG_WIN32_GRS_INDICATOR):
                 # app was processed before, saving hash key, grs time,
-                grs_value_hash_index_start = 115
+                """
+                <![LOG[[Win32App][GRSManager] Found GRS value: 03/23/2023 08:55:35 at key 8679bddf-b85f-473c-bc47-2ed0457ec9fb\GRS\2BKBFKBaevJ8qnbQsLVnCKDoI1ZjfmU5sTdZPc/QtWE=\cce28372-03a1-4006-8035-00deb0c906ed.]LOG]!>
+                """
+                grs_value_hash_index_start = len(LOG_WIN32_GRS_INDICATOR) + len('03/23/2023 08:55:35 at key 8679bddf-b85f-473c-bc47-2ed0457ec9fb\GRS') + 1
                 grs_value_hash_index_end = grs_value_hash_index_start + CONST_GRS_HASH_KEY_LEN
                 if self.hash_key == "":
                     self.hash_key = cur_line[grs_value_hash_index_start:grs_value_hash_index_end]
-                app_id_index_end = cur_line.find('.]LOG]!')
+                app_id_index_end = cur_line.find(LOG_ENDING_STRING) - 1
                 app_id_index_start = app_id_index_end - CONST_APP_ID_LEN
                 cur_app_id = cur_line[app_id_index_start:app_id_index_end]
-                grs_time_index_start = 47
-                grs_time_index_end = 66
+                grs_time_index_start = len(LOG_WIN32_GRS_INDICATOR)
+                log_subgraph_hash_indicator = ' at key '
+                grs_time_index_end = cur_line.find(log_subgraph_hash_indicator)
                 cur_app_grs_time = cur_line[grs_time_index_start:grs_time_index_end]
                 self.grs_time_list[cur_app_id] = cur_app_grs_time
                 # print(self.hash_key)
-            elif cur_line.startswith('<![LOG[[Win32App][GRSManager] App with id: '):
-                app_id_index_start = cur_line.find('App with id: ') + 13
-                app_id_index_end = app_id_index_start + CONST_APP_ID_LEN
-                cur_app_id = cur_line[app_id_index_start:app_id_index_end]
+            elif cur_line.startswith(LOG_WIN32_NO_GRS_1_INDICATOR):
+                cur_app_id = find_app_id_with_starting_string(cur_line, LOG_WIN32_NO_GRS_1_INDICATOR)
                 # print(cur_line[79:83])
-                if "has no recorded GRS value" in cur_line:
+                if LOG_WIN32_NO_GRS_2_INDICATOR in cur_line:
                     # app has no grs found.
-                    # <![LOG[[Win32App][GRSManager] App with id: 0557caed-3f50-499f-a39d-5b1179f78922 has no recorded GRS value which will be treated as expired.
-                    grs_value_hash_index_start = 149
+                    """
+                    <![LOG[[Win32App][GRSManager] App with id: 471f61b1-58ad-431b-bd4d-386d3c953773 has no recorded GRS value which will be treated as expired. | Hash = Z/qdb2IBJPXgSPPxMV14feLXHs7e8XnvSEYNW5fqv3M=]LOG]!
+                    """
+                    grs_value_hash_index_start = len('<![LOG[[Win32App][GRSManager] App with id: ') + CONST_APP_ID_LEN + len(' has no recorded GRS value which will be treated as expired. | Hash = ')
                     grs_value_hash_index_end = grs_value_hash_index_start + CONST_GRS_HASH_KEY_LEN
                     if self.hash_key == "":
                         self.hash_key = cur_line[grs_value_hash_index_start:grs_value_hash_index_end]
                     self.grs_expiry[cur_app_id] = True
-                elif cur_line[79:83] == ' is ':
-                    expiry_start_index = 83
+                elif cur_line[len(LOG_WIN32_NO_GRS_1_INDICATOR) + CONST_APP_ID_LEN:len(LOG_WIN32_NO_GRS_1_INDICATOR) + CONST_APP_ID_LEN + len(' is ')] == ' is ':
+                    """
+                    <![LOG[[Win32App][GRSManager] App with id: cce28372-03a1-4006-8035-00deb0c906ed is expired. | Hash = 2BKBFKBaevJ8qnbQsLVnCKDoI1ZjfmU5sTdZPc/QtWE=
+                    """
+                    expiry_start_index = len(LOG_WIN32_NO_GRS_1_INDICATOR) + CONST_APP_ID_LEN + len(' is ')
                     expiry_end_index = cur_line.find('. | Hash =')
                     cur_app_expiry_string = cur_line[expiry_start_index:expiry_end_index]
                     if cur_app_expiry_string == 'not expired':
                         self.grs_expiry[cur_app_id] = False
                     elif cur_app_expiry_string == 'expired':
                         self.grs_expiry[cur_app_id] = True
-            elif cur_line.startswith(
-                    '<![LOG[[Win32App][ReevaluationScheduleManager] Subgraph reevaluation interval is not expired'):
+            elif cur_line.startswith(LOG_SUBGRAPH_NOT_EXPIRED_INDICATOR):
                 # meaning the current subgraph will not be processed
                 self.reevaluation_expired = False
-            # elif cur_line.startswith(
-            #         '<![LOG[[Win32App][ReevaluationScheduleManager] Setting subgraph reevaluation time with value:'):
-            #     index_subgraph_reevaluation_time_start = cur_line.find('time with value: ') + 17
-            #     index_subgraph_reevaluation_time_end = cur_line.find(' for subgraph with hash')
-            #     if self.reevaluation_time == "":
-            #         self.reevaluation_time = cur_line[
-            #                              index_subgraph_reevaluation_time_start:index_subgraph_reevaluation_time_end]
-                # print(self.reevaluation_time)
-            elif cur_line.startswith('<![LOG[[Win32App][ActionProcessor] Found: 1 apps with intent to install: '):
-                app_id_index_start = cur_line.find('install: [') + 10
-                app_id_index_end = app_id_index_start + CONST_APP_ID_LEN
-                cur_app_id = cur_line[app_id_index_start:app_id_index_end]
-                self.actual_app_id_to_install_list.append(cur_app_id)
 
     def initialize_win32_apps_list(self):
         for cur_app_index in range(self.app_num):

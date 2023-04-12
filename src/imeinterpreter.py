@@ -149,7 +149,7 @@ class ImeInterpreter:
                 ...
                 <![LOG[EMS Agent Started]
                 '''
-                ems_agent_start_lines.append(0)
+                ems_agent_start_lines.insert(0, 0)
                 ems_agent_stop_lines.append(full_log_len)
         elif start_lines_len == stop_lines_len - 1:  # start_lines_len == stop_lines_len - 1
             '''
