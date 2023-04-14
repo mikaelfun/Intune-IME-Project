@@ -222,7 +222,7 @@ class ImeInterpreter:
             self.life_cycle_list.append(EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],
                                         ems_agent_restart_reasons[index_lifecycle_log]))
 
-    def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=True):
+    def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):
         interpreted_log_output = ""
         if self.full_log is None:
             interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
