@@ -87,12 +87,12 @@ if __name__ == '__main__':
     if len(args) > 1:
         path_to_ime_log_folder = args[1]
         if not os.path.exists(path_to_ime_log_folder):
-            print(
-                '''Invalid argument! "path_to_ime_log_folder" does not exists!''')
-            exit()
+            print('''Invalid argument! "path_to_ime_log_folder" does not exists!''')
+            sys.exit('''Invalid argument! "path_to_ime_log_folder" does not exists!''')
+
         if len(args) <= 2 or len(args) >= 5:
             print('''Invalid argument! Please follow "IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
-            exit()
+            sys.exit('''Invalid argument! Please follow "IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
 
         path_to_output_file = args[2]
         full_log_switch = False
@@ -101,12 +101,14 @@ if __name__ == '__main__':
                 full_log_switch = True
             else:
                 print('''Invalid argument! Please follow "IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
-                exit()
+                sys.exit('''Invalid argument! Please follow "IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
 
         a = ImeInterpreter(path_to_ime_log_folder)
         with open(path_to_output_file, 'w') as outfile:
             # Write some text to the file
             outfile.write(a.generate_ime_interpreter_log_output(full_log_switch))
+        print("Log output successful!")
+        sys.exit("Log output successful!")
     else:
         root = Root()
         root.mainloop()
