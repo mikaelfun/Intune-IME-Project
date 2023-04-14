@@ -88,10 +88,10 @@ if __name__ == '__main__':
         path_to_ime_log_folder = args[1]
         if not os.path.exists(path_to_ime_log_folder):
             print(
-                "Invalid argument! 'path_to_ime_log_folder' does not exists!")
+                '''Invalid argument! "path_to_ime_log_folder" does not exists!''')
             exit()
         if len(args) <= 2 or len(args) >= 5:
-            print("Invalid argument! Please follow IME_Interpreter_UI 3.0.exe 'path_to_ime_log_folder' 'path_to_output_file' FULL(optional)")
+            print('''Invalid argument! Please follow "IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
             exit()
 
         path_to_output_file = args[2]
@@ -100,8 +100,7 @@ if __name__ == '__main__':
             if args[3] == "FULL":
                 full_log_switch = True
             else:
-                print(
-                    "Invalid argument! Please follow IME_Interpreter_UI 3.0.exe 'path_to_ime_log_folder' 'path_to_output_file' FULL(optional)")
+                print('''Invalid argument! Please follow "IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
                 exit()
 
         a = ImeInterpreter(path_to_ime_log_folder)
