@@ -1,11 +1,11 @@
 # Intune-IME-Project
 IME tool to analyze IntuneManagementExtension.log
 
-Command line argument format:
-Normal log output(igonoring non expired Subgraphs):
-"IME_Interpreter_UI 3.0.exe" 'path_to_ime_log_folder' 'path_to_output_file'
-Full log output:
-"IME_Interpreter_UI 3.0.exe" 'path_to_ime_log_folder' 'path_to_output_file' FULL
+Command line argument format:\n
+Normal log output(igonoring non expired Subgraphs):\n
+"IME_Interpreter_UI 3.0.exe" 'path_to_ime_log_folder' 'path_to_output_file'\n
+Full log output:\n
+"IME_Interpreter_UI 3.0.exe" 'path_to_ime_log_folder' 'path_to_output_file' FULL\n
 
 
 Tool screenshots:
