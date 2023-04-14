@@ -75,13 +75,40 @@ Later when Intune supports MSFB Win32 app, it may also support dependency then. 
 
 from imeinterpreter import *
 from tkinterui import *
+import sys
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     #test_log_folder = "C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\IMEintepreter Pycharm\\src\\test cases"
-    #test_log_folder = "C:\\Users\\kufang\\Downloads\\Logs (4)\\Logs"
+    #test_log_folder = "D:\\Kun\\Documents\\PyCharm\\IME Interpreter 3.0 - Test cases\\msfb win32\\Ryan_Logs\\Logs"
     #a = ImeInterpreter(test_log_folder)
     #print(a.generate_ime_interpreter_log_output(False))
-    root = Root()
-    root.mainloop()
+    args = sys.argv
+    if len(args) > 1:
+        path_to_ime_log_folder = args[1]
+        if not os.path.exists(path_to_ime_log_folder):
+            print(
+                "Invalid argument! 'path_to_ime_log_folder' does not exists!")
+            exit()
+        if len(args) <= 2 or len(args) >= 5:
+            print("Invalid argument! Please follow IME_Interpreter_UI 3.0.exe 'path_to_ime_log_folder' 'path_to_output_file' FULL(optional)")
+            exit()
+
+        path_to_output_file = args[2]
+        full_log_switch = False
+        if len(args) == 4:
+            if args[3] == "FULL":
+                full_log_switch = True
+            else:
+                print(
+                    "Invalid argument! Please follow IME_Interpreter_UI 3.0.exe 'path_to_ime_log_folder' 'path_to_output_file' FULL(optional)")
+                exit()
+
+        a = ImeInterpreter(path_to_ime_log_folder)
+        with open(path_to_output_file, 'w') as outfile:
+            # Write some text to the file
+            outfile.write(a.generate_ime_interpreter_log_output(full_log_switch))
+    else:
+        root = Root()
+        root.mainloop()
 
