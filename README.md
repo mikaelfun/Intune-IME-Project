@@ -1,7 +1,18 @@
 # Intune-IME-Project
 IME tool to analyze IntuneManagementExtension.log
 
-Tool screenshots:
+## Command line argument format:
+
+Normal log output(igonoring non expired Subgraphs):
+
+"IME_Interpreter_UI 3.0.exe" 'path_to_ime_log_folder' 'path_to_output_file'
+
+Full log output:
+
+"IME_Interpreter_UI 3.0.exe" 'path_to_ime_log_folder' 'path_to_output_file' FULL
+
+
+## Tool screenshots:
 ![image](https://user-images.githubusercontent.com/31831389/228565269-f2b08a4a-3e87-43ed-8d9b-d915995b86cd.png)
 ![image](https://user-images.githubusercontent.com/31831389/228565381-b60acd01-c6fd-4ef4-95a6-fc5f6407ed18.png)
 ![image](https://user-images.githubusercontent.com/31831389/228565459-05127184-1b62-4824-82db-7677ada66b8e.png)
@@ -12,7 +23,7 @@ Tool screenshots:
 
 
 
-Currently supported scenarios:
+## Currently supported scenarios:
 
 1. App poller meta: EspPhase, user session, Comgt app workload status, required/available/selected apps mode, app number after filter
 2. Required App processing flow
@@ -24,3 +35,9 @@ Currently supported scenarios:
 8. GRS skip flow
 9. Incomplete Application Poller/Win32 app processing flow
 10. MSFB UWP app flow
+
+## Roadmap
+
+1. PowerShell script diagnosis
+2. Proactive remediation diagnosis
+3. Win32 supersedence flow
