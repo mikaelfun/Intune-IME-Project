@@ -377,7 +377,18 @@ class Win32App:
                 if self.download_start_time == "":  # only the first line is the start time.
                     self.download_start_time = cur_time
                 else:
+                    cur_downloaded_size_index_start = cur_line.find(', bytes ') + len(', bytes ')
+                    cur_downloaded_size_index_end = cur_line.find(' for user ')
+                    cur_downloaded_size_percent = cur_line[cur_downloaded_size_index_start:cur_downloaded_size_index_end]
+                    if '/' not in cur_downloaded_size_percent:
+                        continue
+                    downloaded_size_list = cur_downloaded_size_percent.split('/')
+                    cur_downloaded_size, cur_needed_size = downloaded_size_list[0], downloaded_size_list[1]
+                    self.download_file_size = int(cur_downloaded_size)
+                    if int(cur_needed_size) > 0:
+                        self.size_need_to_download = int(cur_needed_size)
                     continue
+
             elif cur_line.startswith(LOG_WIN32_EXECUTING_1_INDICATOR) or \
                     cur_line.startswith(LOG_UWP_EXECUTING_INDICATOR):
                 post_install = True
@@ -453,23 +464,11 @@ class Win32App:
 	            <![LOG[[Package Manager] BytesRequired - 177447816BytesDownloaded - 177447816DownloadProgress - 1InstallationProgress - 0]LOG]!><time="08:22:29.4191464" date="3-3-2023" component="IntuneManagementExtension" context="" type="1" thread="161" file="">
 	            <![LOG[[Package Manager] BytesRequired - 0BytesDownloaded - 0DownloadProgress - 1InstallationProgress - 0]LOG]
                 """
-                if cur_line[download_progress_index_start:download_progress_index_end] == '1' and self.download_file_size == -1:
+                if cur_line[download_progress_index_start:download_progress_index_end] == '1' and int(cur_line[size_downloaded_index_start:size_downloaded_index_end]) > 0:
                     self.download_file_size = int(cur_line[size_downloaded_index_start:size_downloaded_index_end])
 
         if self.install_start_time != "" and self.download_finish_time != "":
-            download_finish_time = datetime.datetime.strptime(self.download_finish_time[:-4],
-                                                              '%m-%d-%Y %H:%M:%S')
-            download_start_time = datetime.datetime.strptime(self.download_start_time[:-4], '%m-%d-%Y %H:%M:%S')
-            download_average_speed_raw = self.download_file_size * 1.0 / (
-                        download_finish_time - download_start_time).total_seconds()
-
-            if download_average_speed_raw > 1000000:
-                download_average_speed_converted = str(round(download_average_speed_raw / 1000000, 1)) + " MB/s"
-            elif download_average_speed_raw > 1000:
-                download_average_speed_converted = str(round(download_average_speed_raw / 1000, 1)) + " KB/s"
-            else:
-                download_average_speed_converted = str(round(download_average_speed_raw, 1)) + " B/s"
-            self.download_average_speed = download_average_speed_converted
+            self.download_average_speed = self.convert_speedraw_to_string()
 
     def process_msfb_app_log(self):
         if not self.grs_expiry:
@@ -626,6 +625,14 @@ class Win32App:
                     self.download_success = True
                 else:
                     continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith('<![LOG[[Win32App DO] DO downloading is not finished within timeout'):
+                if self.download_finish_time == "":
+                    self.download_finish_time = cur_time
+                    if self.download_average_speed == "":
+                        self.download_average_speed = self.convert_speedraw_to_string()
+                    self.download_success = False
+                else:
+                    continue  # Means this is the line for other dependent apps
             elif cur_line.startswith('<![LOG[[Win32App] file hash validation pass'):
                 if self.hash_validate_success_time == "":
                     self.hash_validate_success_time = cur_time
@@ -641,26 +648,10 @@ class Win32App:
             elif cur_line.startswith('<![LOG[[Win32App] Downloaded file size '):
                 file_size_index_start = 38
                 file_size_index_end = cur_line.find(']LOG]!') - 3
-                if self.download_file_size == -1:
-                    self.download_file_size = int(
+                self.download_file_size = int(
                         (cur_line[file_size_index_start:file_size_index_end]).replace(',', ''))
-                else:
-                    continue  # Means this is the line for other dependent apps
 
-                download_finish_time = datetime.datetime.strptime(self.download_finish_time[:-4],
-                                                                  '%m-%d-%Y %H:%M:%S')
-                download_start_time = datetime.datetime.strptime(self.download_start_time[:-4], '%m-%d-%Y %H:%M:%S')
-                download_average_speed_raw = self.download_file_size * 1.0 / (download_finish_time - download_start_time).total_seconds()
-                if self.download_average_speed == "":
-                    if download_average_speed_raw > 1000000:
-                        download_average_speed_converted = str(round(download_average_speed_raw / 1000000, 1)) + " MB/s"
-                    elif download_average_speed_raw > 1000:
-                        download_average_speed_converted = str(round(download_average_speed_raw / 1000, 1)) + " KB/s"
-                    else:
-                        download_average_speed_converted = str(round(download_average_speed_raw, 1)) + " B/s"
-                    self.download_average_speed = download_average_speed_converted
-                else:
-                    continue  # Means this is the line for other dependent apps
+                self.download_average_speed = self.convert_speedraw_to_string()
             elif cur_line.startswith('<![LOG[Cleaning up staging content'):
                 if self.unzipping_success_time == "":
                     self.unzipping_success_time = cur_time
@@ -720,6 +711,23 @@ class Win32App:
                         cur_line[installation_result_index_start:installation_result_index_stop]
                 else:
                     continue  # Means this is the line for other dependent apps
+
+    def convert_speedraw_to_string(self):
+        download_finish_time = datetime.datetime.strptime(self.download_finish_time[:-4],
+                                                          '%m-%d-%Y %H:%M:%S')
+        download_start_time = datetime.datetime.strptime(self.download_start_time[:-4], '%m-%d-%Y %H:%M:%S')
+        download_average_speed_raw = self.download_file_size * 1.0 / (
+                download_finish_time - download_start_time).total_seconds()
+
+        if download_average_speed_raw > 1000000:
+            download_average_speed_converted = str(
+                round(download_average_speed_raw / 1000000, 1)) + " MB/s"
+        elif download_average_speed_raw > 1000:
+            download_average_speed_converted = str(
+                round(download_average_speed_raw / 1000, 1)) + " KB/s"
+        else:
+            download_average_speed_converted = str(round(download_average_speed_raw, 1)) + " B/s"
+        return download_average_speed_converted
 
     def process_win32_dependency_app_log(self):
         if not self.grs_expiry:
@@ -815,21 +823,8 @@ class Win32App:
                 else:
                     continue  # Means this is the line for other dependent apps
 
-                download_finish_time = datetime.datetime.strptime(self.download_finish_time[:-4],
-                                                                  '%m-%d-%Y %H:%M:%S')
-                download_start_time = datetime.datetime.strptime(self.download_start_time[:-4], '%m-%d-%Y %H:%M:%S')
-                download_average_speed_raw = self.download_file_size * 1.0 / (
-                            download_finish_time - download_start_time).total_seconds()
                 if self.download_average_speed == "":
-                    if download_average_speed_raw > 1000000:
-                        download_average_speed_converted = str(
-                            round(download_average_speed_raw / 1000000, 1)) + " MB/s"
-                    elif download_average_speed_raw > 1000:
-                        download_average_speed_converted = str(
-                            round(download_average_speed_raw / 1000, 1)) + " KB/s"
-                    else:
-                        download_average_speed_converted = str(round(download_average_speed_raw, 1)) + " B/s"
-                    self.download_average_speed = download_average_speed_converted
+                    self.download_average_speed = self.convert_speedraw_to_string()
                 else:
                     continue  # Means this is the line for other dependent apps
             elif cur_line.startswith('<![LOG[Cleaning up staging content'):
@@ -1067,6 +1062,25 @@ class Win32App:
 
         return interpreted_log_output
 
+    def compute_download_size_and_speed(self):
+        computed_size_str = ""
+        if self.download_file_size > 1000000000:
+            computed_size_str = computed_size_str + 'Downloaded file size is: ' + str(
+                    (self.download_file_size // 100000000) / 10.0) + ' GB'
+        elif self.download_file_size > 1000000:
+            computed_size_str = computed_size_str + 'Downloaded file size is: ' + str(
+                    (self.download_file_size // 100000) / 10.0) + ' MB'
+        elif self.download_file_size > 1000:
+            computed_size_str = computed_size_str + 'Downloaded file size is: ' + str(
+                    (self.download_file_size // 100) / 10.0) + ' KB'
+        else:
+            computed_size_str = computed_size_str + 'Downloaded file size is: ' + str(
+                    self.download_file_size) + ' B'
+
+        computed_speed_str = 'Average download speed is: ' + self.download_average_speed
+
+        return computed_size_str, computed_speed_str
+
     def generate_msfb_uwp_post_download_log_output(self, depth=0):
         # This works for MSFB UWP
         interpreted_log_output = ""
@@ -1080,29 +1094,21 @@ class Win32App:
         if self.download_success:
             if self.intent != 4:
                 interpreted_log_output += write_log_output_line_with_indent_depth(self.download_finish_time + ' WinGet mode download completed.\n')
-                if self.download_file_size > 1000000000:
-                    interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str(
-                            (self.download_file_size // 100000000) / 10.0) + ' GB\n', depth)
-                elif self.download_file_size > 1000000:
-                    interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str(
-                            (self.download_file_size // 100000) / 10.0) + ' MB\n', depth)
-                elif self.download_file_size > 1000:
-                    interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str(
-                            (self.download_file_size // 100) / 10.0) + ' KB\n', depth)
-                else:
-                    interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str(
-                            self.download_file_size) + ' B\n', depth)
+                computed_size_str, computed_speed_str = self.compute_download_size_and_speed()
+                interpreted_log_output += write_log_output_line_with_indent_depth(
+                        self.download_finish_time + ' ' + computed_size_str + '\n', depth)
 
                 interpreted_log_output += write_log_output_line_with_indent_depth(
-                    self.download_finish_time + ' Average download speed is: ' + self.download_average_speed + '\n',
-                    depth)
+                    self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
         else:
             if self.intent != 4:
                 interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' WinGet mode download FAILED! \n')
+                computed_size_str, computed_speed_str = self.compute_download_size_and_speed()
+                interpreted_log_output += write_log_output_line_with_indent_depth(
+                    self.download_finish_time + ' ' + computed_size_str + '\n', depth)
+
+                interpreted_log_output += write_log_output_line_with_indent_depth(
+                    self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
                 interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' App Installation Result: ' + result + '\n')
                 return interpreted_log_output
@@ -1201,23 +1207,22 @@ class Win32App:
                 self.download_start_time + ' Current Proxy is: ' + self.proxy_url + '\n', depth)
         if self.download_success:
             interpreted_log_output += write_log_output_line_with_indent_depth(self.download_finish_time + ' DO mode download completed.\n', depth)
-            if self.download_file_size > 1000000000:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str((self.download_file_size // 100000000) / 10.0) + ' GB\n', depth)
-            elif self.download_file_size > 1000000:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str((self.download_file_size // 100000) / 10.0) + ' MB\n', depth)
-            elif self.download_file_size > 1000:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str((self.download_file_size // 100) / 10.0) + ' KB\n', depth)
-            else:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
-                        self.download_finish_time + ' Downloaded file size is: ' + str(self.download_file_size) + ' B\n', depth)
+            computed_size_str, computed_speed_str = self.compute_download_size_and_speed()
+            interpreted_log_output += write_log_output_line_with_indent_depth(
+                self.download_finish_time + ' ' + computed_size_str + '\n', depth)
 
             interpreted_log_output += write_log_output_line_with_indent_depth(
-                    self.download_finish_time + ' Average download speed is: ' + self.download_average_speed + '\n', depth)
+                self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
         else:
             interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' DO mode download FAILED! \n', depth)
+            if self.download_finish_time and self.download_file_size > -1:
+                computed_size_str, computed_speed_str = self.compute_download_size_and_speed()
+                interpreted_log_output += write_log_output_line_with_indent_depth(
+                    self.download_finish_time + ' ' + computed_size_str + '\n', depth)
+
+                interpreted_log_output += write_log_output_line_with_indent_depth(
+                    self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
+
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
             interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output
