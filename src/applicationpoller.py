@@ -179,8 +179,10 @@ class ApplicationPoller:
             # print(self.subgraph_num_expected)
             # print(self.subgraph_num_actual)
             if len(self.index_list_subgraph_processing_start) > len(self.index_list_subgraph_processing_stop):
-                while len(self.index_list_subgraph_processing_start) != len(self.index_list_subgraph_processing_stop):
-                    self.index_list_subgraph_processing_start.pop(-1)
+                if len(self.index_list_subgraph_processing_start) == len(self.index_list_subgraph_processing_stop) + 1:
+                    self.index_list_subgraph_processing_stop.append(self.log_len - 1)
+                # while len(self.index_list_subgraph_processing_start) != len(self.index_list_subgraph_processing_stop):
+                #     self.index_list_subgraph_processing_start.pop(-1)
             else:
                 while len(self.index_list_subgraph_processing_stop) != len(self.index_list_subgraph_processing_start):
                     self.index_list_subgraph_processing_stop.pop(-1)

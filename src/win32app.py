@@ -158,6 +158,7 @@ class Win32App:
         self.device_restart_behavior = -1
         self.app_result = "FAIL"
         self.dependent_apps_list = {}
+        self.supersedence_apps_list = {}
         """
         ReportingState: {"ApplicationId":"0557caed-3f50-499f-a39d-5b1179f78922","ResultantAppState":null,"ReportingImpact":null,"WriteableToStorage":true,"CanGenerateComplianceState":true,"CanGenerateEnforcementState":true,"IsAppReportable":true,"IsAppAggregatable":true,"AvailableAppEnforcementFlag":0,"DesiredState":2,"DetectionState":1,"DetectionErrorOccurred":false,"DetectionErrorCode":null,"ApplicabilityState":0,"ApplicabilityErrorOccurred":false,"ApplicabilityErrorCode":null,
         "EnforcementState":1000,
@@ -271,7 +272,12 @@ class Win32App:
         # if self.dependent_apps_list:
         #    print(self.dependent_apps_list)
         """
-
+        self.supersedence_apps_list = cur_app_dict['FlatDependencies']
+        """
+        "Action":110 : Auto uninstall: yes
+        "Action":100: Auto uninstall: no
+        [{"Action":110,"AppId":"d57bd65f-b00e-4814-a03f-3e8e8d2b3aa4","ChildId":"a1444e9f-a771-479e-a356-cadcade53b57","Type":1,"Level":0}]
+        """
         self.install_command = cur_app_dict['InstallCommandLine']
         self.uninstall_command = cur_app_dict['UninstallCommandLine']
         self.intent = cur_app_dict["Intent"]
@@ -1104,11 +1110,12 @@ class Win32App:
             if self.intent != 4:
                 interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' WinGet mode download FAILED! \n')
                 computed_size_str, computed_speed_str = self.compute_download_size_and_speed()
-                interpreted_log_output += write_log_output_line_with_indent_depth(
-                    self.download_finish_time + ' ' + computed_size_str + '\n', depth)
+                if self.download_finish_time and self.download_file_size > -1:
+                    interpreted_log_output += write_log_output_line_with_indent_depth(
+                        self.download_finish_time + ' ' + computed_size_str + '\n', depth)
 
-                interpreted_log_output += write_log_output_line_with_indent_depth(
-                    self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
+                    interpreted_log_output += write_log_output_line_with_indent_depth(
+                        self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
                 interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' App Installation Result: ' + result + '\n')
                 return interpreted_log_output
