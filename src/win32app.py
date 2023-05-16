@@ -467,7 +467,7 @@ class Win32App:
                 if cur_line[download_progress_index_start:download_progress_index_end] == '1' and int(cur_line[size_downloaded_index_start:size_downloaded_index_end]) > 0:
                     self.download_file_size = int(cur_line[size_downloaded_index_start:size_downloaded_index_end])
 
-        if self.install_start_time != "" and self.download_finish_time != "":
+        if self.download_start_time != "" and self.download_finish_time != "":
             self.download_average_speed = self.convert_speedraw_to_string()
 
     def process_msfb_app_log(self):
@@ -823,7 +823,7 @@ class Win32App:
                 else:
                     continue  # Means this is the line for other dependent apps
 
-                if self.download_average_speed == "":
+                if self.download_average_speed == "" and self.download_start_time != "" and self.download_finish_time != "":
                     self.download_average_speed = self.convert_speedraw_to_string()
                 else:
                     continue  # Means this is the line for other dependent apps
