@@ -719,6 +719,9 @@ class Win32App:
                     continue  # Means this is the line for other dependent apps
 
     def convert_speedraw_to_string(self):
+        if not self.download_finish_time:
+            print("No self.download_finish_time, exit in convert_speedraw_to_string")
+            return ""
         download_finish_time = datetime.datetime.strptime(self.download_finish_time[:-4],
                                                           '%m-%d-%Y %H:%M:%S')
         download_start_time = datetime.datetime.strptime(self.download_start_time[:-4], '%m-%d-%Y %H:%M:%S')

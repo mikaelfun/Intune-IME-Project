@@ -160,9 +160,42 @@ class ApplicationPoller:
                 reporting_state_json_string = cur_line[reporting_state_start_index:reporting_state_end_index]
                 self.last_enforcement_json_dict[cur_app_id] = json.loads(reporting_state_json_string)
             elif cur_line.startswith(LOG_SUBGRAPH_PROCESSING_START_INDICATOR):
+                """
+                Supercedence subgraph ending is ambiguous.
+                
+                <![LOG[[Win32App][ActionProcessor] Calculating desired states for all subgraphs. The computed desired states may be overridden as resolution continues.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] Updating desired states for subgraph with id: c5b3ad1e-19ae-4b6e-90b5-1e9e329fb451.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] Found: 0 apps with intent to uninstall before enforcing installs: [].]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] Found: 1 apps with intent to install: [fc7d1ee3-2778-4312-8496-7d5d2e13695b].]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] Found: 0 apps with intent to uninstall after enforcing installs: [].]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] Evaluating install enforcement actions for app with id: fc7d1ee3-2778-4312-8496-7d5d2e13695b.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] No action required for app with id: fc7d1ee3-2778-4312-8496-7d5d2e13695b.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] Updating desired states for subgraph with id: 30a3c1f4-d552-47a5-ac5f-f882c460a1f9.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] Found: 0 apps with intent to uninstall before enforcing installs: [].]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] Found: 1 apps with intent to install: [13a7b5f5-9512-42d1-a8d4-e486f1dfe614].]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] Found: 0 apps with intent to uninstall after enforcing installs: [].]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] Evaluating install enforcement actions for app with id: 13a7b5f5-9512-42d1-a8d4-e486f1dfe614.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ActionProcessor] No action required for app with id: 13a7b5f5-9512-42d1-a8d4-e486f1dfe614.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ReportingManager] Sending status to company portal based on report: {"ApplicationId":"13a7b5f5-9512-42d1-a8d4-e486f1dfe614","ResultantAppState":1,"ReportingImpact":{"DesiredState":3,"Classification":2,"ConflictReason":0,"ImpactingApps":[{"AppId":"fc7d1ee3-2778-4312-8496-7d5d2e13695b","RelationshipType":2,"RelativeType":1,"DesiredState":3}]},"WriteableToStorage":true,"CanGenerateComplianceState":true,"CanGenerateEnforcementState":true,"IsAppReportable":true,"IsAppAggregatable":true,"AvailableAppEnforcementFlag":0,"DesiredState":2,"DetectionState":1,"DetectionErrorOccurred":false,"DetectionErrorCode":null,"ApplicabilityState":0,"ApplicabilityErrorOccurred":false,"ApplicabilityErrorCode":null,"EnforcementState":1000,"EnforcementErrorCode":0,"TargetingMethod":0,"TargetingType":2,"InstallContext":2,"Intent":3,"InternalVersion":1,"DetectedIdentityVersion":null,"RemovalReason":null}]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][StatusServiceReportsStore] Saved AppInstallStatusReport for user 536e85c2-2d7a-4b05-968c-1345a861286e for app 13a7b5f5-9512-42d1-a8d4-e486f1dfe614 in the StatusServiceReports registry.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[StatusService] Sending update from StatusServicePublisher.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[StatusService] Received AppInstallStatusUpdate to send via Callback.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[StatusService] Sending an update to user 536e85c2-2d7a-4b05-968c-1345a861286e via callback for app: 13a7b5f5-9512-42d1-a8d4-e486f1dfe614. Applicability: Applicable, Status: Installed, ErrorCode: null]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][ReportingManager] Not sending status update for user with id: 536e85c2-2d7a-4b05-968c-1345a861286e and app: fc7d1ee3-2778-4312-8496-7d5d2e13695b because the app does not have available, required, or uninstall intent.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][GRSManager] Saving GRS values to storage.]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App][V3Processor] Processing subgraph with app ids: 30664d04-0476-4cbe-b3a8-7dbeac0cb5d4, 513fd40d-27eb-41da-b221-b9a1b19ebfe3]LOG]!><time="08:26:58.0888164" date="5-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                
+                Manual add subgraph ending if does not find ending keywords Done processing subgraph
+                """
+                if self.index_list_subgraph_processing_stop and self.index_list_subgraph_processing_stop[-1] < log_line_index - 1:
+                    self.index_list_subgraph_processing_stop.append(log_line_index - 1)
                 self.index_list_subgraph_processing_start.append(log_line_index)
+
             elif cur_line.startswith(LOG_SUBGRAPH_PROCESSING_END_INDICATOR):
-                self.index_list_subgraph_processing_stop.append(log_line_index)
+                if self.index_list_subgraph_processing_stop and self.index_list_subgraph_processing_stop[-1] == log_line_index:
+                    pass
+                else:
+                    self.index_list_subgraph_processing_stop.append(log_line_index)
             elif cur_line.startswith(LOG_SUBGRAPH_PROCESSING_NOT_APPLICABLE_INDICATOR):
                 self.index_list_subgraph_processing_stop.append(log_line_index)
 
