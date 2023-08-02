@@ -103,6 +103,7 @@ class ApplicationPoller:
             elif each_line.startswith(LOG_THROTTLED_INDICATOR):
                 self.is_throttled = True
             elif each_line.startswith(LOG_RE_EVAL_INDICATOR):
+
                 index_start = len(LOG_RE_EVAL_INDICATOR)
                 index_end = each_line.find(LOG_ENDING_STRING) - 1  # dropping .
                 self.poller_reevaluation_check_in_time = each_line[index_start:index_end]
@@ -121,6 +122,7 @@ class ApplicationPoller:
                 json_start_index = len(LOG_POLICY_JSON_INDICATOR)
                 json_end_index = each_line.find(LOG_ENDING_STRING)
                 json_string = each_line[json_start_index:json_end_index]
+
                 self.get_policy_json = json.loads(json_string)
                 """
                 There is one bug that in get policy json, "InstallContext":1 always.
@@ -145,6 +147,11 @@ class ApplicationPoller:
 
         for log_line_index in range(self.log_len):
             cur_line = self.log_content[log_line_index]
+            """
+            Fix bug that will read other threads app processing.
+            """
+            if locate_thread(cur_line) != self.thread_id:
+                continue
             if self.subgraph_num_expected == -1 and cur_line.startswith(LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR) \
                     and LOG_V3_PROCESSOR_ALL_SUBGRAPH_2_INDICATOR in cur_line:  # get ESP phase
                 subgraph_num_expected_index_start = len(LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR)
