@@ -19,6 +19,7 @@ from applicationpoller import *
 
 class EMSLifeCycle:
     def __init__(self, full_log, boot_reason="IME Service Starts"):
+        self.log_keyword_table = init_keyword_table()
         self.full_log = full_log
         self.boot_reason = boot_reason
         self.log_len = len(self.full_log)
@@ -44,8 +45,8 @@ class EMSLifeCycle:
 
 
         '''
-        line_index_start_list = locate_line_startswith_keyword(self.full_log, LOG_APP_POLLER_START_STRING)
-        line_index_stop_list = locate_line_startswith_keyword(self.full_log, LOG_APP_POLLER_STOP_STRING)
+        line_index_start_list = locate_line_startswith_keyword(self.full_log, self.log_keyword_table['LOG_APP_POLLER_START_STRING'])
+        line_index_stop_list = locate_line_startswith_keyword(self.full_log, self.log_keyword_table['LOG_APP_POLLER_STOP_STRING'])
 
         '''
         Consecutive start stop should have same thread ID. Dropping if thread ID is not match
@@ -67,7 +68,7 @@ class EMSLifeCycle:
                     application_poller_logs.append(cur_poller_log)
                     line_index_stop_list.remove(line_index_iter)
                     break
-                elif self.full_log[line_index_iter].startswith(LOG_STARTING_STRING) and "-1" == locate_thread(
+                elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(
                         self.full_log[line_index_iter]):
                     # breaking log start line
                     """
@@ -84,7 +85,7 @@ class EMSLifeCycle:
                     temp_log = process_breaking_line_log(self.full_log[line_index_iter:])
                     if temp_log != "" and locate_thread(temp_log) == cur_poller_thread:
                         cur_poller_log = cur_poller_log + temp_log
-                elif self.full_log[line_index_iter].startswith(LOG_STARTING_STRING):
+                elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
                     # if cur_poller_thread == locate_thread(self.full_log[line_index_iter]):
                         # normal log line with same thread id
                     """
@@ -109,14 +110,14 @@ class EMSLifeCycle:
                 cur_poller_log = self.full_log[each_start_index]
                 line_index_iter = each_start_index
                 while line_index_iter < self.log_len:
-                    if self.full_log[line_index_iter].startswith(LOG_STARTING_STRING) and "-1" == locate_thread(
+                    if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(
                             self.full_log[line_index_iter]):
                         # beginning of line breaking logs
                         temp_log = process_breaking_line_log(self.full_log[line_index_iter:])
 
                         if temp_log != "" and locate_thread(temp_log) == cur_poller_thread:
                             cur_poller_log = cur_poller_log + temp_log
-                    elif self.full_log[line_index_iter].startswith(LOG_STARTING_STRING):
+                    elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
                         # if cur_poller_thread == locate_thread(self.full_log[line_index_iter]):
                         # normal log line with same thread id
                         """

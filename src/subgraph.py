@@ -23,6 +23,7 @@ from win32app import Win32App
 
 class SubGraph:
     def __init__(self, subgraph_processing_log, policy_json, last_enforcement_json_dict, reevaluation_time="Subgraph Not Evaluated before"):
+        self.log_keyword_table = init_keyword_table()
         self.reevaluation_time = reevaluation_time
         self.reevaluation_expired = True
         self.hash_key = ""
@@ -34,7 +35,7 @@ class SubGraph:
         self.app_id_list = []
         self.app_names = dict()  # key: app id string, value: app name string
         self.policy_json = policy_json
-        self.win32app_object_list = []
+        self.subgraph_app_object_list = []
         self.is_stand_alone_subgraph = True
         self.last_enforcement_json_dict = last_enforcement_json_dict  # key: app id string, value: last_enforcement_json
         """ 
@@ -125,44 +126,43 @@ class SubGraph:
             return temp_list
 
     def process_subgraph_meta(self):
-        id_start_index = len(LOG_SUBGRAPH_PROCESSING_START_INDICATOR)
-        id_stop_index = self.log_content[0].find(LOG_ENDING_STRING)
+        id_start_index = len(self.log_keyword_table['LOG_SUBGRAPH_PROCESSING_START_INDICATOR'])
+        id_stop_index = self.log_content[0].find(self.log_keyword_table['LOG_ENDING_STRING'])
         """
         Need to put the root app of dependency chain in first one.
         """
         self.app_id_list = list(
             (self.log_content[0][id_start_index:id_stop_index]).split(', '))
-        self.sort_app_id_list_top_root_app()
-
         # print(cur_subgraph.app_id_list)
         self.app_num = len(self.app_id_list)
         if self.app_num > 1:
+            self.sort_app_id_list_top_root_app()
             self.is_stand_alone_subgraph = False
             # print(self.log_content)
         for each_line_index in range(1, self.log_len):
             cur_line = self.log_content[each_line_index]
-            if cur_line.startswith(LOG_WIN32_GRS_INDICATOR):
+            if cur_line.startswith(self.log_keyword_table['LOG_WIN32_GRS_INDICATOR']):
                 # app was processed before, saving hash key, grs time,
                 """
                 <![LOG[[Win32App][GRSManager] Found GRS value: 03/23/2023 08:55:35 at key 8679bddf-b85f-473c-bc47-2ed0457ec9fb\GRS\2BKBFKBaevJ8qnbQsLVnCKDoI1ZjfmU5sTdZPc/QtWE=\cce28372-03a1-4006-8035-00deb0c906ed.]LOG]!>
                 """
-                grs_value_hash_index_start = len(LOG_WIN32_GRS_INDICATOR) + len('03/23/2023 08:55:35 at key 8679bddf-b85f-473c-bc47-2ed0457ec9fb\GRS') + 1
+                grs_value_hash_index_start = len(self.log_keyword_table['LOG_WIN32_GRS_INDICATOR']) + len('03/23/2023 08:55:35 at key 8679bddf-b85f-473c-bc47-2ed0457ec9fb\GRS') + 1
                 grs_value_hash_index_end = grs_value_hash_index_start + CONST_GRS_HASH_KEY_LEN
                 if self.hash_key == "":
                     self.hash_key = cur_line[grs_value_hash_index_start:grs_value_hash_index_end]
-                app_id_index_end = cur_line.find(LOG_ENDING_STRING) - 1
+                app_id_index_end = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING']) - 1
                 app_id_index_start = app_id_index_end - CONST_APP_ID_LEN
                 cur_app_id = cur_line[app_id_index_start:app_id_index_end]
-                grs_time_index_start = len(LOG_WIN32_GRS_INDICATOR)
+                grs_time_index_start = len(self.log_keyword_table['LOG_WIN32_GRS_INDICATOR'])
                 log_subgraph_hash_indicator = ' at key '
                 grs_time_index_end = cur_line.find(log_subgraph_hash_indicator)
                 cur_app_grs_time = cur_line[grs_time_index_start:grs_time_index_end]
                 self.grs_time_list[cur_app_id] = cur_app_grs_time
                 # print(self.hash_key)
-            elif cur_line.startswith(LOG_WIN32_NO_GRS_1_INDICATOR):
-                cur_app_id = find_app_id_with_starting_string(cur_line, LOG_WIN32_NO_GRS_1_INDICATOR)
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']):
+                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR'])
                 # print(cur_line[79:83])
-                if LOG_WIN32_NO_GRS_2_INDICATOR in cur_line:
+                if self.log_keyword_table['LOG_WIN32_NO_GRS_2_INDICATOR'] in cur_line:
                     # app has no grs found.
                     """
                     <![LOG[[Win32App][GRSManager] App with id: 471f61b1-58ad-431b-bd4d-386d3c953773 has no recorded GRS value which will be treated as expired. | Hash = Z/qdb2IBJPXgSPPxMV14feLXHs7e8XnvSEYNW5fqv3M=]LOG]!
@@ -172,47 +172,34 @@ class SubGraph:
                     if self.hash_key == "":
                         self.hash_key = cur_line[grs_value_hash_index_start:grs_value_hash_index_end]
                     self.grs_expiry[cur_app_id] = True
-                elif cur_line[len(LOG_WIN32_NO_GRS_1_INDICATOR) + CONST_APP_ID_LEN:len(LOG_WIN32_NO_GRS_1_INDICATOR) + CONST_APP_ID_LEN + len(' is ')] == ' is ':
+                elif cur_line[len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN:len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN + len(' is ')] == ' is ':
                     """
                     <![LOG[[Win32App][GRSManager] App with id: cce28372-03a1-4006-8035-00deb0c906ed is expired. | Hash = 2BKBFKBaevJ8qnbQsLVnCKDoI1ZjfmU5sTdZPc/QtWE=
                     """
-                    expiry_start_index = len(LOG_WIN32_NO_GRS_1_INDICATOR) + CONST_APP_ID_LEN + len(' is ')
+                    expiry_start_index = len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN + len(' is ')
                     expiry_end_index = cur_line.find('. | Hash =')
                     cur_app_expiry_string = cur_line[expiry_start_index:expiry_end_index]
                     if cur_app_expiry_string == 'not expired':
                         self.grs_expiry[cur_app_id] = False
                     elif cur_app_expiry_string == 'expired':
                         self.grs_expiry[cur_app_id] = True
-            elif cur_line.startswith(LOG_SUBGRAPH_NOT_EXPIRED_INDICATOR):
+            elif cur_line.startswith(self.log_keyword_table['LOG_SUBGRAPH_NOT_EXPIRED_INDICATOR']):
                 # meaning the current subgraph will not be processed
                 self.reevaluation_expired = False
 
     def initialize_win32_apps_list(self):
         for cur_app_index in range(self.app_num):
             cur_app_id = self.app_id_list[cur_app_index]
+            if cur_app_id == "6e55f61a-55c8-4a71-94c2-64f71b7da820":
+                print("debug")
             cur_app_name = self.app_names[cur_app_id] if cur_app_id in self.app_names.keys() else ''
             cur_app_grs_time = self.grs_time_list[cur_app_id] if cur_app_id in self.grs_time_list.keys() else ''
             cur_app_grs_expiry = self.grs_expiry[cur_app_id] if cur_app_id in self.grs_expiry.keys() else False
             cur_app_last_enforcement_json = self.last_enforcement_json_dict[cur_app_id] \
                 if cur_app_id in self.last_enforcement_json_dict.keys() else None
-            self.win32app_object_list.append(Win32App(self.log_content, cur_app_id, cur_app_name, self.policy_json,
-                                                      cur_app_grs_time, self.hash_key, cur_app_grs_expiry,
-                                                      self.is_stand_alone_subgraph, cur_app_last_enforcement_json))
-
-    def generate_subgraph_standalone_app_processing_log_output(self, app_object):
-        interpreted_log_output = ""
-        if not self.is_stand_alone_subgraph:
-            print("Error in code! Standalone subgraph flow with dependency chain")
-            return interpreted_log_output
-        """
-        For standalone app, there is just 1 app in the subgraph.
-        Output app meta and app processing if any.
-        """
-        interpreted_log_output += app_object.generate_standalone_win32_app_meta_log_output()
-        interpreted_log_output += '\n'
-
-        interpreted_log_output += app_object.generate_win32app_log_output()
-        interpreted_log_output += '\n'
+            self.subgraph_app_object_list.append(Win32App(self.log_content, cur_app_id, cur_app_name, self.policy_json,
+                                                          cur_app_grs_time, self.hash_key, cur_app_grs_expiry,
+                                                          self.is_stand_alone_subgraph, cur_app_last_enforcement_json))
 
     # Recursive function to handle dependency chain
     def generate_subgraph_dependent_app_processing_log_output(self, app_object, depth=0):
@@ -236,7 +223,7 @@ class SubGraph:
                 interpreted_log_output += write_log_output_line_with_indent_depth(app_object.pre_install_detection_time + ' Processing dependent apps start\n\n', depth)
 
             dependency_app_id_list = [each_dependency_dic['ChildId'] for each_dependency_dic in app_object.dependent_apps_list]
-            dependency_app_object_list = [each_app for each_app in self.win32app_object_list if each_app.app_id in dependency_app_id_list]
+            dependency_app_object_list = [each_app for each_app in self.subgraph_app_object_list if each_app.app_id in dependency_app_id_list]
 
             each_app_object = None
             for each_app_object in dependency_app_object_list:
@@ -258,29 +245,43 @@ class SubGraph:
         interpreted_log_output = ""
 
         if self.is_stand_alone_subgraph:
-            if len(self.win32app_object_list) == 1:
-                # Add subgraph meta to log
-                """
-                The first app in the line below is not necessarily the root app.
-<![LOG[[Win32App][V3Processor] Processing subgraph with app ids: 1f4b773e-53ed-4cd8-b12b-16c336bba549, b3aa3d56-d0f5-47a0-8240-ae85ed050a6b, 3dde4e19-3a18-4dec-b60e-720b919e1790]LOG]
-                """
-                interpreted_log_output += self.win32app_object_list[0].generate_standalone_win32_app_meta_log_output()
-                interpreted_log_output += '\n'
-                if not self.reevaluation_expired:
-                    interpreted_log_output += "Subgraph will be reevaluated after last reevaluation time + 8 hours\n\n"
-                    return interpreted_log_output
-                else:
-                    # Add subgraph processing log
-                    interpreted_log_output += self.win32app_object_list[0].generate_standalone_win32app_log_output()
+            if len(self.subgraph_app_object_list) == 1:
+                # Check if Win32 or MSFB
+                if self.subgraph_app_object_list[0].app_type == "Win32":
+                    # Add subgraph meta to log
+                    interpreted_log_output += self.subgraph_app_object_list[0].generate_standalone_win32_app_meta_log_output()
                     interpreted_log_output += '\n'
+                    if not self.reevaluation_expired:
+                        interpreted_log_output += "Subgraph will be reevaluated after last reevaluation time + 8 hours\n\n"
+                        return interpreted_log_output
+                    else:
+                        # Add subgraph processing log
+                        interpreted_log_output += self.subgraph_app_object_list[0].generate_standalone_win32app_log_output()
+                        interpreted_log_output += '\n'
+                elif self.subgraph_app_object_list[0].app_type == "MSFB":
+                    # Add subgraph meta to log
+                    interpreted_log_output += self.subgraph_app_object_list[
+                        0].generate_msfb_app_meta_log_output()
+                    interpreted_log_output += '\n'
+                    if not self.reevaluation_expired:
+                        interpreted_log_output += "Subgraph will be reevaluated after last reevaluation time + 8 hours\n\n"
+                        return interpreted_log_output
+                    else:
+                        # Add subgraph processing log
+                        interpreted_log_output += self.subgraph_app_object_list[0].generate_msfb_log_output()
+                        interpreted_log_output += '\n'
             else:
                 print("Error in code. Standalone flow does not have 1 app in current subgraph!")
         else:
-            if (len(self.win32app_object_list)) > 0:
-                if (len(self.win32app_object_list)) > 1:
-                    self.win32app_object_list[0].is_root_app = True
+            if (len(self.subgraph_app_object_list)) > 0:
+                if (len(self.subgraph_app_object_list)) > 1:
+                    """
+                    The first app in the line below is not necessarily the root app.
+                    <![LOG[[Win32App][V3Processor] Processing subgraph with app ids: 1f4b773e-53ed-4cd8-b12b-16c336bba549, b3aa3d56-d0f5-47a0-8240-ae85ed050a6b, 3dde4e19-3a18-4dec-b60e-720b919e1790]LOG]
+                    """
+                    self.subgraph_app_object_list[0].is_root_app = True
                 interpreted_log_output += (
-                    self.generate_subgraph_dependent_app_processing_log_output(self.win32app_object_list[0]))
+                    self.generate_subgraph_dependent_app_processing_log_output(self.subgraph_app_object_list[0]))
                 interpreted_log_output += '\n'
 
             interpreted_log_output += '\n'

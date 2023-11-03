@@ -23,6 +23,7 @@ from subgraph import *
 
 class ApplicationPoller:
     def __init__(self, poller_log, poller_thread_string):
+        self.log_keyword_table = init_keyword_table()
         self.log_content = list(poller_log.split("\n"))
         if self.log_content[-1] == "":
             self.log_content.pop(-1)
@@ -66,29 +67,29 @@ class ApplicationPoller:
                 # ignoring log not belonging to this poller thread. All these metadata are not related to UWP special case with new thread ID on installing.
                 continue
 
-            if not self.esp_phase and each_line.startswith(LOG_ESP_INDICATOR):  # get ESP phase
-                end_place = each_line.find(LOG_ENDING_STRING) - 1
-                self.esp_phase = each_line[len(LOG_ESP_INDICATOR):end_place]
+            if not self.esp_phase and each_line.startswith(self.log_keyword_table['LOG_ESP_INDICATOR']):  # get ESP phase
+                end_place = each_line.find(self.log_keyword_table['LOG_ENDING_STRING']) - 1
+                self.esp_phase = each_line[len(self.log_keyword_table['LOG_ESP_INDICATOR']):end_place]
                 '''
                 <![LOG[[Win32App] The EspPhase: NotInEsp.]LOG]!
                 <![LOG[[Win32App] The EspPhase: DevicePreparation.]LOG]!
                 <![LOG[[Win32App] The EspPhase: DeviceSetup.]LOG]!
                 <![LOG[[Win32App] The EspPhase: AccountSetup.]LOG]!
                 '''
-            elif not self.user_session and each_line.startswith(LOG_USER_INDICATOR):  # get current user session
-                end_place = each_line.find(LOG_ENDING_STRING)
-                self.user_session = each_line[len(LOG_USER_INDICATOR):end_place]
-            elif not self.comanagement_workload and each_line.startswith(LOG_CO_MA_INDICATOR):
-                end_place = each_line.find(LOG_ENDING_STRING)
-                if each_line[len(LOG_CO_MA_INDICATOR):end_place] == "False":
+            elif not self.user_session and each_line.startswith(self.log_keyword_table['LOG_USER_INDICATOR']):  # get current user session
+                end_place = each_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
+                self.user_session = each_line[len(self.log_keyword_table['LOG_USER_INDICATOR']):end_place]
+            elif not self.comanagement_workload and each_line.startswith(self.log_keyword_table['LOG_CO_MA_INDICATOR']):
+                end_place = each_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
+                if each_line[len(self.log_keyword_table['LOG_CO_MA_INDICATOR']):end_place] == "False":
                     self.comanagement_workload = "Intune"
-                elif each_line[len(LOG_CO_MA_INDICATOR):end_place] == "True":
+                elif each_line[len(self.log_keyword_table['LOG_CO_MA_INDICATOR']):end_place] == "True":
                     self.comanagement_workload = "SCCM"
                 else:
                     self.comanagement_workload = "Unknown"
-            elif not self.app_type and each_line.startswith(LOG_APP_MODE_INDICATOR) and (
+            elif not self.app_type and each_line.startswith(self.log_keyword_table['LOG_APP_MODE_INDICATOR']) and (
                     'available apps only]' in each_line or 'required apps]' in each_line or 'for ESP]' in each_line):
-                start_place = len(LOG_APP_MODE_INDICATOR)
+                start_place = len(self.log_keyword_table['LOG_APP_MODE_INDICATOR'])
                 if each_line.find("available apps only]LOG]!") > 0:
                     end_place = each_line.find(" apps only]LOG]!")
                 elif each_line.find("required apps]LOG]!") > 0:
@@ -97,30 +98,30 @@ class ApplicationPoller:
                     end_place = each_line.find(" for ESP]")
                 self.app_type = each_line[start_place:end_place]
             elif self.poller_apps_got == '0' and each_line.startswith(
-                    LOG_POLLER_APPS_1_INDICATOR) and LOG_POLLER_APPS_2_INDICATOR in each_line:
-                end_place = each_line.find(LOG_POLLER_APPS_2_INDICATOR)
-                self.poller_apps_got = each_line[len(LOG_POLLER_APPS_1_INDICATOR):end_place]
-            elif each_line.startswith(LOG_THROTTLED_INDICATOR):
+                    self.log_keyword_table['LOG_POLLER_APPS_1_INDICATOR']) and self.log_keyword_table['LOG_POLLER_APPS_2_INDICATOR'] in each_line:
+                end_place = each_line.find(self.log_keyword_table['LOG_POLLER_APPS_2_INDICATOR'])
+                self.poller_apps_got = each_line[len(self.log_keyword_table['LOG_POLLER_APPS_1_INDICATOR']):end_place]
+            elif each_line.startswith(self.log_keyword_table['LOG_THROTTLED_INDICATOR']):
                 self.is_throttled = True
-            elif each_line.startswith(LOG_RE_EVAL_INDICATOR):
+            elif each_line.startswith(self.log_keyword_table['LOG_RE_EVAL_INDICATOR']):
 
-                index_start = len(LOG_RE_EVAL_INDICATOR)
-                index_end = each_line.find(LOG_ENDING_STRING) - 1  # dropping .
+                index_start = len(self.log_keyword_table['LOG_RE_EVAL_INDICATOR'])
+                index_end = each_line.find(self.log_keyword_table['LOG_ENDING_STRING']) - 1  # dropping .
                 self.poller_reevaluation_check_in_time = each_line[index_start:index_end]
-            elif each_line.startswith(LOG_SUBGRAPH_RE_EVAL_INDICATOR):
-                index_start = len(LOG_SUBGRAPH_RE_EVAL_INDICATOR)
+            elif each_line.startswith(self.log_keyword_table['LOG_SUBGRAPH_RE_EVAL_INDICATOR']):
+                index_start = len(self.log_keyword_table['LOG_SUBGRAPH_RE_EVAL_INDICATOR'])
                 log_subgraph_hash_indicator = ' at key '
                 index_end = each_line.find(log_subgraph_hash_indicator)
                 sub_graph_reeval_time = each_line[index_start:index_end]
                 index_start = index_end + len(log_subgraph_hash_indicator)
-                index_end = each_line.find(LOG_ENDING_STRING) - 1  # dropping .
+                index_end = each_line.find(self.log_keyword_table['LOG_ENDING_STRING']) - 1  # dropping .
                 sub_graph_hash = each_line[index_start:index_end]
                 # print(sub_graph_reeval_time)
                 # print(sub_graph_hash)
                 self.sub_graph_reevaluation_time_list[sub_graph_hash] = sub_graph_reeval_time
-            elif each_line.startswith(LOG_POLICY_JSON_INDICATOR):
-                json_start_index = len(LOG_POLICY_JSON_INDICATOR)
-                json_end_index = each_line.find(LOG_ENDING_STRING)
+            elif each_line.startswith(self.log_keyword_table['LOG_POLICY_JSON_INDICATOR']):
+                json_start_index = len(self.log_keyword_table['LOG_POLICY_JSON_INDICATOR'])
+                json_end_index = each_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
                 json_string = each_line[json_start_index:json_end_index]
 
                 self.get_policy_json = json.loads(json_string)
@@ -152,21 +153,21 @@ class ApplicationPoller:
             """
             if locate_thread(cur_line) != self.thread_id:
                 continue
-            if self.subgraph_num_expected == -1 and cur_line.startswith(LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR) \
-                    and LOG_V3_PROCESSOR_ALL_SUBGRAPH_2_INDICATOR in cur_line:  # get ESP phase
-                subgraph_num_expected_index_start = len(LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR)
-                subgraph_num_expected_index_end = cur_line.find(LOG_V3_PROCESSOR_ALL_SUBGRAPH_2_INDICATOR)
+            if self.subgraph_num_expected == -1 and cur_line.startswith(self.log_keyword_table['LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR']) \
+                    and self.log_keyword_table['LOG_V3_PROCESSOR_ALL_SUBGRAPH_2_INDICATOR'] in cur_line:  # get ESP phase
+                subgraph_num_expected_index_start = len(self.log_keyword_table['LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR'])
+                subgraph_num_expected_index_end = cur_line.find(self.log_keyword_table['LOG_V3_PROCESSOR_ALL_SUBGRAPH_2_INDICATOR'])
                 subgraph_number = int(cur_line[subgraph_num_expected_index_start:subgraph_num_expected_index_end])
                 self.subgraph_num_expected = subgraph_number
-            elif cur_line.startswith(LOG_REPORTING_STATE_1_INDICATOR) and \
-                    (LOG_REPORTING_STATE_2_INDICATOR in cur_line or LOG_REPORTING_STATE_3_INDICATOR in cur_line):
+            elif cur_line.startswith(self.log_keyword_table['LOG_REPORTING_STATE_1_INDICATOR']) and \
+                    (self.log_keyword_table['LOG_REPORTING_STATE_2_INDICATOR'] in cur_line or self.log_keyword_table['LOG_REPORTING_STATE_3_INDICATOR'] in cur_line):
 
-                cur_app_id = find_app_id_with_starting_string(cur_line, LOG_REPORTING_STATE_1_INDICATOR)
+                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_REPORTING_STATE_1_INDICATOR'])
                 reporting_state_start_index = cur_line.find('ReportingState: ') + len('ReportingState: ')
-                reporting_state_end_index = cur_line.find(LOG_ENDING_STRING)
+                reporting_state_end_index = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
                 reporting_state_json_string = cur_line[reporting_state_start_index:reporting_state_end_index]
                 self.last_enforcement_json_dict[cur_app_id] = json.loads(reporting_state_json_string)
-            elif cur_line.startswith(LOG_SUBGRAPH_PROCESSING_START_INDICATOR):
+            elif cur_line.startswith(self.log_keyword_table['LOG_SUBGRAPH_PROCESSING_START_INDICATOR']):
                 """
                 Supercedence subgraph ending is ambiguous.
                 
@@ -198,12 +199,12 @@ class ApplicationPoller:
                     self.index_list_subgraph_processing_stop.append(log_line_index - 1)
                 self.index_list_subgraph_processing_start.append(log_line_index)
 
-            elif cur_line.startswith(LOG_SUBGRAPH_PROCESSING_END_INDICATOR):
+            elif cur_line.startswith(self.log_keyword_table['LOG_SUBGRAPH_PROCESSING_END_INDICATOR']):
                 if self.index_list_subgraph_processing_stop and self.index_list_subgraph_processing_stop[-1] == log_line_index:
                     pass
                 else:
                     self.index_list_subgraph_processing_stop.append(log_line_index)
-            elif cur_line.startswith(LOG_SUBGRAPH_PROCESSING_NOT_APPLICABLE_INDICATOR):
+            elif cur_line.startswith(self.log_keyword_table['LOG_SUBGRAPH_PROCESSING_NOT_APPLICABLE_INDICATOR']):
                 self.index_list_subgraph_processing_stop.append(log_line_index)
 
         if self.subgraph_num_expected <= 0:
@@ -260,7 +261,7 @@ class ApplicationPoller:
 
         first_line = self.log_content[0]
         if first_line.startswith(
-                LOG_APP_POLLER_START_STRING):
+                self.log_keyword_table['LOG_APP_POLLER_START_STRING']):
             interpreted_log_output += write_application_poller_start_to_log_output(
                 "Application Poller Starts",
                 self.esp_phase, self.user_session,
@@ -332,7 +333,7 @@ class ApplicationPoller:
 
         interpreted_log_output += "\n"
         last_line = self.log_content[-1]
-        if last_line.startswith(LOG_APP_POLLER_START_STRING):
+        if last_line.startswith(self.log_keyword_table['LOG_APP_POLLER_START_STRING']):
             interpreted_log_output += write_string_in_middle_with_dash_to_log_output('Application Poller Stops')
             interpreted_log_output += write_empty_dash_to_log_output()
         else:
