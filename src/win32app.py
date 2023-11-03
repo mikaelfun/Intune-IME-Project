@@ -52,7 +52,7 @@ from constructinterpretedlog import *
 
 class Win32App:
     def __init__(self, subgraph_log, app_id, app_name, policy_json, grs_time, subgraph_hash, grs_expiry=True,
-                 subgraph_is_standalone=True, last_enforcement_json=None):
+                 subgraph_type=1, last_enforcement_json=None):
         self.log_keyword_table = init_keyword_table()
         self.app_name = app_name
         self.app_id = app_id
@@ -91,7 +91,7 @@ class Win32App:
         if len(subgraph_log) < 2:
             print("Error! Invalid Win32App log length. Exit 5001")
             return None
-        self.subgraph_is_standalone = subgraph_is_standalone
+        self.subgraph_type = subgraph_type
         self.start_time = get_timestamp_by_line(self.full_log[0])
         self.end_time = get_timestamp_by_line(self.full_log[-1])
         # default to last line, in dependency flow, change to current app ending index line
@@ -156,7 +156,7 @@ class Win32App:
         self.execution_state_json = ""
 
         self.msfb_detected_version = ""
-        self.uwp_installed_version = ""
+        self.msfb_installed_version = ""
         '''
         RestartBehavior
         0: Return codes
@@ -285,15 +285,17 @@ class Win32App:
             if self.applicability_reason != "":
                 self.no_enforcement_reason = self.applicability_reason
                 self.reason_need_output = True
-        elif self.subgraph_is_standalone:
+        elif self.subgraph_type == 1:
             self.no_enforcement_reason = self.cur_enforcement_state
             self.reason_need_output = True
-        elif not self.subgraph_is_standalone:
+        elif self.subgraph_type == 2:
             if self.cur_enforcement_state == "IN_PROGRESS_PENDING_REBOOT":
                 self.no_enforcement_reason = "App pending reboot."
             else:
                 self.no_enforcement_reason = "Subgraph may be missing required intent in dependency chain."
             self.reason_need_output = True
+        elif self.subgraph_type == 3:
+            print("TBD, determine_no_enforcement_reason")
         else:
             self.no_enforcement_reason = self.cur_enforcement_state
             self.reason_need_output = True
@@ -367,10 +369,12 @@ class Win32App:
         if self.app_type == "MSFB":
             self.process_msfb_app_log()
         elif self.app_type == "Win32":
-            if self.subgraph_is_standalone:
+            if self.subgraph_type == 1:
                 self.process_win32_standalone_app_log()
-            else:
+            elif self.subgraph_type == 2:
                 self.process_win32_dependency_app_log()
+            elif self.subgraph_type == 3:
+                self.process_win32_supercedence_app_log()
 
     def process_win32_standalone_app_log(self):
         if not self.grs_expiry:
@@ -943,6 +947,9 @@ class Win32App:
         if self.download_start_time != "":
             self.download_average_speed = self.convert_speedraw_to_string()
 
+    def process_win32_supercedence_app_log(self):
+        pass
+
     def process_msfb_user_context_app_log(self):
         for cur_line_index in range(len(self.full_log)):
             cur_line = self.full_log[cur_line_index]
@@ -1007,9 +1014,6 @@ class Win32App:
                 if cur_line[download_progress_index_start:download_progress_index_end] == '1' and int(
                         cur_line[size_downloaded_index_start:size_downloaded_index_end]) > 0:
                     self.download_file_size = int(cur_line[size_downloaded_index_start:size_downloaded_index_end])
-
-        if self.download_start_time != "" and self.download_finish_time != "":
-            self.download_average_speed = self.convert_speedraw_to_string()
 
     def process_msfb_app_log(self):
         if not self.grs_expiry:
@@ -1088,6 +1092,33 @@ class Win32App:
                             self.post_install_detection = False
                             self.post_install_detection_time = cur_time
 
+            elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_FINISH_DETECTION_INDICATOR']):
+                if not post_download and not post_install:
+                    """
+                    In Non-1st IME check in, MSFB app will not have ReportManager keyword to track detection and applicability check results.
+                    Hence only can check from WinGetAppApplicabilityExecutor and WinGetAppDetectionExecutor
+                    """
+                    detected_version_index_start = cur_line.find(
+                        self.log_keyword_table['LOG_MFSB_DETECTION_DETECTED_VERSION_INDICATOR']) + len(
+                        self.log_keyword_table['LOG_MFSB_DETECTION_DETECTED_VERSION_INDICATOR'])
+                    detected_version_index_stop = cur_line.find(
+                        self.log_keyword_table['LOG_MFSB_DETECTION_ERRORCODE_INDICATOR']) - 3
+                    self.msfb_detected_version = cur_line[detected_version_index_start:detected_version_index_stop]
+
+                    install_version_index_start = cur_line.find(
+                        self.log_keyword_table['LOG_MSFB_DETECTION_INSTALLED_VERSION_INDICATOR']) + len(
+                        self.log_keyword_table['LOG_MSFB_DETECTION_INSTALLED_VERSION_INDICATOR'])
+                    install_version_index_stop = cur_line.find(
+                        self.log_keyword_table['LOG_MSFB_DETECTION_REBOOT_INDICATOR']) - 3
+                    self.msfb_installed_version = cur_line[install_version_index_start:install_version_index_stop]
+                elif post_download and post_install:
+                    install_version_index_start = cur_line.find(
+                        self.log_keyword_table['LOG_MSFB_DETECTION_INSTALLED_VERSION_INDICATOR']) + len(
+                        self.log_keyword_table['LOG_MSFB_DETECTION_INSTALLED_VERSION_INDICATOR'])
+                    install_version_index_stop = cur_line.find(
+                        self.log_keyword_table['LOG_MSFB_DETECTION_REBOOT_INDICATOR']) - 3
+                    self.msfb_installed_version = cur_line[install_version_index_start:install_version_index_stop]
+
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_APPLICABILITY_STATE_REPORT_INDICATOR']):
                 cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_MSFB_APPLICABILITY_STATE_REPORT_INDICATOR'])
@@ -1132,7 +1163,7 @@ class Win32App:
                 self.installer_exit_success = True
 
                 install_action_status_index_start = cur_line.find(self.log_keyword_table['LOG_MSFB_INSTALL_ACTION_STATUS_INDICATOR']) + len(self.log_keyword_table['LOG_MSFB_INSTALL_ACTION_STATUS_INDICATOR'])
-                install_action_status_index_end = cur_line.find(self.log_keyword_table['LOG_MSFB_INSTALL_ENFORCEMENT_INDICATOR']) - len(self.log_keyword_table['LOG_MSFB_INSTALL_ENFORCEMENT_INDICATOR']) - 3
+                install_action_status_index_end = cur_line.find(self.log_keyword_table['LOG_MSFB_INSTALL_ENFORCEMENT_INDICATOR']) - 3
                 self.installation_result = cur_line[install_action_status_index_start:install_action_status_index_end]
 
                 install_message_status_index_start = cur_line.find(self.log_keyword_table['LOG_MSFB_INSTALL_EXCEPTION_INDICATOR']) + len(
@@ -1147,6 +1178,8 @@ class Win32App:
                 else:
                     continue
 
+        if self.download_start_time != "":
+            self.download_average_speed = self.convert_speedraw_to_string()
 
         # if self.install_context == 1:
         #     self.process_msfb_user_context_app_log()
@@ -1180,10 +1213,12 @@ class Win32App:
         left_string = 'App Intent:'
         right_string = ""
         if self.intent == 0:
-            if self.subgraph_is_standalone:
+            if self.subgraph_type == 1:
                 right_string = "Filtered by Assignment filter"
-            else:
+            elif self.subgraph_type == 2:
                 right_string = "Dependent app"
+            elif self.subgraph_type == 3:
+                right_string = "TBD_generate_standalone_win32_app_meta_log_output"
         elif self.intent == 1:
             right_string = "Available Install"
         elif self.intent == 3:
@@ -1365,10 +1400,12 @@ class Win32App:
         left_string = 'App Intent:'
         right_string = ""
         if self.intent == 0:
-            if self.subgraph_is_standalone:
+            if self.subgraph_type == 1:
                 right_string = "Filtered by Assignment filter"
-            else:
+            elif self.subgraph_type == 2:
                 right_string = "Dependent app"
+            elif self.subgraph_type == 3:
+                right_string = "Supercedence app"
         elif self.intent == 1:
             right_string = "Available Install"
         elif self.intent == 3:
@@ -1400,7 +1437,7 @@ class Win32App:
         interpreted_log_output += write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
-        left_string = 'Detected Version'
+        left_string = 'Detected Version:'
         if self.msfb_detected_version != "":
             right_string = self.msfb_detected_version
         else:
@@ -1409,9 +1446,9 @@ class Win32App:
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
-        left_string = 'Installed Version'
-        if self.uwp_installed_version != "":
-            right_string = self.uwp_installed_version
+        left_string = 'Installed Version:'
+        if self.msfb_installed_version != "":
+            right_string = self.msfb_installed_version
         else:
             right_string = "None"
         interpreted_log_output += write_log_output_line_with_indent_depth(
@@ -1860,9 +1897,9 @@ class Win32App:
         interpreted_log_output = ""
         temp_log = ""
         temp_log += self.start_time + " Processing "
-        if self.subgraph_is_standalone:
+        if self.subgraph_type == 1:
             temp_log += "Standalone app: ["
-        else:
+        elif self.subgraph_type == 2:
             if self.dependent_apps_list is not None:
                 if self.is_root_app:
                     temp_log += "Root "
@@ -1871,6 +1908,8 @@ class Win32App:
                 temp_log += "app with Dependency: ["
             else:
                 temp_log += "Dependent standalone app: ["
+        elif self.subgraph_type == 3:
+            temp_log += "Supercedence app: ["
         temp_log += (self.app_name + "] " + 'with intent: ')
 
         "with intent "
@@ -1905,7 +1944,7 @@ class Win32App:
 
     def generate_msfb_log_output(self, depth=0):
         interpreted_log_output = ""
-        interpreted_log_output += self.generate_msfb_app_meta_log_output(depth)
+        interpreted_log_output += self.generate_win32app_first_line_log_output(depth)
         interpreted_log_output += self.generate_msfb_pre_download_log_output(depth)
 
         interpreted_log_output += self.generate_msfb_post_download_log_output()

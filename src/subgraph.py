@@ -36,7 +36,14 @@ class SubGraph:
         self.app_names = dict()  # key: app id string, value: app name string
         self.policy_json = policy_json
         self.subgraph_app_object_list = []
-        self.is_stand_alone_subgraph = True
+        """
+                subgraph_type
+                1: standalone
+                2: dependency
+                3: supercedence
+                """
+        self.subgraph_type = 1
+        self.is_supercedence = False
         self.last_enforcement_json_dict = last_enforcement_json_dict  # key: app id string, value: last_enforcement_json
         """ 
         <![LOG[[Win32App][ActionProcessor] Found: 1 apps with intent to install: [1f4b773e-53ed-4cd8-b12b-16c336bba549].]LOG]
@@ -48,8 +55,37 @@ class SubGraph:
             print(subgraph_processing_log)
             return None
         self.process_subgraph_meta()
+        self.check_subgraph_type()
         self.get_app_name_from_json_by_app_id()
         self.initialize_win32_apps_list()
+
+    def check_subgraph_type(self):
+        for each_app_id in self.app_id_list:
+            cur_app_dict = self.find_app_dict_json_from_policy_json(each_app_id)
+            cur_app_dependent_apps_list = cur_app_dict['FlatDependencies']
+            """
+            [{"Action":10,"AppId":"b3aa3d56-d0f5-47a0-8240-ae85ed050a6b","ChildId":"3dde4e19-3a18-4dec-b60e-720b919e1790","Type":0,"Level":0},{"Action":0,"AppId":"b3aa3d56-d0f5-47a0-8240-ae85ed050a6b","ChildId":"1f4b773e-53ed-4cd8-b12b-16c336bba549","Type":0,"Level":0}]
+            """
+            if cur_app_dependent_apps_list:
+                for each_dependency_relationship_dict in cur_app_dependent_apps_list:
+                    """
+                    public enum DependencyAction
+                    {
+                        Detect = 0,
+                        Install = 10,
+                    }
+
+                    public enum SupersedenceAction
+                    {
+                        Update = 100,
+                        Replace = 110
+                    }
+                    """
+                    if each_dependency_relationship_dict["Action"] > 10:
+                        self.subgraph_type = 3
+                        return None
+                    elif each_dependency_relationship_dict["Action"] <= 10:
+                        self.subgraph_type = 2
 
     def get_app_name_from_json_by_app_id(self):
         for cur_app_index in range(self.app_num):
@@ -100,6 +136,21 @@ class SubGraph:
                         root_to_leaf_dic[each_app_id].append(each_dependency_relationship_dict["ChildId"])
                     else:
                         root_to_leaf_dic[each_app_id] = [each_dependency_relationship_dict["ChildId"]]
+                        """
+                        public enum DependencyAction
+                        {
+                            Detect = 0,
+                            Install = 10,
+                        }
+
+                        public enum SupersedenceAction
+                        {
+                            Update = 100,
+                            Replace = 110
+                        }
+                        """
+                        if each_dependency_relationship_dict["Action"] > 10:
+                            self.subgraph_type = 3
 
         for each_app_id in self.app_id_list:
             if each_app_id not in leaf_to_root_dic.keys():
@@ -135,10 +186,8 @@ class SubGraph:
             (self.log_content[0][id_start_index:id_stop_index]).split(', '))
         # print(cur_subgraph.app_id_list)
         self.app_num = len(self.app_id_list)
-        if self.app_num > 1:
+        if self.subgraph_type == 2:
             self.sort_app_id_list_top_root_app()
-            self.is_stand_alone_subgraph = False
-            # print(self.log_content)
         for each_line_index in range(1, self.log_len):
             cur_line = self.log_content[each_line_index]
             if cur_line.startswith(self.log_keyword_table['LOG_WIN32_GRS_INDICATOR']):
@@ -199,7 +248,7 @@ class SubGraph:
                 if cur_app_id in self.last_enforcement_json_dict.keys() else None
             self.subgraph_app_object_list.append(Win32App(self.log_content, cur_app_id, cur_app_name, self.policy_json,
                                                           cur_app_grs_time, self.hash_key, cur_app_grs_expiry,
-                                                          self.is_stand_alone_subgraph, cur_app_last_enforcement_json))
+                                                          self.subgraph_type, cur_app_last_enforcement_json))
 
     # Recursive function to handle dependency chain
     def generate_subgraph_dependent_app_processing_log_output(self, app_object, depth=0):
@@ -244,7 +293,7 @@ class SubGraph:
     def generate_subgraph_log_output(self):
         interpreted_log_output = ""
 
-        if self.is_stand_alone_subgraph:
+        if self.subgraph_type == 1:
             if len(self.subgraph_app_object_list) == 1:
                 # Check if Win32 or MSFB
                 if self.subgraph_app_object_list[0].app_type == "Win32":

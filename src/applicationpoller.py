@@ -333,7 +333,7 @@ class ApplicationPoller:
 
         interpreted_log_output += "\n"
         last_line = self.log_content[-1]
-        if last_line.startswith(self.log_keyword_table['LOG_APP_POLLER_START_STRING']):
+        if last_line.startswith(self.log_keyword_table['LOG_APP_POLLER_STOP_STRING']):
             interpreted_log_output += write_string_in_middle_with_dash_to_log_output('Application Poller Stops')
             interpreted_log_output += write_empty_dash_to_log_output()
         else:
