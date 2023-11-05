@@ -59,6 +59,7 @@ class EMSLifeCycle:
             cur_poller_thread = locate_thread(self.full_log[cur_start_index])
             cur_poller_log = self.full_log[cur_start_index]
             application_poller_threads.append(cur_poller_thread)
+
             line_index_iter = cur_start_index + 1
             while line_index_iter < self.log_len:
                 if line_index_iter in line_index_stop_list and cur_poller_thread == locate_thread(
@@ -85,16 +86,25 @@ class EMSLifeCycle:
                     temp_log = process_breaking_line_log(self.full_log[line_index_iter:])
                     if temp_log != "" and locate_thread(temp_log) == cur_poller_thread:
                         cur_poller_log = cur_poller_log + temp_log
+                    line_index_iter = line_index_iter + temp_log.count(' | ') + 1
                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
-                    # if cur_poller_thread == locate_thread(self.full_log[line_index_iter]):
-                        # normal log line with same thread id
                     """
                     Fixing for UWP app have multiple threads logs in one app poller
                     """
-                    cur_poller_log = cur_poller_log + self.full_log[line_index_iter]
+                    thread_id_exception_headers = self.log_keyword_table['LOG_MSFB_THREAD_ID_EXCEPTION_HEADERS']
+                    is_msfb_second_thread = False
+                    for each_header in thread_id_exception_headers:
+                        if self.full_log[line_index_iter].startswith(each_header):
+                            is_msfb_second_thread = True
+                    if cur_poller_thread == locate_thread(self.full_log[line_index_iter]) or is_msfb_second_thread:
+                        # normal log line with same thread id
+                        cur_poller_log = cur_poller_log + self.full_log[line_index_iter]
 
-                line_index_iter = line_index_iter + 1
-            if line_index_iter == self.log_len:
+                    line_index_iter = line_index_iter + 1
+                else:
+                    line_index_iter = line_index_iter + 1
+
+            if line_index_iter >= self.log_len:
                 application_poller_logs.append(cur_poller_log)
 
         if len(line_index_stop_list) != 0:
@@ -117,15 +127,24 @@ class EMSLifeCycle:
 
                         if temp_log != "" and locate_thread(temp_log) == cur_poller_thread:
                             cur_poller_log = cur_poller_log + temp_log
+                        line_index_iter = line_index_iter + temp_log.count(' | ') + 1
                     elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
-                        # if cur_poller_thread == locate_thread(self.full_log[line_index_iter]):
-                        # normal log line with same thread id
                         """
                         Fixing for UWP app have multiple threads logs in one app poller
                         """
-                        cur_poller_log = cur_poller_log + self.full_log[line_index_iter]
+                        thread_id_exception_headers = self.log_keyword_table['LOG_MSFB_THREAD_ID_EXCEPTION_HEADERS']
+                        is_msfb_second_thread = False
+                        for each_header in thread_id_exception_headers:
+                            if self.full_log[line_index_iter].startswith(each_header):
+                                is_msfb_second_thread = True
+                        if cur_poller_thread == locate_thread(
+                                self.full_log[line_index_iter]) or is_msfb_second_thread:
+                            # normal log line with same thread id
+                            cur_poller_log = cur_poller_log + self.full_log[line_index_iter]
 
-                    line_index_iter = line_index_iter + 1
+                        line_index_iter = line_index_iter + 1
+                    else:
+                        line_index_iter = line_index_iter + 1
                 application_poller_logs.append(cur_poller_log)
 
         return application_poller_logs, application_poller_threads

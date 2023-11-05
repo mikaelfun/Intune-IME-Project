@@ -221,17 +221,25 @@ class SubGraph:
                     if self.hash_key == "":
                         self.hash_key = cur_line[grs_value_hash_index_start:grs_value_hash_index_end]
                     self.grs_expiry[cur_app_id] = True
-                elif cur_line[len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN:len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN + len(' is ')] == ' is ':
+                elif cur_line[len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN: len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN + len(' is ')] == ' is ':
                     """
                     <![LOG[[Win32App][GRSManager] App with id: cce28372-03a1-4006-8035-00deb0c906ed is expired. | Hash = 2BKBFKBaevJ8qnbQsLVnCKDoI1ZjfmU5sTdZPc/QtWE=
                     """
                     expiry_start_index = len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN + len(' is ')
                     expiry_end_index = cur_line.find('. | Hash =')
-                    cur_app_expiry_string = cur_line[expiry_start_index:expiry_end_index]
-                    if cur_app_expiry_string == 'not expired':
-                        self.grs_expiry[cur_app_id] = False
-                    elif cur_app_expiry_string == 'expired':
+                    cur_app_expiry_string = cur_line[expiry_start_index: expiry_end_index]
+                    """
+                    Available app will skip GRS:
+                    
+                    <![LOG[[Win32App][GRSManager] App with id: 2c675442-fd92-4000-ab65-e740d6187efe is not expired but will be enforced due to targeting intent on the subgraph. | Hash = JEJN8M6SCgv6ZxH2rSNO0aC3ZzY2X2yblciKmvFz3Q4=
+                    """
+                    if cur_app_expiry_string == 'expired':
                         self.grs_expiry[cur_app_id] = True
+                    elif cur_app_expiry_string == 'not expired':
+                        self.grs_expiry[cur_app_id] = False
+                    elif cur_app_expiry_string == 'not expired but will be enforced due to targeting intent on the subgraph':
+                        self.grs_expiry[cur_app_id] = True
+
             elif cur_line.startswith(self.log_keyword_table['LOG_SUBGRAPH_NOT_EXPIRED_INDICATOR']):
                 # meaning the current subgraph will not be processed
                 self.reevaluation_expired = False
@@ -239,8 +247,8 @@ class SubGraph:
     def initialize_win32_apps_list(self):
         for cur_app_index in range(self.app_num):
             cur_app_id = self.app_id_list[cur_app_index]
-            if cur_app_id == "6e55f61a-55c8-4a71-94c2-64f71b7da820":
-                print("debug")
+            # if cur_app_id == "545d5b9c-60e4-488d-a084-9896ba3b3d6e":
+            #     print("debug")
             cur_app_name = self.app_names[cur_app_id] if cur_app_id in self.app_names.keys() else ''
             cur_app_grs_time = self.grs_time_list[cur_app_id] if cur_app_id in self.grs_time_list.keys() else ''
             cur_app_grs_expiry = self.grs_expiry[cur_app_id] if cur_app_id in self.grs_expiry.keys() else False
@@ -249,6 +257,7 @@ class SubGraph:
             self.subgraph_app_object_list.append(Win32App(self.log_content, cur_app_id, cur_app_name, self.policy_json,
                                                           cur_app_grs_time, self.hash_key, cur_app_grs_expiry,
                                                           self.subgraph_type, cur_app_last_enforcement_json))
+            # print("here")
 
     # Recursive function to handle dependency chain
     def generate_subgraph_dependent_app_processing_log_output(self, app_object, depth=0):

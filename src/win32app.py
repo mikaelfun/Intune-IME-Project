@@ -129,6 +129,7 @@ class Win32App:
         self.download_start_time = ""
         self.download_finish_time = ""
         self.download_file_size = -1
+        self.app_file_size = -1
         self.download_time = -1
         self.size_need_to_download = -1
         self.download_average_speed = ""
@@ -185,6 +186,7 @@ class Win32App:
         'IN_PROGRESS_INSTALLING_DEPENDENCIES': 2007,
         'IN_PROGRESS_PENDING_REBOOT': 2008,
         'IN_PROGRESS_CONTENT_DOWNLOADED': 2009,
+        'IN_PROGRESS_PENDING_MANAGED_INSTALLER': 2012,
         'IN_PROGRESS_WAITING_USERLOGON': 2013,
         'UNKNOWN': 4000,
         'ERROR': 5000,
@@ -210,7 +212,8 @@ class Win32App:
                                  2004: 'IN_PROGRESS_WAITING_MAINTENANCE_WINDOW', 2005: 'IN_PROGRESS_WAITING_SCHEDULE',
                                  2006: 'IN_PROGRESS_DOWNLOADING_DEPENDENT_CONTENT',
                                  2007: 'IN_PROGRESS_INSTALLING_DEPENDENCIES', 2008: 'IN_PROGRESS_PENDING_REBOOT',
-                                 2009: 'IN_PROGRESS_CONTENT_DOWNLOADED', 2013: 'IN_PROGRESS_WAITING_USERLOGON',
+                                 2009: 'IN_PROGRESS_CONTENT_DOWNLOADED', 2012: "IN_PROGRESS_PENDING_MANAGED_INSTALLER",
+                                 2013: 'IN_PROGRESS_WAITING_USERLOGON',
                                  4000: 'UNKNOWN', 5000: 'ERROR', 5001: 'ERROR_EVALUATING', 5002: 'ERROR_INSTALLING',
                                  5003: 'ERROR_RETRIEVING_CONTENT', 5004: 'ERROR_INSTALLING_DEPENDENCY',
                                  5005: 'ERROR_RETRIEVING_CONTENT_DEPENDENCY', 5006: 'ERROR_RULES_CONFLICT',
@@ -231,20 +234,24 @@ class Win32App:
         self.load_current_enforcement_state()
         self.determine_no_enforcement_reason()
 
-    def compute_download_size_and_speed(self):
-        computed_size_str = ""
-        if self.download_file_size > 1000000000:
-            computed_size_str = computed_size_str + 'Downloaded file size is: ' + str(
-                (self.download_file_size // 100000000) / 10.0) + ' GB'
-        elif self.download_file_size > 1000000:
-            computed_size_str = computed_size_str + 'Downloaded file size is: ' + str(
-                (self.download_file_size // 100000) / 10.0) + ' MB'
-        elif self.download_file_size > 1000:
-            computed_size_str = computed_size_str + 'Downloaded file size is: ' + str(
-                (self.download_file_size // 100) / 10.0) + ' KB'
+    def convert_file_size_to_readable_string(self, size):
+        if size > 1000000000:
+            computed_size_str = str(
+                (round(size / 1000000000, 2))) + ' GB'
+        elif size > 1000000:
+            computed_size_str = str(
+                (round(size / 1000000, 2))) + ' MB'
+        elif size > 1000:
+            computed_size_str = str(
+                (round(size / 1000, 2))) + ' KB'
         else:
-            computed_size_str = computed_size_str + 'Downloaded file size is: ' + str(
-                self.download_file_size) + ' B'
+            computed_size_str = str(
+                round(size, 2)) + ' B'
+
+        return computed_size_str
+
+    def compute_download_size_and_speed(self):
+        computed_size_str = 'Downloaded file size is: ' + self.convert_file_size_to_readable_string(self.download_file_size)
 
         computed_speed_str = 'Average download speed is: ' + self.download_average_speed
 
@@ -252,10 +259,18 @@ class Win32App:
 
     def convert_speedraw_to_string(self):
         download_average_speed_raw = -1
+        if self.download_finish_time:
+            download_finish_time = datetime.datetime.strptime(self.download_finish_time[:-4],
+                                                              '%m-%d-%Y %H:%M:%S')
+            download_start_time = datetime.datetime.strptime(self.download_start_time[:-4], '%m-%d-%Y %H:%M:%S')
+            download_time_spent = (download_finish_time - download_start_time).total_seconds()
+            if download_time_spent < self.download_time - 9:
+                self.download_time = download_time_spent
+
         if self.download_time > 0 and self.download_file_size > 0:
             download_average_speed_raw = self.download_file_size * 1.0 / self.download_time
         elif not self.download_finish_time:
-            print("No self.download_finish_time, exit in convert_speedraw_to_string")
+            # print("No self.download_finish_time, exit in convert_speedraw_to_string")
             return ""
         else:
             download_finish_time = datetime.datetime.strptime(self.download_finish_time[:-4],
@@ -284,7 +299,8 @@ class Win32App:
         elif not self.applicability:
             if self.applicability_reason != "":
                 self.no_enforcement_reason = self.applicability_reason
-                self.reason_need_output = True
+                # self.applicability_reason = ""
+                self.reason_need_output = False
         elif self.subgraph_type == 1:
             self.no_enforcement_reason = self.cur_enforcement_state
             self.reason_need_output = True
@@ -301,18 +317,32 @@ class Win32App:
             self.reason_need_output = True
 
     def load_current_enforcement_state(self):
-        if self.current_enforcement_status_report is not None and self.current_enforcement_status_report[
-            'EnforcementState'] is not None and self.current_enforcement_status_report['EnforcementState'] \
-                in self.enforcement_dict.keys():
-            self.cur_enforcement_state = self.enforcement_dict[
-                self.current_enforcement_status_report['EnforcementState']]
+        if self.current_enforcement_status_report is not None:
+            if self.current_enforcement_status_report['EnforcementState'] is not None:
+                if self.current_enforcement_status_report['EnforcementState'] in self.enforcement_dict.keys():
+                    self.cur_enforcement_state = self.enforcement_dict[
+                        self.current_enforcement_status_report['EnforcementState']]
+                else:
+                    self.cur_enforcement_state = self.current_enforcement_status_report['EnforcementState']
+            else:
+                self.cur_enforcement_state = self.last_enforcement_state
         else:
             self.cur_enforcement_state = self.last_enforcement_state
 
     def load_last_enforcement_state(self):
-        self.last_enforcement_state = self.enforcement_dict[self.last_enforcement_json['EnforcementState']] if \
-            self.last_enforcement_json is not None and self.last_enforcement_json['EnforcementState'] is not None \
-            else "No enforcement state found"
+        if self.last_enforcement_json is not None:
+            if 'EnforcementState' in self.last_enforcement_json:
+                if self.last_enforcement_json['EnforcementState'] is not None:
+                    if self.last_enforcement_json['EnforcementState'] in self.enforcement_dict.keys():
+                        self.last_enforcement_state = self.enforcement_dict[self.last_enforcement_json['EnforcementState']]
+                    else:
+                        self.last_enforcement_state = self.last_enforcement_json['EnforcementState']
+                else:
+                    self.last_enforcement_state = "No enforcement state found"
+            else:
+                self.last_enforcement_state = "No enforcement state found"
+        else:
+            self.last_enforcement_state = "No enforcement state found"
 
     def initialize_app_log(self):
         cur_app_dict = None
@@ -377,9 +407,10 @@ class Win32App:
                 self.process_win32_supercedence_app_log()
 
     def process_win32_standalone_app_log(self):
-        if not self.grs_expiry:
-            # skipped processing enforcement log due to GRS
-            return None
+        # if not self.grs_expiry:
+        #     # skipped processing enforcement log due to GRS
+        #     # Available app will skip GRS since user manually clicks install button in company portal
+        #     return None
         post_install = False
         post_download = False
         for cur_line_index in range(len(self.full_log)):
@@ -441,7 +472,20 @@ class Win32App:
                         if self.detection_state_json['DetectionState']['NewValue'] == "Installed":
                             self.post_install_detection = True
                             self.post_install_detection_time = cur_time
-
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_INDICATOR']):
+                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_APPLICABILITY_OLD_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                if not post_download and not post_install:
+                    detection_old_start_index = len(
+                        self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_RESULT_INDICATOR'])
+                    if cur_line[detection_old_start_index:detection_old_start_index + 10] == "Applicable":
+                        self.applicability = True
+                        self.applicability_time = cur_time
+                    else:
+                        self.applicability = False
+                        self.applicability_time = cur_time
             elif cur_line.startswith(
                             self.log_keyword_table['LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR']):
                 cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
@@ -460,6 +504,10 @@ class Win32App:
                     'NewValue'] == "AppUnsupportedDueToUnknownReason":
                     self.applicability = False
                     self.applicability_reason = "User Context App will be processed after user logon."
+                elif self.applicability_state_json['ApplicabilityState'][
+                    'NewValue'] == "ScriptRequirementRuleNotMet":
+                    self.applicability = False
+                    self.applicability_reason = "Script Requirement Rule Not Met."
                 else:
                     self.applicability = False
                 self.applicability_time = cur_time
@@ -528,6 +576,28 @@ class Win32App:
                         self.download_do_mode = "FOREGROUND(12 hour timeout)"
                     else:
                         continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR']):
+                """
+                Track downloaded size in case timeout.
+
+                <![LOG[[StatusService] Downloading app (id = e765119c-6af3-4d39-8eac-3e86fd7642b0, name Adobe Acrobat DC) via DO, bytes 720928912/721977488 for user 37ed0412-d13e-481c-a784-6447007aa208]LOG]!><time="09:49:19.3750179" date="10-26-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">                
+                """
+                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                downloaded_size_index_start = cur_line.find(self.log_keyword_table[
+                                                                'LOG_WIN32_DOWNLOADED_START_INDICATOR']) + \
+                                              len(self.log_keyword_table['LOG_WIN32_DOWNLOADED_START_INDICATOR'])
+                downloaded_size_index_stop = cur_line.find(
+                    self.log_keyword_table['LOG_WIN32_DOWNLOADED_STOP_INDICATOR'])
+                percent_size = cur_line[downloaded_size_index_start: downloaded_size_index_stop].split('/')
+                downloaded_size = int(percent_size[0])
+                app_size = int(percent_size[1])
+                self.download_file_size = downloaded_size
+                if self.app_file_size <= 0:
+                    self.app_file_size = app_size
+
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DO_FINISH_INDICATOR']):
                 if self.download_finish_time == "" and self.download_start_time != "":
                     self.download_finish_time = cur_time
@@ -662,9 +732,9 @@ class Win32App:
             self.download_average_speed = self.convert_speedraw_to_string()
 
     def process_win32_dependency_app_log(self):
-        if not self.grs_expiry:
-            # skipped processing enforcement log due to GRS
-            return None
+        # if not self.grs_expiry:
+        #     # skipped processing enforcement log due to GRS
+        #     return None
         post_install = False
         post_download = False
         for cur_line_index in range(len(self.full_log)):
@@ -730,6 +800,20 @@ class Win32App:
                         if self.detection_state_json['DetectionState']['NewValue'] == "Installed":
                             self.post_install_detection = True
                             self.post_install_detection_time = cur_time
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_INDICATOR']):
+                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_APPLICABILITY_OLD_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                if not post_download and not post_install:
+                    detection_old_start_index = len(
+                        self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_RESULT_INDICATOR'])
+                    if cur_line[detection_old_start_index:detection_old_start_index + 10] == "Applicable":
+                        self.applicability = True
+                        self.applicability_time = cur_time
+                    else:
+                        self.applicability = False
+                        self.applicability_time = cur_time
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR']):
                 cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR'])
@@ -813,6 +897,26 @@ class Win32App:
                         self.download_do_mode = "FOREGROUND(12 hour timeout)"
                     else:
                         continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR']):
+                """
+                Track downloaded size in case timeout.
+                
+                <![LOG[[StatusService] Downloading app (id = e765119c-6af3-4d39-8eac-3e86fd7642b0, name Adobe Acrobat DC) via DO, bytes 720928912/721977488 for user 37ed0412-d13e-481c-a784-6447007aa208]LOG]!><time="09:49:19.3750179" date="10-26-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">                
+                """
+                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                downloaded_size_index_start = cur_line.find(self.log_keyword_table[
+                                                                'LOG_WIN32_DOWNLOADED_START_INDICATOR']) + \
+                                              len(self.log_keyword_table['LOG_WIN32_DOWNLOADED_START_INDICATOR'])
+                downloaded_size_index_stop = cur_line.find(self.log_keyword_table['LOG_WIN32_DOWNLOADED_STOP_INDICATOR'])
+                percent_size = cur_line[downloaded_size_index_start: downloaded_size_index_stop].split('/')
+                downloaded_size = int(percent_size[0])
+                app_size = int(percent_size[1])
+                self.download_file_size = downloaded_size
+                if self.app_file_size <= 0:
+                    self.app_file_size = app_size
+
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DO_FINISH_INDICATOR']):
                 if self.download_finish_time == "" and self.download_start_time != "":
                     self.download_finish_time = cur_time
@@ -823,8 +927,6 @@ class Win32App:
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DO_NOT_FINISH_INDICATOR']):
                 if self.download_finish_time == "" and self.download_start_time != "":
                     self.download_finish_time = cur_time
-                    if self.download_average_speed == "":
-                        self.download_average_speed = self.convert_speedraw_to_string()
                     self.download_success = False
                 else:
                     continue  # Means this is the line for other dependent apps
@@ -1016,8 +1118,11 @@ class Win32App:
                     self.download_file_size = int(cur_line[size_downloaded_index_start:size_downloaded_index_end])
 
     def process_msfb_app_log(self):
-        if not self.grs_expiry:
-            return None
+        """
+        GRS not expired but SubGraph expired will process pre-detection and applicability
+        """
+        # if not self.grs_expiry:
+        #     return None
         # UWP app don't need to hash validate, decrypt, unzip
         self.hash_validate_success = True
         self.decryption_success = True
@@ -1044,12 +1149,29 @@ class Win32App:
         for cur_line_index in range(len(self.full_log)):
             cur_line = self.full_log[cur_line_index]
             cur_time = get_timestamp_by_line(cur_line)
-            if cur_line.startswith(self.log_keyword_table['LOG_MSFB_DETECTION_STATE_REPORT_INDICATOR']):
+            if cur_line.startswith(self.log_keyword_table['LOG_REPORTING_STATE_1_INDICATOR']):
+                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_REPORTING_STATE_1_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                if 'has both detection and applicability errors' in cur_line:
+                    applicability_error_code_index_start = cur_line.find(
+                        self.log_keyword_table['LOG_MSFB_APPLICABILITY_ERROR_CODE_INDICATOR']) + \
+                                                           len(self.log_keyword_table['LOG_MSFB_APPLICABILITY_ERROR_CODE_INDICATOR'])
+                    applicability_error_code_index_stop = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
+                    applicability_error_code = cur_line[applicability_error_code_index_start: applicability_error_code_index_stop - 1]
+                    if applicability_error_code == "-2146233079":
+                        self.applicability_reason = "Network Issue when trying to Invoke WinGet command. Try removing Proxy/Firewall or switch to different network."
+                        self.applicability = False
+                        self.applicability_time = cur_time
+                        self.has_enforcement = False
+            elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_DETECTION_STATE_REPORT_INDICATOR']):
                 # Evaluating whether app has enforcement
                 cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_MSFB_DETECTION_STATE_REPORT_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
+
                 # Pre-Download Detection
                 detection_state_json_start_index = len(
                     self.log_keyword_table['LOG_MSFB_DETECTION_STATE_JSON_INDICATOR'])
@@ -1059,6 +1181,12 @@ class Win32App:
                 # print(self.detection_state_json)
                 if not post_download and not post_install:
                     if 'DetectionState' not in self.detection_state_json:
+                        if 'DetectionErrorOccurred' in self.detection_state_json and 'DetectionErrorCode' in self.detection_state_json:
+                            if self.detection_state_json['DetectionErrorOccurred']['NewValue'] == True:
+                                if self.detection_state_json['DetectionErrorCode']['NewValue'] == -2146233079:
+                                    self.pre_install_detection_time = cur_time
+                                    self.pre_install_detection = False
+                    elif self.pre_install_detection_time != "":
                         continue
                     else:
                         if self.detection_state_json['DetectionState']['NewValue'] == "Installed":
@@ -1082,6 +1210,8 @@ class Win32App:
                 elif post_download and post_install:
                     if 'DetectionState' not in self.detection_state_json:
                         continue
+                    elif self.post_install_detection_time != "":
+                        continue
                     else:
                         if self.detection_state_json['DetectionState']['NewValue'] == "Installed":
                             self.post_install_detection = True
@@ -1093,11 +1223,28 @@ class Win32App:
                             self.post_install_detection_time = cur_time
 
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_FINISH_DETECTION_INDICATOR']):
+                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_MSFB_FINISH_DETECTION_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
                 if not post_download and not post_install:
                     """
                     In Non-1st IME check in, MSFB app will not have ReportManager keyword to track detection and applicability check results.
                     Hence only can check from WinGetAppApplicabilityExecutor and WinGetAppDetectionExecutor
                     """
+
+                    detected_state_index_start = cur_line.find(
+                        self.log_keyword_table['LOG_MFSB_DETECTION_DETECTED_INDICATOR']) + len(
+                        self.log_keyword_table['LOG_MFSB_DETECTION_DETECTED_INDICATOR'])
+                    detected_state_index_stop = cur_line.find(
+                        self.log_keyword_table['LOG_MFSB_DETECTION_DETECTED_VERSION_INDICATOR']) - 3
+                    if cur_line[detected_state_index_start:detected_state_index_stop] == "Detected":
+                        self.pre_install_detection = True
+                        self.pre_install_detection_time = cur_time
+                        # self.has_enforcement = False
+                    else:
+                        self.pre_install_detection = False
+                        self.pre_install_detection_time = cur_time
                     detected_version_index_start = cur_line.find(
                         self.log_keyword_table['LOG_MFSB_DETECTION_DETECTED_VERSION_INDICATOR']) + len(
                         self.log_keyword_table['LOG_MFSB_DETECTION_DETECTED_VERSION_INDICATOR'])
@@ -1119,6 +1266,19 @@ class Win32App:
                         self.log_keyword_table['LOG_MSFB_DETECTION_REBOOT_INDICATOR']) - 3
                     self.msfb_installed_version = cur_line[install_version_index_start:install_version_index_stop]
 
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_INDICATOR']):
+                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_APPLICABILITY_OLD_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                if not post_download and not post_install:
+                    detection_old_start_index = len(self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_RESULT_INDICATOR'])
+                    if cur_line[detection_old_start_index:detection_old_start_index + 10] == "Applicable":
+                        self.applicability = True
+                        self.applicability_time = cur_time
+                    else:
+                        self.applicability = False
+                        self.applicability_time = cur_time
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_APPLICABILITY_STATE_REPORT_INDICATOR']):
                 cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_MSFB_APPLICABILITY_STATE_REPORT_INDICATOR'])
@@ -1129,22 +1289,62 @@ class Win32App:
                 applicability_state_json_stop_index = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
                 self.applicability_state_json = json.loads(
                     cur_line[applicability_state_json_start_index: applicability_state_json_stop_index])
-                if self.applicability_state_json['ApplicabilityState']['NewValue'] == "Applicable":
-                    self.applicability = True
+                if 'ApplicabilityState' not in self.applicability_state_json:
+                    if 'ApplicabilityErrorOccurred' in self.applicability_state_json and 'ApplicabilityErrorCode' in self.applicability_state_json:
+                        if self.applicability_state_json['ApplicabilityErrorOccurred']['NewValue'] == True:
+                            if self.applicability_state_json['ApplicabilityErrorCode']['NewValue'] == -2146233079:
+                                self.applicability_reason = "Network Issue when trying to Invoke WinGet command. Try removing Proxy/Firewall or switch to different network."
+                                self.applicability = False
                 else:
-                    self.applicability = False
-                self.applicability_time = cur_time
+                    if self.applicability_state_json['ApplicabilityState']['NewValue'] == "Applicable":
+                        self.applicability = True
+                    else:
+                        self.applicability = False
+                    self.applicability_time = cur_time
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_TRANSITION_DOWNLOAD_STATE_INDICATOR']):
                 self.download_start_time = cur_time
                 self.has_enforcement = True
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_DOWNLOAD_SIZE_INDICATOR']):
+                """
+                System context MSFB download size indicator:
+                """
                 # Only Non 0 BytesRequired reflect actual download progress
                 if not cur_line.startswith("<![LOG[[Package Manager] BytesRequired - 0BytesDownloaded "):
                     donwloaded_size_index_start = cur_line.find(self.log_keyword_table['LOG_MFSB_DOWNLOADED_SIZE_INDEX_INDICATOR']) + len(self.log_keyword_table['LOG_MFSB_DOWNLOADED_SIZE_INDEX_INDICATOR'])
                     donwloaded_size_index_stop = cur_line.find(self.log_keyword_table['LOG_MFSB_DOWNLOADED_SIZE_INDEX_END_INDICATOR'])
                     self.download_file_size = int(cur_line[donwloaded_size_index_start: donwloaded_size_index_stop])
+                    if self.app_file_size <= 0:
+                        self.app_file_size = 100
                     self.download_finish_time = cur_time
+            elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_PROGRESS_LINE_START_INDICATOR']):
 
+                """
+                User context MSFB download size indicator, no actual Bytes, only percentage.
+                
+                <![LOG[[WinGetMessageProcessor] Processing Progress for app = 3a272aef-2bfa-426d-9137-4d5402be15c6 and user = 528f5241-8074-44d8-bdc0-3cb237149dde - Operation Phase = Downloading - Downloaded bytes = 90 - Total bytes = 100.]LOG]!><time="21:21:30.4343553" date="10-29-2023" component="IntuneManagementExtension" context="" type="1" thread="22" file="">
+                <![LOG[[WinGetMessageProcessor] Processing Progress for app = 3a272aef-2bfa-426d-9137-4d5402be15c6 and user = 528f5241-8074-44d8-bdc0-3cb237149dde - DebugInfo = State = Installing
+                OperationType = Install
+                BytesRequired = 0
+                BytesDownloaded = 0
+                DownloadProgress = 1
+                Progress = 0.9
+                ]LOG]!><time="21:21:30.4343553" date="10-29-2023" component="IntuneManagementExtension" context="" type="1" thread="22" file="">
+
+                """
+                if self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_SIZE_INDICATOR'] in cur_line:
+                    donwloaded_size_index_start = cur_line.find(self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_SIZE_INDICATOR']) + len(self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_SIZE_INDICATOR'])
+                    donwloaded_size_index_stop = cur_line.find(self.log_keyword_table['LOG_MSFB_USER_TOTAL_SIZE_INDICATOR'])
+
+                    download_file_size = int(cur_line[donwloaded_size_index_start: donwloaded_size_index_stop])
+                    if download_file_size == 0:
+                        if self.download_start_time == "":
+                            self.download_start_time = cur_time
+                            self.has_enforcement = True
+                    if self.download_file_size <= 100:
+                        self.download_file_size = download_file_size
+                        self.download_finish_time = cur_time
+            elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_SUCCESS_INDICATOR']):
+                pass
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_TRANSITION_INSTALL_STATE_INDICATOR']):
                 self.download_success = True
                 self.install_start_time = cur_time
@@ -1500,7 +1700,10 @@ class Win32App:
                 if self.download_finish_time and self.download_file_size > -1:
                     interpreted_log_output += write_log_output_line_with_indent_depth(
                         self.download_finish_time + ' ' + computed_size_str + '\n', depth)
-
+                    if self.app_file_size > 0:
+                        total_size_str = "Total file size is: " + self.convert_file_size_to_readable_string(self.app_file_size)
+                        interpreted_log_output += write_log_output_line_with_indent_depth(
+                            self.download_finish_time + ' ' + total_size_str + '\n', depth)
                     interpreted_log_output += write_log_output_line_with_indent_depth(
                         self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
@@ -1616,6 +1819,9 @@ class Win32App:
         if self.proxy_url != "":
             interpreted_log_output += write_log_output_line_with_indent_depth(
                 self.download_start_time + ' Current Proxy is: ' + self.proxy_url + '\n', depth)
+        if self.download_url != "":
+            interpreted_log_output += write_log_output_line_with_indent_depth(
+                self.download_start_time + ' Current Download URL is: ' + self.download_url + '\n', depth)
         if self.download_success:
             interpreted_log_output += write_log_output_line_with_indent_depth(
                 self.download_finish_time + ' DO mode download completed.\n', depth)
@@ -1633,8 +1839,16 @@ class Win32App:
                 interpreted_log_output += write_log_output_line_with_indent_depth(
                     self.download_finish_time + ' ' + computed_size_str + '\n', depth)
 
+                if self.app_file_size > 0:
+                    total_size_str = "Total file size is: " + self.convert_file_size_to_readable_string(
+                        self.app_file_size)
+                    interpreted_log_output += write_log_output_line_with_indent_depth(
+                        self.download_finish_time + ' ' + total_size_str + '\n', depth)
+
                 interpreted_log_output += write_log_output_line_with_indent_depth(
                     self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
+
+
 
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
             interpreted_log_output += write_log_output_line_with_indent_depth(
@@ -1829,7 +2043,7 @@ class Win32App:
                 self.applicability_time + ' Applicability Check: NOT Applicable \n', depth)
             if self.applicability_reason != "":
                 interpreted_log_output += write_log_output_line_with_indent_depth(
-                    self.applicability_time + ' Not Applicable Reason: ' + self.applicability_reason +  '\n', depth)
+                    self.applicability_time + ' Not Applicable Reason: ' + self.applicability_reason + '\n', depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "NOT Applicable"
             interpreted_log_output += write_log_output_line_with_indent_depth(
                 self.applicability_time + ' App Installation Result: ' + result + '\n', depth)
@@ -1886,6 +2100,9 @@ class Win32App:
             if self.applicability_reason != "":
                 interpreted_log_output += write_log_output_line_with_indent_depth(
                     self.applicability_time + ' Not Applicable Reason: ' + self.applicability_reason +  '\n', depth)
+            # if self.no_enforcement_reason != "":
+            #     interpreted_log_output += write_log_output_line_with_indent_depth(
+            #         self.applicability_time + ' No Enforcement Reason: ' + self.no_enforcement_reason + '\n', depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "NOT Applicable"
             interpreted_log_output += write_log_output_line_with_indent_depth(
                 self.applicability_time + ' App Installation Result: ' + result + '\n', depth)

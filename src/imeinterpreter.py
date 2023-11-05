@@ -100,114 +100,77 @@ class ImeInterpreter:
         if stop_lines_len > 0:
             last_stop_time = get_timestamp_by_line(self.full_log[ems_agent_stop_lines[-1]])
 
-        if start_lines_len == stop_lines_len + 1:
-            if start_lines_len == 1:
-                """
-                Autopilot without reboot structure:
-                <![LOG[EMS Agent Started]
-                ...
-                """
-                ems_agent_stop_lines.append(full_log_len)
-            elif last_start_time > last_stop_time:
-                '''
-                Most ideal structure:
-                <![LOG[EMS Agent Started]
-                ...
-                <![LOG[EMS Agent Stopped]
-                ...
-                <![LOG[EMS Agent Started]
-                '''
-                # This would mean that upon log collection, IME service is up and running,
-                # so there is 1 more start than stop
-                ems_agent_stop_lines.append(full_log_len)
-            else:
-                print("Error Invalid log structure! Exit 1201")
-                return None
-                #exit(1101)
-        elif start_lines_len == stop_lines_len:
-            if last_start_time < last_stop_time:
-                # This would mean that upon log collection, IME service is stopped
-                '''
-                Like this structure:
-                <![LOG[EMS Agent Started]
-                ...
-                <![LOG[EMS Agent Stopped]
-                ...
-                <![LOG[EMS Agent Started]
-                ...
-                <![LOG[EMS Agent Stopped]
-                '''
-                if start_lines_len == 0:
-                    ems_agent_start_lines.append(0)
-                    ems_agent_stop_lines.append(-1)
-                    start_lines_len = len(ems_agent_start_lines)
-                    stop_lines_len = len(ems_agent_stop_lines)
-            else:
-                # This would mean that upon log collection, IME service is up and running,
-                # adding the first line as Starting, adding the last line as stopping
-                '''
-                This structure would apply when only recent IME logs are captured, 
-                does not include to the very beginning of the log.
-                Like IntuneManagementExtention.log alone
-                <![LOG[EMS Agent Stopped]
-                ...
-                <![LOG[EMS Agent Started]
-                ...
-                <![LOG[EMS Agent Stopped]
-                ...
-                <![LOG[EMS Agent Started]
-                '''
-                ems_agent_start_lines.insert(0, 0)
-                ems_agent_stop_lines.append(full_log_len)
-        elif start_lines_len == stop_lines_len - 1:  # start_lines_len == stop_lines_len - 1
-            '''
-            Like this structure:
-            <![LOG[EMS Agent Stopped]
-            ...
-            <![LOG[EMS Agent Started]
-            ...
-            <![LOG[EMS Agent Stopped]
-            ...
-            <![LOG[EMS Agent Started]
-            ...
-            <![LOG[EMS Agent Stopped]
-            '''
-            if last_start_time < last_stop_time:
-                ems_agent_start_lines.append(0)
-            else:
-                print("Error Invalid log structure! Exit 1202")
-                return None
-                #exit(1102)
-        elif start_lines_len > stop_lines_len + 1:
-            '''
-            Like this structure:
-            <![LOG[EMS Agent Started]
-            ...
-            <![LOG[EMS Agent Stopped]
-            ...
-            <![LOG[EMS Agent Started]
-            ...
-            <![LOG[EMS Agent Started]
-            '''
-            while start_lines_len > len(ems_agent_stop_lines) + 1:
-                diff = start_lines_len - len(ems_agent_stop_lines)
-                ems_agent_stop_lines.append(ems_agent_start_lines[1 - diff] - 1)
+        ems_agent_sorted_start_lines = []
+        ems_agent_sorted_stop_lines = []
 
-            ems_agent_stop_lines.append(full_log_len)
+        start_line_index = 0
+        stop_line_index = 0
+
+
+        """
+        This situation cannot exist:
+        EMS AGENT stops
+        EMS AGENT stops
+        
+        This situation can exist: (hard reboot)
+        EMS AGENT starts
+        EMS AGENT starts
+        """
+        while start_line_index < start_lines_len and stop_line_index < stop_lines_len:
+            cur_start_line_top_index = ems_agent_start_lines[start_line_index]
+            cur_stop_line_top_index = ems_agent_stop_lines[stop_line_index]
+            if cur_start_line_top_index < cur_stop_line_top_index:
+                ems_agent_sorted_start_lines.append(cur_start_line_top_index)
+                start_line_index += 1
+                if start_line_index < start_lines_len:
+                    if ems_agent_start_lines[start_line_index] < ems_agent_stop_lines[stop_line_index]:
+                        """
+                        start
+                        start
+                        stop
+                        """
+                        ems_agent_sorted_stop_lines.append(ems_agent_start_lines[start_line_index] - 1)
+                    else:
+                        """
+                        start
+                        stop
+                        start
+                        """
+                        ems_agent_sorted_stop_lines.append(ems_agent_stop_lines[stop_line_index])
+                        stop_line_index += 1
+            else:
+                ems_agent_sorted_start_lines.append(0)
+                ems_agent_sorted_stop_lines.append(cur_stop_line_top_index)
+                stop_line_index += 1
+
+        if start_line_index < start_lines_len:
+            """
+            Start
+            ...
+            """
+            while start_line_index < start_lines_len:
+                ems_agent_sorted_start_lines.append(ems_agent_start_lines[start_line_index])
+                start_line_index += 1
+                if start_line_index < start_lines_len:
+                    ems_agent_sorted_stop_lines.append(ems_agent_start_lines[start_line_index] - 1)
+                else:
+                    ems_agent_sorted_stop_lines.append(full_log_len-1)
+        elif stop_line_index < stop_lines_len:
+            pass
 
         ems_agent_lifecycle_log_list = []
         # Indicating whether the service is being restarted manually or restart by reboot
         agent_life_ending_reason = ["IME Service Starts"]  # first one is always IME service Starts
 
-        for agent_lifecycle_log_index in range(len(ems_agent_start_lines)):
+        for agent_lifecycle_log_index in range(len(ems_agent_sorted_start_lines)):
             ems_agent_lifecycle_log_list.append(
-                self.full_log[ems_agent_start_lines[agent_lifecycle_log_index]:
-                              ems_agent_stop_lines[agent_lifecycle_log_index]])
-            if agent_lifecycle_log_index < len(ems_agent_start_lines) - 1:
-                agent_stop_time = get_timestamp_by_line(self.full_log[ems_agent_stop_lines[agent_lifecycle_log_index]])
+                self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]:
+                              ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
+            if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:
+                agent_stop_time = get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
                 agent_stop_time_datetime = datetime.datetime.strptime(agent_stop_time[:-4], '%m-%d-%Y %H:%M:%S')
                 agent_next_start_time = get_timestamp_by_line(
-                    self.full_log[ems_agent_start_lines[agent_lifecycle_log_index + 1]])
+                    self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index + 1]])
                 agent_next_start_time_datetime = convert_date_string_to_date_time(agent_next_start_time[:-4])
 
                 if agent_next_start_time_datetime - agent_stop_time_datetime < datetime.timedelta(seconds=10):
