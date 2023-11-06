@@ -293,11 +293,11 @@ class ApplicationPoller:
                         cur_subgraph_log = self.sub_graph_list[cur_subgraph_log_index]
 
                         mid_string = ("Subgraph " + str(cur_subgraph_log_index + 1))
-                        interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                        interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_plus_to_log_output(mid_string)
                         mid_string = "Subgraph Expired" if cur_subgraph_log.reevaluation_expired else "Subgraph NOT Expired"
-                        interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                        interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_plus_to_log_output(mid_string)
                         mid_string = "Subgraph Last Evaluation Time: " + cur_subgraph_log.reevaluation_time
-                        interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                        interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_plus_to_log_output(mid_string)
                         interpreted_log_output += '\n'
 
                         interpreted_log_output += cur_subgraph_log.generate_subgraph_log_output()
@@ -312,16 +312,16 @@ class ApplicationPoller:
                             cur_subgraph_log = self.expired_sub_graph_list[cur_subgraph_log_index]
                             if show_not_expired_subgraph:
                                 mid_string = ("Subgraph " + str(cur_subgraph_log_index + 1))
-                                interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                                interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_plus_to_log_output(mid_string)
                                 mid_string = "Subgraph Expired" if cur_subgraph_log.reevaluation_expired else "Subgraph NOT Expired"
-                                interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                                interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_plus_to_log_output(mid_string)
                                 mid_string = "Subgraph Last Evaluation Time: " + cur_subgraph_log.reevaluation_time
-                                interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
+                                interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_plus_to_log_output(mid_string)
                             else:
                                 # interpreted_log_output += write_empty_plus_to_log_output()
                                 mid_string = ("Subgraph " + str(cur_subgraph_log_index + 1))
-                                interpreted_log_output += write_string_in_middle_with_plus_to_log_output(mid_string)
-                                interpreted_log_output += write_empty_plus_to_log_output()
+                                interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_plus_to_log_output(mid_string)
+                                interpreted_log_output += constructinterpretedlog.write_empty_plus_to_log_output()
 
                             interpreted_log_output += '\n'
 
@@ -331,10 +331,10 @@ class ApplicationPoller:
         interpreted_log_output += "\n"
         last_line = self.log_content[-1]
         if last_line.startswith(self.log_keyword_table['LOG_APP_POLLER_STOP_STRING']):
-            interpreted_log_output += write_string_in_middle_with_dash_to_log_output('Application Poller Stops')
-            interpreted_log_output += write_empty_dash_to_log_output()
+            interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_dash_to_log_output('Application Poller Stops')
+            interpreted_log_output += constructinterpretedlog.write_empty_dash_to_log_output()
         else:
-            interpreted_log_output += write_string_in_middle_with_dash_to_log_output('Application Poller Missing Stop')
-            interpreted_log_output += write_string_in_middle_with_dash_to_log_output('log may be incomplete')
+            interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_dash_to_log_output('Application Poller Missing Stop')
+            interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_dash_to_log_output('log may be incomplete')
 
         return interpreted_log_output
