@@ -44,14 +44,6 @@ class OnOffButton(ttk.Button):
             self.configure(text="Off")
 
 
-def download_file(url, filename):
-    # Send a HTTP request to the URL
-    r = requests.get(url, allow_redirects=True)
-
-    # Write the content of the request to a file
-    open(filename, 'wb').write(r.content)
-
-
 class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()

@@ -73,9 +73,17 @@ Later when Intune supports MSFB Win32 app, it may also support dependency then. 
 
 """
 
-from tkinterui import *
 import sys
 import os
+import requests
+
+
+def download_file(url, filename):
+    # Send a HTTP request to the URL
+    r = requests.get(url, allow_redirects=True)
+
+    # Write the content of the request to a file
+    open(filename, 'wb').write(r.content)
 
 
 def update_pyd_and_json_from_github():
@@ -131,6 +139,7 @@ if __name__ == '__main__':
 
     update_pyd_and_json_from_github()
 
+    from tkinterui import *
     args = sys.argv
     if len(args) > 1:
         path_to_ime_log_folder = args[1]

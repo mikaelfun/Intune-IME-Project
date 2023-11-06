@@ -14,7 +14,6 @@ Class hierarchy:
 
 """
 
-from constructinterpretedlog import *
 from subgraph import *
 
 
@@ -257,15 +256,16 @@ class ApplicationPoller:
             return interpreted_log_output
 
         first_line = self.log_content[0]
+        import constructinterpretedlog
         if first_line.startswith(
                 self.log_keyword_table['LOG_APP_POLLER_START_STRING']):
-            interpreted_log_output += write_application_poller_start_to_log_output(
+            interpreted_log_output += constructinterpretedlog.write_application_poller_start_to_log_output(
                 "Application Poller Starts",
                 self.esp_phase, self.user_session,
                 self.comanagement_workload, self.app_type,
                 self.poller_apps_got, self.poller_time)
         else:
-            interpreted_log_output += write_application_poller_start_to_log_output(
+            interpreted_log_output += constructinterpretedlog.write_application_poller_start_to_log_output(
                 "Application Poller Missing Start",
                 self.esp_phase, self.user_session,
                 self.comanagement_workload, self.app_type,
