@@ -73,14 +73,52 @@ Later when Intune supports MSFB Win32 app, it may also support dependency then. 
 
 """
 
-from imeinterpreter import *
 from tkinterui import *
 import sys
+import os
+
+
+def update_pyd_and_json_from_github():
+    download_file(
+        'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/logging%20keyword%20table.json',
+        'logging keyword table.json')
+
+    download_file(
+        'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/imeinterpreter.cp311-win_amd64.pyd',
+        'imeinterpreter.cp311-win_amd64.pyd')
+
+    download_file(
+        'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/constructinterpretedlog.cp311-win_amd64.pyd',
+        'constructinterpretedlog.cp311-win_amd64.pyd')
+
+    download_file(
+        'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/logprocessinglibrary.cp311-win_amd64.pyd',
+        'logprocessinglibrary.cp311-win_amd64.pyd')
+
+    download_file(
+        'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/emslifecycle.cp311-win_amd64.pyd',
+        'emslifecycle.cp311-win_amd64.pyd')
+
+    download_file(
+        'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/applicationpoller.cp311-win_amd64.pyd',
+        'applicationpoller.cp311-win_amd64.pyd')
+
+    download_file(
+        'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/subgraph.cp311-win_amd64.pyd',
+        'subgraph.cp311-win_amd64.pyd')
+
+    download_file(
+        'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/tkinterui.cp311-win_amd64.pyd',
+        'tkinterui.cp311-win_amd64.pyd')
+
+    download_file(
+        'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/win32app.cp311-win_amd64.pyd',
+        'win32app.cp311-win_amd64.pyd')
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-30-04-21-47"
-    # test_log_folder = r"D:\Kun\Downloads\IME test logs\Logs 谢飞 adobe"
     # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-27-03-20-10"
     # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-17-03-50-20"
     # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-24-00-54-21"
@@ -90,6 +128,9 @@ if __name__ == '__main__':
     # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-17-13-53-48"
     # a = ImeInterpreter(test_log_folder)
     # print(a.generate_ime_interpreter_log_output(False))
+
+    update_pyd_and_json_from_github()
+
     args = sys.argv
     if len(args) > 1:
         path_to_ime_log_folder = args[1]
@@ -110,6 +151,7 @@ if __name__ == '__main__':
                 print('''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
                 sys.exit('''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
 
+        from imeinterpreter import *
         a = ImeInterpreter(path_to_ime_log_folder)
         with open(path_to_output_file, 'w') as outfile:
             # Write some text to the file
