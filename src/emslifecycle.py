@@ -13,7 +13,6 @@ Class hierarchy:
                 - Win32App
 
 """
-from logprocessinglibrary import *
 from applicationpoller import *
 
 

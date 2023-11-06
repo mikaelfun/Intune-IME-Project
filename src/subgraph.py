@@ -15,8 +15,6 @@ Class hierarchy:
                 - Win32App
 
 """
-from logprocessinglibrary import *
-import json
 from win32app import *
 from win32app import Win32App
 

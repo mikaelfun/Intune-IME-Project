@@ -14,9 +14,6 @@ Class hierarchy:
 
 """
 
-from logprocessinglibrary import *
-import datetime
-import json
 from constructinterpretedlog import *
 from subgraph import *
 

@@ -45,8 +45,6 @@ Note:
 
     RestartBehavior:
 """
-from logprocessinglibrary import *
-import json
 from constructinterpretedlog import *
 
 

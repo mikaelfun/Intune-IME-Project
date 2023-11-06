@@ -21,9 +21,8 @@ Display download URL
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-from logprocessinglibrary import *
-from constructinterpretedlog import *
 from imeinterpreter import *
+import requests
 
 
 class OnOffButton(ttk.Button):
@@ -45,10 +44,18 @@ class OnOffButton(ttk.Button):
             self.configure(text="Off")
 
 
+def download_file(url, filename):
+    # Send a HTTP request to the URL
+    r = requests.get(url, allow_redirects=True)
+
+    # Write the content of the request to a file
+    open(filename, 'wb').write(r.content)
+
+
 class Root(Tk):
     def __init__(self):
         super(Root, self).__init__()
-        self.title("IME log Interpreter  V3.0")
+        self.title("IME log Interpreter  V4.0")
         self.minsize(1920, 850)
 
         self.labelFrame = ttk.LabelFrame(self, text="Log folder loaded", height=48, width=190)
@@ -91,6 +98,9 @@ class Root(Tk):
         self.scrollbar.grid(row=0, column=1, sticky=NS)
         self.text_output['yscrollcommand'] = self.scrollbar.set
 
+        # Use the function
+        download_file('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/logging%20keyword%20table.json', 'logging keyword table.json')
+
     def turn_on(self):
         self.enable_full_log.set(True)
 
@@ -98,7 +108,7 @@ class Root(Tk):
         self.enable_full_log.set(False)
 
     def browse_button_init(self):
-        self.browse_button = ttk.Button(self.action_frame, text="Browse IME log File", command=self.file_dialog)
+        self.browse_button = ttk.Button(self.action_frame, text="Browse IME log Folder", command=self.file_dialog)
         self.browse_button.grid(column=0, row=0, sticky=W)
 
     def button_analyze_init(self):

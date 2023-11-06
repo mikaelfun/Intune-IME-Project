@@ -79,20 +79,27 @@ import sys
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    #test_log_folder = "C:\\Users\\kufang\\OneDrive - Microsoft\\Projects\\IME project\\IMEintepreter Pycharm\\src\\test cases"
-    #test_log_folder = "D:\\Kun\\Documents\\PyCharm\\IME Interpreter 3.0 - Test cases\\msfb win32\\Ryan_Logs\\Logs"
-    #a = ImeInterpreter(test_log_folder)
-    #print(a.generate_ime_interpreter_log_output(False))
+    # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-30-04-21-47"
+    # test_log_folder = r"D:\Kun\Downloads\IME test logs\Logs 谢飞 adobe"
+    # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-27-03-20-10"
+    # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-17-03-50-20"
+    # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-24-00-54-21"
+    # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-24-04-02-41"
+    # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-23-06-06-17"
+    # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-16-07-45-17"
+    # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-17-13-53-48"
+    # a = ImeInterpreter(test_log_folder)
+    # print(a.generate_ime_interpreter_log_output(False))
     args = sys.argv
     if len(args) > 1:
         path_to_ime_log_folder = args[1]
         if not os.path.exists(path_to_ime_log_folder):
-            print('''Invalid argument! "path_to_ime_log_folder" does not exists!''')
-            sys.exit('''Invalid argument! "path_to_ime_log_folder" does not exists!''')
+            print('''Invalid argument! "path_to_ime_log_folder" does not exist!''')
+            sys.exit('''Invalid argument! "path_to_ime_log_folder" does not exist!''')
 
         if len(args) <= 2 or len(args) >= 5:
-            print('''Invalid argument! Please follow "IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
-            sys.exit('''Invalid argument! Please follow "IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
+            print('''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
+            sys.exit('''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
 
         path_to_output_file = args[2]
         full_log_switch = False
@@ -100,8 +107,8 @@ if __name__ == '__main__':
             if args[3] == "FULL":
                 full_log_switch = True
             else:
-                print('''Invalid argument! Please follow "IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
-                sys.exit('''Invalid argument! Please follow "IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
+                print('''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
+                sys.exit('''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
 
         a = ImeInterpreter(path_to_ime_log_folder)
         with open(path_to_output_file, 'w') as outfile:
