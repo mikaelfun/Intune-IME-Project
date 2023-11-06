@@ -22,7 +22,6 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 import importlib
-import imeinterpreter
 import requests
 
 
@@ -99,13 +98,6 @@ class Root(Tk):
         self.scrollbar.grid(row=0, column=1, sticky=NS)
         self.text_output['yscrollcommand'] = self.scrollbar.set
 
-        # Use the function
-        download_file('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/logging%20keyword%20table.json', 'logging keyword table.json')
-
-        download_file(
-        'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/imeinterpreter.cp311-win_amd64.pyd',
-        'imeinterpreter.cp311-win_amd64.pyd')
-
     def turn_on(self):
         self.enable_full_log.set(True)
 
@@ -135,7 +127,7 @@ class Root(Tk):
         self.on_off_button.grid(column=0, row=0, sticky=W)
 
     def clear_result(self):
-        self.text_output.delete("1.0","end")
+        self.text_output.delete("1.0", "end")
 
     def file_dialog(self):
         if self.log_folder_name == "":
@@ -146,7 +138,7 @@ class Root(Tk):
         self.label.configure(text=self.log_folder_name)
 
     def start_analyze(self, ime_log_folder_path):
-        importlib.reload(imeinterpreter)
+        import imeinterpreter
         ime_interpreter_object = imeinterpreter.ImeInterpreter(ime_log_folder_path)
         processed_log = ime_interpreter_object.generate_ime_interpreter_log_output(self.on_off_button.var.get())
         self.text_output.delete("1.0", "end")

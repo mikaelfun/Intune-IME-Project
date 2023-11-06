@@ -13,7 +13,9 @@ Class hierarchy:
                 - Win32App
 
 """
-from emslifecycle import *
+import os
+from constructinterpretedlog import *
+import emslifecycle
 
 
 class ImeInterpreter:
@@ -187,7 +189,7 @@ class ImeInterpreter:
             return None
             # exit(1000)
         for index_lifecycle_log in range(len(ems_agent_lifecycle_log_list)):
-            self.life_cycle_list.append(EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],
+            self.life_cycle_list.append(emslifecycle.EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],
                                         ems_agent_restart_reasons[index_lifecycle_log]))
 
     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):
@@ -206,6 +208,7 @@ class ImeInterpreter:
             interpreted_log_output += '\n'
             interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
 
+        # interpreted_log_output = "Updated!"
         return interpreted_log_output
 
 
