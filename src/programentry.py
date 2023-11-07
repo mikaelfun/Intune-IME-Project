@@ -72,7 +72,6 @@ Later when Intune supports MSFB Win32 app, it may also support dependency then. 
 
 
 """
-
 import sys
 import os
 from tkinterui import *
@@ -81,6 +80,23 @@ from tkinter import ttk
 from tkinter import filedialog
 import json
 import requests
+
+
+def update_selfupdater():
+    url = 'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/selfupdater.exe'
+    filename = url.split("/")[-1].replace('%20', ' ')
+    response = requests.get(url, stream=True)
+    total = response.headers.get('content-length')
+
+    with open(filename, 'wb') as f:
+        if total is None:
+            f.write(response.content)
+        else:
+            downloaded = 0
+            total = int(total)
+            for data in response.iter_content(chunk_size=max(int(total / 1000), 1024 * 1024)):
+                downloaded += len(data)
+                f.write(data)
 
 
 # Press the green button in the gutter to run the script.
@@ -98,6 +114,11 @@ if __name__ == '__main__':
 
     # update_pyd_and_json_from_github()
 
+    try:
+        update_selfupdater()
+    except:
+        print("Unable to update selfupdater.exe!")
+
     args = sys.argv
     if len(args) > 1:
         path_to_ime_log_folder = args[1]
@@ -106,8 +127,10 @@ if __name__ == '__main__':
             sys.exit('''Invalid argument! "path_to_ime_log_folder" does not exist!''')
 
         if len(args) <= 2 or len(args) >= 5:
-            print('''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
-            sys.exit('''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
+            print(
+                '''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
+            sys.exit(
+                '''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
 
         path_to_output_file = args[2]
         full_log_switch = False
@@ -115,10 +138,13 @@ if __name__ == '__main__':
             if args[3] == "FULL":
                 full_log_switch = True
             else:
-                print('''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
-                sys.exit('''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
+                print(
+                    '''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
+                sys.exit(
+                    '''Invalid argument! Please follow "IME_Interpreter_UI 4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
 
         from imeinterpreter import *
+
         a = ImeInterpreter(path_to_ime_log_folder)
         with open(path_to_output_file, 'w') as outfile:
             # Write some text to the file
@@ -128,4 +154,3 @@ if __name__ == '__main__':
     else:
         root = Root()
         root.mainloop()
-
