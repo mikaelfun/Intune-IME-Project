@@ -5,28 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfc567d1-b6c4-44a0-8487-755a14a15d51" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/IMEInterLauncher.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/selfupdater.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../IME Interpreter UI 4.0.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PYDsetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/PYDsetup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/applicationpoller.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/applicationpoller.cp311-win_amd64.pyd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/applicationpoller.py" beforeDir="false" afterPath="$PROJECT_DIR$/applicationpoller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constructinterpretedlog.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/constructinterpretedlog.cp311-win_amd64.pyd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constructinterpretedlog.py" beforeDir="false" afterPath="$PROJECT_DIR$/constructinterpretedlog.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/emslifecycle.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/emslifecycle.cp311-win_amd64.pyd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/emslifecycle.py" beforeDir="false" afterPath="$PROJECT_DIR$/emslifecycle.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/imeinterpreter.c" beforeDir="false" afterPath="$PROJECT_DIR$/imeinterpreter.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/imeinterpreter.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/imeinterpreter.cp311-win_amd64.pyd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/imeinterpreter.py" beforeDir="false" afterPath="$PROJECT_DIR$/imeinterpreter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logprocessinglibrary.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/logprocessinglibrary.cp311-win_amd64.pyd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/programentry.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/subgraph.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/subgraph.cp311-win_amd64.pyd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/subgraph.py" beforeDir="false" afterPath="$PROJECT_DIR$/subgraph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tkinterui.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/tkinterui.cp311-win_amd64.pyd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tkinterui.py" beforeDir="false" afterPath="$PROJECT_DIR$/tkinterui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/win32app.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/win32app.cp311-win_amd64.pyd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/win32app.py" beforeDir="false" afterPath="$PROJECT_DIR$/win32app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfupdater.py" beforeDir="false" afterPath="$PROJECT_DIR$/selfupdater.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +39,7 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.selfupdater">
     <configuration name="programentry" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IME Interpreter" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -81,8 +61,30 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="selfupdater" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="IME Interpreter" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfupdater.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.selfupdater" />
         <item itemvalue="Python.programentry" />
       </list>
     </recent_temporary>
@@ -173,6 +175,11 @@
           <url>file://$PROJECT_DIR$/applicationpoller.py</url>
           <line>249</line>
           <option name="timeStamp" value="64" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/selfupdater.py</url>
+          <line>68</line>
+          <option name="timeStamp" value="67" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
