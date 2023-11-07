@@ -15,13 +15,14 @@ Class hierarchy:
                 - Win32App
 
 """
-from win32app import *
-from win32app import Win32App
+import logprocessinglibrary
+import win32app
+import constructinterpretedlog
 
 
 class SubGraph:
     def __init__(self, subgraph_processing_log, policy_json, last_enforcement_json_dict, reevaluation_time="Subgraph Not Evaluated before"):
-        self.log_keyword_table = init_keyword_table()
+        self.log_keyword_table = logprocessinglibrary.init_keyword_table()
         self.reevaluation_time = reevaluation_time
         self.reevaluation_expired = True
         self.hash_key = ""
@@ -194,11 +195,11 @@ class SubGraph:
                 <![LOG[[Win32App][GRSManager] Found GRS value: 03/23/2023 08:55:35 at key 8679bddf-b85f-473c-bc47-2ed0457ec9fb\GRS\2BKBFKBaevJ8qnbQsLVnCKDoI1ZjfmU5sTdZPc/QtWE=\cce28372-03a1-4006-8035-00deb0c906ed.]LOG]!>
                 """
                 grs_value_hash_index_start = len(self.log_keyword_table['LOG_WIN32_GRS_INDICATOR']) + len('03/23/2023 08:55:35 at key 8679bddf-b85f-473c-bc47-2ed0457ec9fb\GRS') + 1
-                grs_value_hash_index_end = grs_value_hash_index_start + CONST_GRS_HASH_KEY_LEN
+                grs_value_hash_index_end = grs_value_hash_index_start + logprocessinglibrary.CONST_GRS_HASH_KEY_LEN
                 if self.hash_key == "":
                     self.hash_key = cur_line[grs_value_hash_index_start:grs_value_hash_index_end]
                 app_id_index_end = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING']) - 1
-                app_id_index_start = app_id_index_end - CONST_APP_ID_LEN
+                app_id_index_start = app_id_index_end - logprocessinglibrary.CONST_APP_ID_LEN
                 cur_app_id = cur_line[app_id_index_start:app_id_index_end]
                 grs_time_index_start = len(self.log_keyword_table['LOG_WIN32_GRS_INDICATOR'])
                 log_subgraph_hash_indicator = ' at key '
@@ -207,23 +208,23 @@ class SubGraph:
                 self.grs_time_list[cur_app_id] = cur_app_grs_time
                 # print(self.hash_key)
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR'])
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR'])
                 # print(cur_line[79:83])
                 if self.log_keyword_table['LOG_WIN32_NO_GRS_2_INDICATOR'] in cur_line:
                     # app has no grs found.
                     """
                     <![LOG[[Win32App][GRSManager] App with id: 471f61b1-58ad-431b-bd4d-386d3c953773 has no recorded GRS value which will be treated as expired. | Hash = Z/qdb2IBJPXgSPPxMV14feLXHs7e8XnvSEYNW5fqv3M=]LOG]!
                     """
-                    grs_value_hash_index_start = len('<![LOG[[Win32App][GRSManager] App with id: ') + CONST_APP_ID_LEN + len(' has no recorded GRS value which will be treated as expired. | Hash = ')
-                    grs_value_hash_index_end = grs_value_hash_index_start + CONST_GRS_HASH_KEY_LEN
+                    grs_value_hash_index_start = len('<![LOG[[Win32App][GRSManager] App with id: ') + logprocessinglibrary.CONST_APP_ID_LEN + len(' has no recorded GRS value which will be treated as expired. | Hash = ')
+                    grs_value_hash_index_end = grs_value_hash_index_start + logprocessinglibrary.CONST_GRS_HASH_KEY_LEN
                     if self.hash_key == "":
                         self.hash_key = cur_line[grs_value_hash_index_start:grs_value_hash_index_end]
                     self.grs_expiry[cur_app_id] = True
-                elif cur_line[len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN: len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN + len(' is ')] == ' is ':
+                elif cur_line[len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + logprocessinglibrary.CONST_APP_ID_LEN: len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + logprocessinglibrary.CONST_APP_ID_LEN + len(' is ')] == ' is ':
                     """
                     <![LOG[[Win32App][GRSManager] App with id: cce28372-03a1-4006-8035-00deb0c906ed is expired. | Hash = 2BKBFKBaevJ8qnbQsLVnCKDoI1ZjfmU5sTdZPc/QtWE=
                     """
-                    expiry_start_index = len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + CONST_APP_ID_LEN + len(' is ')
+                    expiry_start_index = len(self.log_keyword_table['LOG_WIN32_NO_GRS_1_INDICATOR']) + logprocessinglibrary.CONST_APP_ID_LEN + len(' is ')
                     expiry_end_index = cur_line.find('. | Hash =')
                     cur_app_expiry_string = cur_line[expiry_start_index: expiry_end_index]
                     """
@@ -252,7 +253,7 @@ class SubGraph:
             cur_app_grs_expiry = self.grs_expiry[cur_app_id] if cur_app_id in self.grs_expiry.keys() else False
             cur_app_last_enforcement_json = self.last_enforcement_json_dict[cur_app_id] \
                 if cur_app_id in self.last_enforcement_json_dict.keys() else None
-            self.subgraph_app_object_list.append(Win32App(self.log_content, cur_app_id, cur_app_name, self.policy_json,
+            self.subgraph_app_object_list.append(win32app.Win32App(self.log_content, cur_app_id, cur_app_name, self.policy_json,
                                                           cur_app_grs_time, self.hash_key, cur_app_grs_expiry,
                                                           self.subgraph_type, cur_app_last_enforcement_json))
             # print("here")
@@ -276,7 +277,7 @@ class SubGraph:
                 interpreted_log_output += app_object.generate_win32app_first_line_log_output(depth)
                 interpreted_log_output += app_object.generate_win32app_pre_download_log_output(depth)
                 interpreted_log_output += '\n'
-                interpreted_log_output += write_log_output_line_with_indent_depth(app_object.pre_install_detection_time + ' Processing dependent apps start\n\n', depth)
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(app_object.pre_install_detection_time + ' Processing dependent apps start\n\n', depth)
 
             dependency_app_id_list = [each_dependency_dic['ChildId'] for each_dependency_dic in app_object.dependent_apps_list]
             dependency_app_object_list = [each_app for each_app in self.subgraph_app_object_list if each_app.app_id in dependency_app_id_list]
@@ -287,10 +288,10 @@ class SubGraph:
                 interpreted_log_output += '\n'
 
             if self.reevaluation_expired:
-                interpreted_log_output += write_log_output_line_with_indent_depth(each_app_object.end_time + ' All dependent apps processed, processing root app [' + app_object.app_name + ']\n\n', depth)
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(each_app_object.end_time + ' All dependent apps processed, processing root app [' + app_object.app_name + ']\n\n', depth)
                 interpreted_log_output += app_object.generate_win32app_post_download_log_output(depth)
                 if not app_object.has_enforcement and not app_object.reason_need_output:
-                    interpreted_log_output += write_log_output_line_with_indent_depth(app_object.end_time + ' No Action required for this root app [' + app_object.app_name + '] because ' + app_object.no_enforcement_reason + '\n', depth)
+                    interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(app_object.end_time + ' No Action required for this root app [' + app_object.app_name + '] because ' + app_object.no_enforcement_reason + '\n', depth)
 
             else:
                 pass

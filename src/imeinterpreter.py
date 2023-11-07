@@ -14,8 +14,10 @@ Class hierarchy:
 
 """
 import os
-from constructinterpretedlog import *
+import datetime
+import logprocessinglibrary
 import emslifecycle
+import constructinterpretedlog
 
 
 class ImeInterpreter:
@@ -92,12 +94,12 @@ class ImeInterpreter:
                 ems_agent_stop_lines.append(index)
         start_lines_len = len(ems_agent_start_lines)
         stop_lines_len = len(ems_agent_stop_lines)
-        last_start_time = get_timestamp_by_line(self.full_log[0])
-        last_stop_time = get_timestamp_by_line(self.full_log[-1])
+        last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[0])
+        last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[-1])
         if start_lines_len > 0:
-            last_start_time = get_timestamp_by_line(self.full_log[ems_agent_start_lines[-1]])
+            last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_start_lines[-1]])
         if stop_lines_len > 0:
-            last_stop_time = get_timestamp_by_line(self.full_log[ems_agent_stop_lines[-1]])
+            last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_stop_lines[-1]])
 
         ems_agent_sorted_start_lines = []
         ems_agent_sorted_stop_lines = []
@@ -166,11 +168,11 @@ class ImeInterpreter:
                 self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]:
                               ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
             if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:
-                agent_stop_time = get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
+                agent_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
                 agent_stop_time_datetime = datetime.datetime.strptime(agent_stop_time[:-4], '%m-%d-%Y %H:%M:%S')
-                agent_next_start_time = get_timestamp_by_line(
+                agent_next_start_time = logprocessinglibrary.get_timestamp_by_line(
                     self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index + 1]])
-                agent_next_start_time_datetime = convert_date_string_to_date_time(agent_next_start_time[:-4])
+                agent_next_start_time_datetime = logprocessinglibrary.convert_date_string_to_date_time(agent_next_start_time[:-4])
 
                 if agent_next_start_time_datetime - agent_stop_time_datetime < datetime.timedelta(seconds=10):
                     agent_life_ending_reason.append("Service Manual Restart")
@@ -193,7 +195,6 @@ class ImeInterpreter:
                                         ems_agent_restart_reasons[index_lifecycle_log]))
 
     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):
-        import constructinterpretedlog
         interpreted_log_output = ""
         if self.full_log is None:
             interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
@@ -209,7 +210,6 @@ class ImeInterpreter:
             interpreted_log_output += '\n'
             interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
 
-        # interpreted_log_output = "Updated!"
         return interpreted_log_output
 
 

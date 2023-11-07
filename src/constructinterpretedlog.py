@@ -1,5 +1,4 @@
 from logprocessinglibrary import *
-from applicationpoller import *
 
 """
 Output standards:

@@ -1,3 +1,7 @@
+import tkinter
+from tkinter import ttk
+from tkinter import filedialog
+import imeinterpreter
 '''
 Developing plan:
 
@@ -18,17 +22,12 @@ Remember last opened directory              done
 Display download URL
 
 '''
-from tkinter import *
-from tkinter import ttk
-from tkinter import filedialog
-import importlib
-import requests
 
 
 class OnOffButton(ttk.Button):
     def __init__(self, master=None, **kw):
         super().__init__(master, **kw)
-        self.var = BooleanVar()
+        self.var = tkinter.BooleanVar()
         self.var.set(False)
         self.configure(command=self.toggle)
         self.update_text()
@@ -44,7 +43,7 @@ class OnOffButton(ttk.Button):
             self.configure(text="Off")
 
 
-class Root(Tk):
+class Root(tkinter.Tk):
     def __init__(self):
         super(Root, self).__init__()
         self.title("IME log Interpreter  V4.0")
@@ -58,10 +57,10 @@ class Root(Tk):
 
         self.action_frame = ttk.LabelFrame(self, text="Actions", height=48, width=60)
         # self.action_frame = ttk.Frame(self, height=15, width=100, )
-        self.action_frame.grid(column=1, row=0, padx=5, pady=5, sticky=NS)
+        self.action_frame.grid(column=1, row=0, padx=5, pady=5, sticky=tkinter.NS)
 
         self.label = ttk.Label(self.labelFrame, text="")
-        self.label.grid(column=0, row=1, sticky=W)
+        self.label.grid(column=0, row=1, sticky=tkinter.W)
 
         self.browse_button = None
 
@@ -73,7 +72,7 @@ class Root(Tk):
         self.button_clear = None
         self.button_clear_init()
 
-        self.enable_full_log = BooleanVar()
+        self.enable_full_log = tkinter.BooleanVar()
         self.enable_full_log.set(False)
 
         self.enable_full_log_label_frame = ttk.LabelFrame(self.action_frame, text="Enable full log", height=15, width=30)
@@ -87,7 +86,7 @@ class Root(Tk):
         self.log_folder_name = ""
 
         self.scrollbar = ttk.Scrollbar(self.log_frame, orient='vertical', command=self.text_output.yview)
-        self.scrollbar.grid(row=0, column=1, sticky=NS)
+        self.scrollbar.grid(row=0, column=1, sticky=tkinter.NS)
         self.text_output['yscrollcommand'] = self.scrollbar.set
 
     def turn_on(self):
@@ -98,25 +97,25 @@ class Root(Tk):
 
     def browse_button_init(self):
         self.browse_button = ttk.Button(self.action_frame, text="Browse IME log Folder", command=self.file_dialog)
-        self.browse_button.grid(column=0, row=0, sticky=W)
+        self.browse_button.grid(column=0, row=0, sticky=tkinter.W)
 
     def button_analyze_init(self):
         self.button_analyze = ttk.Button(self.action_frame, text="Start Analyzing", command=lambda: self.start_analyze(self.log_folder_name))
-        self.button_analyze.grid(column=0, row=3, sticky=W)
+        self.button_analyze.grid(column=0, row=3, sticky=tkinter.W)
 
     def button_clear_init(self):
         self.button_clear = ttk.Button(self.action_frame, text="Clear Result", command=self.clear_result)
-        self.button_clear.grid(column=0, row=1, sticky=W)
+        self.button_clear.grid(column=0, row=1, sticky=tkinter.W)
 
     def text_output_init(self):
         # Create text widget and specify size.
-        self.text_output = Text(self.log_frame, height=48, width=190, font=('Consolas', 12))
+        self.text_output = tkinter.Text(self.log_frame, height=48, width=190, font=('Consolas', 12))
         # Times New Roman
         self.text_output.grid(column=0, row=0)
 
     def full_log_button_init(self):
-        self.enable_full_log_label_frame.grid(column=0, row=2, sticky=W)
-        self.on_off_button.grid(column=0, row=0, sticky=W)
+        self.enable_full_log_label_frame.grid(column=0, row=2, sticky=tkinter.W)
+        self.on_off_button.grid(column=0, row=0, sticky=tkinter.W)
 
     def clear_result(self):
         self.text_output.delete("1.0", "end")
@@ -130,8 +129,7 @@ class Root(Tk):
         self.label.configure(text=self.log_folder_name)
 
     def start_analyze(self, ime_log_folder_path):
-        import imeinterpreter
         ime_interpreter_object = imeinterpreter.ImeInterpreter(ime_log_folder_path)
         processed_log = ime_interpreter_object.generate_ime_interpreter_log_output(self.on_off_button.var.get())
         self.text_output.delete("1.0", "end")
-        self.text_output.insert(END, processed_log)
+        self.text_output.insert(tkinter.END, processed_log)

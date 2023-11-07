@@ -14,12 +14,15 @@ Class hierarchy:
 
 """
 
-from subgraph import *
+import json
+import logprocessinglibrary
+import subgraph
+import constructinterpretedlog
 
 
 class ApplicationPoller:
     def __init__(self, poller_log, poller_thread_string):
-        self.log_keyword_table = init_keyword_table()
+        self.log_keyword_table = logprocessinglibrary.init_keyword_table()
         self.log_content = list(poller_log.split("\n"))
         if self.log_content[-1] == "":
             self.log_content.pop(-1)
@@ -28,10 +31,10 @@ class ApplicationPoller:
             print("Error self.log_len < 3! Exit 3101")
             return None
             # exit(3101)
-        self.poller_time = get_timestamp_by_line(self.log_content[0])
+        self.poller_time = logprocessinglibrary.get_timestamp_by_line(self.log_content[0])
         self.thread_id = poller_thread_string
-        self.start_time = get_timestamp_by_line(self.log_content[0])
-        self.stop_time = get_timestamp_by_line(self.log_content[-1])
+        self.start_time = logprocessinglibrary.get_timestamp_by_line(self.log_content[0])
+        self.stop_time = logprocessinglibrary.get_timestamp_by_line(self.log_content[-1])
         # self.app_processing_line_start, self.app_processing_line_stop = self.get_each_app_processing_lines()
         # self.number_of_apps_processed = len(self.app_processing_line_start)
         self.esp_phase = ""
@@ -59,7 +62,7 @@ class ApplicationPoller:
     def init_app_poller_meta_data(self):
         for log_line_index in range(self.log_len):
             each_line = self.log_content[log_line_index]
-            if locate_thread(each_line) != self.thread_id:
+            if logprocessinglibrary.locate_thread(each_line) != self.thread_id:
                 # ignoring log not belonging to this poller thread. All these metadata are not related to UWP special case with new thread ID on installing.
                 continue
 
@@ -141,13 +144,12 @@ class ApplicationPoller:
 
         so the common element should be the target line we are looking at. and it should only contain 1 element.
         """
-
         for log_line_index in range(self.log_len):
             cur_line = self.log_content[log_line_index]
             """
             Fix bug that will read other threads app processing.
             """
-            if locate_thread(cur_line) != self.thread_id:
+            if logprocessinglibrary.locate_thread(cur_line) != self.thread_id:
                 continue
             if self.subgraph_num_expected == -1 and cur_line.startswith(self.log_keyword_table['LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR']) \
                     and self.log_keyword_table['LOG_V3_PROCESSOR_ALL_SUBGRAPH_2_INDICATOR'] in cur_line:  # get ESP phase
@@ -158,7 +160,7 @@ class ApplicationPoller:
             elif cur_line.startswith(self.log_keyword_table['LOG_REPORTING_STATE_1_INDICATOR']) and \
                     (self.log_keyword_table['LOG_REPORTING_STATE_2_INDICATOR'] in cur_line or self.log_keyword_table['LOG_REPORTING_STATE_3_INDICATOR'] in cur_line):
 
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_REPORTING_STATE_1_INDICATOR'])
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_REPORTING_STATE_1_INDICATOR'])
                 reporting_state_start_index = cur_line.find('ReportingState: ') + len('ReportingState: ')
                 reporting_state_end_index = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
                 reporting_state_json_string = cur_line[reporting_state_start_index:reporting_state_end_index]
@@ -231,7 +233,7 @@ class ApplicationPoller:
         for subgraph_index in range(len(self.index_list_subgraph_processing_start)):
             cur_subgraph_start_line_index = self.index_list_subgraph_processing_start[subgraph_index]
             cur_subgraph_stop_line_index = self.index_list_subgraph_processing_stop[subgraph_index] + 1
-            cur_subgraph = SubGraph(self.log_content[cur_subgraph_start_line_index:cur_subgraph_stop_line_index],
+            cur_subgraph = subgraph.SubGraph(self.log_content[cur_subgraph_start_line_index:cur_subgraph_stop_line_index],
                                     self.get_policy_json, self.last_enforcement_json_dict)
 
             # Overwrite from poller to Subgraph object
@@ -256,7 +258,6 @@ class ApplicationPoller:
             return interpreted_log_output
 
         first_line = self.log_content[0]
-        import constructinterpretedlog
         if first_line.startswith(
                 self.log_keyword_table['LOG_APP_POLLER_START_STRING']):
             interpreted_log_output += constructinterpretedlog.write_application_poller_start_to_log_output(

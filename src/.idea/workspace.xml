@@ -5,9 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfc567d1-b6c4-44a0-8487-755a14a15d51" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/IMEInterLauncher.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selfupdater.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../IME Interpreter UI 4.0.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PYDsetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/PYDsetup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/applicationpoller.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/applicationpoller.cp311-win_amd64.pyd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/applicationpoller.py" beforeDir="false" afterPath="$PROJECT_DIR$/applicationpoller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructinterpretedlog.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/constructinterpretedlog.cp311-win_amd64.pyd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructinterpretedlog.py" beforeDir="false" afterPath="$PROJECT_DIR$/constructinterpretedlog.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/emslifecycle.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/emslifecycle.cp311-win_amd64.pyd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/emslifecycle.py" beforeDir="false" afterPath="$PROJECT_DIR$/emslifecycle.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/imeinterpreter.c" beforeDir="false" afterPath="$PROJECT_DIR$/imeinterpreter.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imeinterpreter.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/imeinterpreter.cp311-win_amd64.pyd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imeinterpreter.py" beforeDir="false" afterPath="$PROJECT_DIR$/imeinterpreter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logprocessinglibrary.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/logprocessinglibrary.cp311-win_amd64.pyd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/programentry.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/subgraph.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/subgraph.cp311-win_amd64.pyd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/subgraph.py" beforeDir="false" afterPath="$PROJECT_DIR$/subgraph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tkinterui.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/tkinterui.cp311-win_amd64.pyd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tkinterui.py" beforeDir="false" afterPath="$PROJECT_DIR$/tkinterui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/win32app.cp311-win_amd64.pyd" beforeDir="false" afterPath="$PROJECT_DIR$/win32app.cp311-win_amd64.pyd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/win32app.py" beforeDir="false" afterPath="$PROJECT_DIR$/win32app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +60,7 @@
   }
 }</component>
   <component name="RunManager">
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="programentry" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IME Interpreter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -53,7 +72,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="SCRIPT_NAME" value="D:\Kun\Documents\PyCharm\IME Interpreter\src\programentry.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -64,7 +83,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
+        <item itemvalue="Python.programentry" />
       </list>
     </recent_temporary>
   </component>
@@ -87,68 +106,73 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>606</line>
+          <line>609</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>918</line>
+          <line>921</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>913</line>
+          <line>916</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>915</line>
+          <line>918</line>
           <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/emslifecycle.py</url>
-          <line>106</line>
+          <line>107</line>
           <option name="timeStamp" value="31" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/subgraph.py</url>
-          <line>238</line>
+          <line>239</line>
           <option name="timeStamp" value="37" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>2100</line>
+          <line>2103</line>
           <option name="timeStamp" value="39" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/subgraph.py</url>
-          <line>321</line>
+          <line>322</line>
           <option name="timeStamp" value="51" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>2067</line>
+          <line>2070</line>
           <option name="timeStamp" value="54" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>1185</line>
+          <line>1188</line>
           <option name="timeStamp" value="58" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/subgraph.py</url>
-          <line>248</line>
+          <line>249</line>
           <option name="timeStamp" value="60" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/subgraph.py</url>
-          <line>257</line>
+          <line>258</line>
           <option name="timeStamp" value="62" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>265</line>
+          <line>268</line>
           <option name="timeStamp" value="63" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/applicationpoller.py</url>
+          <line>249</line>
+          <option name="timeStamp" value="64" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

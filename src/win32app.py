@@ -45,13 +45,16 @@ Note:
 
     RestartBehavior:
 """
-from constructinterpretedlog import *
+import datetime
+import json
+import logprocessinglibrary
+import constructinterpretedlog
 
 
 class Win32App:
     def __init__(self, subgraph_log, app_id, app_name, policy_json, grs_time, subgraph_hash, grs_expiry=True,
                  subgraph_type=1, last_enforcement_json=None):
-        self.log_keyword_table = init_keyword_table()
+        self.log_keyword_table = logprocessinglibrary.init_keyword_table()
         self.app_name = app_name
         self.app_id = app_id
         self.app_type = 'Unknown'
@@ -90,8 +93,8 @@ class Win32App:
             print("Error! Invalid Win32App log length. Exit 5001")
             return None
         self.subgraph_type = subgraph_type
-        self.start_time = get_timestamp_by_line(self.full_log[0])
-        self.end_time = get_timestamp_by_line(self.full_log[-1])
+        self.start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[0])
+        self.end_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[-1])
         # default to last line, in dependency flow, change to current app ending index line
         self.intent = -1
         '''
@@ -413,10 +416,10 @@ class Win32App:
         post_download = False
         for cur_line_index in range(len(self.full_log)):
             cur_line = self.full_log[cur_line_index]
-            cur_time = get_timestamp_by_line(cur_line)
+            cur_time = logprocessinglibrary.get_timestamp_by_line(cur_line)
 
             if cur_line.startswith(self.log_keyword_table['LOG_WIN32_DETECTION_OLD_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_DETECTION_OLD_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -430,7 +433,7 @@ class Win32App:
                         self.pre_install_detection_time = cur_time
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DETECTION_STATE_REPORT_INDICATOR']):
                 # Evaluating whether app has enforcement
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_DETECTION_STATE_REPORT_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -471,7 +474,7 @@ class Win32App:
                             self.post_install_detection = True
                             self.post_install_detection_time = cur_time
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_APPLICABILITY_OLD_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -486,7 +489,7 @@ class Win32App:
                         self.applicability_time = cur_time
             elif cur_line.startswith(
                             self.log_keyword_table['LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -511,7 +514,7 @@ class Win32App:
                 self.applicability_time = cur_time
 
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_EXECUTION_STATE_REPORT_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_EXECUTION_STATE_REPORT_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -533,7 +536,7 @@ class Win32App:
 
             elif cur_line.startswith(
                     self.log_keyword_table['LOG_WIN32_NO_ACTION_REQUIRED_INDICATOR']):  # TODO ? Delete?
-                cur_app_id = find_app_id_with_starting_string(cur_line, "app with id: ")
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, "app with id: ")
                 if cur_app_id != self.app_id:
                     continue
                 # Stop without enforcement
@@ -546,7 +549,7 @@ class Win32App:
 
                 <![LOG[[Win32App] Downloading app on session 2. App: 3dde4e19-3a18-4dec-b60e-720b919e1790]LOG]!><time="12:37:58.5140236" date="3-23-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
                 """
-                cur_app_id = find_app_id_with_starting_string(cur_line, '. App: ')
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, '. App: ')
                 if cur_app_id != self.app_id:
                     continue
                 if self.download_start_time == "":
@@ -580,7 +583,7 @@ class Win32App:
 
                 <![LOG[[StatusService] Downloading app (id = e765119c-6af3-4d39-8eac-3e86fd7642b0, name Adobe Acrobat DC) via DO, bytes 720928912/721977488 for user 37ed0412-d13e-481c-a784-6447007aa208]LOG]!><time="09:49:19.3750179" date="10-26-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">                
                 """
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -715,7 +718,7 @@ class Win32App:
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_REPORTING_STATE_INDICATOR']):
                 cur_enforcement_index_start = cur_line.find('{"ApplicationId"')
                 cur_enforcement_index_end = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_REPORTING_STATE_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -737,10 +740,10 @@ class Win32App:
         post_download = False
         for cur_line_index in range(len(self.full_log)):
             cur_line = self.full_log[cur_line_index]
-            cur_time = get_timestamp_by_line(cur_line)
+            cur_time = logprocessinglibrary.get_timestamp_by_line(cur_line)
 
             if cur_line.startswith(self.log_keyword_table['LOG_WIN32_DETECTION_OLD_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_DETECTION_OLD_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -754,7 +757,7 @@ class Win32App:
                         self.pre_install_detection_time = cur_time
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DETECTION_STATE_REPORT_INDICATOR']):
                 # Evaluating whether app has enforcement
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_DETECTION_STATE_REPORT_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -799,7 +802,7 @@ class Win32App:
                             self.post_install_detection = True
                             self.post_install_detection_time = cur_time
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_APPLICABILITY_OLD_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -813,7 +816,7 @@ class Win32App:
                         self.applicability = False
                         self.applicability_time = cur_time
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -832,7 +835,7 @@ class Win32App:
                 self.applicability_time = cur_time
 
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_EXECUTION_STATE_REPORT_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_EXECUTION_STATE_REPORT_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -854,7 +857,7 @@ class Win32App:
 
             elif cur_line.startswith(
                     self.log_keyword_table['LOG_WIN32_NO_ACTION_REQUIRED_INDICATOR']):  # TODO ? Delete?
-                cur_app_id = find_app_id_with_starting_string(cur_line, "app with id: ")
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, "app with id: ")
                 if cur_app_id != self.app_id:
                     continue
                 # Stop without enforcement
@@ -867,7 +870,7 @@ class Win32App:
 
                 <![LOG[[Win32App] Downloading app on session 2. App: 3dde4e19-3a18-4dec-b60e-720b919e1790]LOG]!><time="12:37:58.5140236" date="3-23-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
                 """
-                cur_app_id = find_app_id_with_starting_string(cur_line, '. App: ')
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, '. App: ')
                 if cur_app_id != self.app_id:
                     continue
                 if self.download_start_time == "":
@@ -901,7 +904,7 @@ class Win32App:
                 
                 <![LOG[[StatusService] Downloading app (id = e765119c-6af3-4d39-8eac-3e86fd7642b0, name Adobe Acrobat DC) via DO, bytes 720928912/721977488 for user 37ed0412-d13e-481c-a784-6447007aa208]LOG]!><time="09:49:19.3750179" date="10-26-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">                
                 """
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR'])
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
                 downloaded_size_index_start = cur_line.find(self.log_keyword_table[
@@ -1034,7 +1037,7 @@ class Win32App:
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_REPORTING_STATE_INDICATOR']):
                 cur_enforcement_index_start = cur_line.find('{"ApplicationId"')
                 cur_enforcement_index_end = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_REPORTING_STATE_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -1053,7 +1056,7 @@ class Win32App:
     def process_msfb_user_context_app_log(self):
         for cur_line_index in range(len(self.full_log)):
             cur_line = self.full_log[cur_line_index]
-            cur_time = get_timestamp_by_line(cur_line)
+            cur_time = logprocessinglibrary.get_timestamp_by_line(cur_line)
             if cur_line.startswith(self.log_keyword_table['LOG_MSFB_USER_EXECUTING_START_INDICATOR']):
                 """
                 MSFB UWP indicator for User Context
@@ -1093,7 +1096,7 @@ class Win32App:
         """
         for cur_line_index in range(len(self.full_log)):
             cur_line = self.full_log[cur_line_index]
-            cur_time = get_timestamp_by_line(cur_line)
+            cur_time = logprocessinglibrary.get_timestamp_by_line(cur_line)
             if cur_line.startswith(self.log_keyword_table["LOG_MSFB_DOWNLOAD_SIZE_INDICATOR"]):
                 size_need_to_download_index_start = len(self.log_keyword_table["LOG_MSFB_DOWNLOAD_SIZE_INDICATOR"])
                 size_need_to_download_index_end = cur_line.find('BytesDownloaded - ')
@@ -1146,9 +1149,9 @@ class Win32App:
         post_install = False
         for cur_line_index in range(len(self.full_log)):
             cur_line = self.full_log[cur_line_index]
-            cur_time = get_timestamp_by_line(cur_line)
+            cur_time = logprocessinglibrary.get_timestamp_by_line(cur_line)
             if cur_line.startswith(self.log_keyword_table['LOG_REPORTING_STATE_1_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_REPORTING_STATE_1_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -1165,7 +1168,7 @@ class Win32App:
                         self.has_enforcement = False
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_DETECTION_STATE_REPORT_INDICATOR']):
                 # Evaluating whether app has enforcement
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_MSFB_DETECTION_STATE_REPORT_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -1221,7 +1224,7 @@ class Win32App:
                             self.post_install_detection_time = cur_time
 
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_FINISH_DETECTION_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_MSFB_FINISH_DETECTION_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -1265,7 +1268,7 @@ class Win32App:
                     self.msfb_installed_version = cur_line[install_version_index_start:install_version_index_stop]
 
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_APPLICABILITY_OLD_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -1278,7 +1281,7 @@ class Win32App:
                         self.applicability = False
                         self.applicability_time = cur_time
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_APPLICABILITY_STATE_REPORT_INDICATOR']):
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_MSFB_APPLICABILITY_STATE_REPORT_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
@@ -1354,7 +1357,7 @@ class Win32App:
                 MSFB UWP install stop indicator
                 <![LOG[[Win32App][WinGetApp][WinGetAppExecutionExecutor] Completed execution for app with id:
                 """
-                cur_app_id = find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_MSFB_FINISH_EXECUTING_INDICATOR'])
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_MSFB_FINISH_EXECUTING_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
 
@@ -1385,7 +1388,6 @@ class Win32App:
         #     self.process_msfb_system_context_app_log()
 
     def generate_standalone_win32_app_meta_log_output(self, depth=0):
-        import constructinterpretedlog
         """
         Include Win32
         :return:
@@ -1470,7 +1472,6 @@ class Win32App:
         return interpreted_log_output
 
     def generate_dependency_win32_app_meta_log_output(self, depth=0):
-        import constructinterpretedlog
         interpreted_log_output = ""
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
@@ -1557,7 +1558,7 @@ class Win32App:
             interpreted_log_output += \
                 constructinterpretedlog.write_log_output_line_with_indent_depth(
                     constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output \
-                        ("", right_string, CONST_META_DEPENDENT_APP_VALUE_INDEX), depth)
+                        ("", right_string, logprocessinglibrary.CONST_META_DEPENDENT_APP_VALUE_INDEX), depth)
 
         left_string = 'GRS time:'
         right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
@@ -1578,7 +1579,6 @@ class Win32App:
         Include MSFB
         :return:
         """
-        import constructinterpretedlog
         interpreted_log_output = ""
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
@@ -1672,7 +1672,6 @@ class Win32App:
         return interpreted_log_output
 
     def generate_msfb_post_download_log_output(self, depth=0):
-        import constructinterpretedlog
         # This works for MSFB UWP
         interpreted_log_output = ""
         if not self.has_enforcement:
@@ -1798,7 +1797,6 @@ class Win32App:
         return interpreted_log_output
 
     def generate_win32app_post_download_log_output(self, depth=0):
-        import constructinterpretedlog
         # This works for Win32, not MSFB UWP
         interpreted_log_output = ""
 
@@ -1999,7 +1997,6 @@ class Win32App:
         return interpreted_log_output
 
     def generate_win32app_pre_download_log_output(self, depth=0):
-        import constructinterpretedlog
         # including predetection, grs, applicability logging.
         # This works for Win32 apps
         interpreted_log_output = ""
@@ -2056,7 +2053,6 @@ class Win32App:
         return interpreted_log_output
 
     def generate_msfb_pre_download_log_output(self, depth):
-        import constructinterpretedlog
         # including predetection, grs, applicability logging.
         # This works for MSFB apps
         interpreted_log_output = ""
@@ -2116,7 +2112,6 @@ class Win32App:
         return interpreted_log_output
 
     def generate_win32app_first_line_log_output(self, depth):
-        import constructinterpretedlog
         interpreted_log_output = ""
         temp_log = ""
         temp_log += self.start_time + " Processing "
@@ -2157,7 +2152,6 @@ class Win32App:
         return interpreted_log_output
 
     def generate_standalone_win32app_log_output(self, depth=0):
-        import constructinterpretedlog
         interpreted_log_output = ""
         interpreted_log_output += self.generate_win32app_first_line_log_output(depth)
         interpreted_log_output += self.generate_win32app_pre_download_log_output(depth)
@@ -2167,7 +2161,6 @@ class Win32App:
         return interpreted_log_output
 
     def generate_msfb_log_output(self, depth=0):
-        import constructinterpretedlog
         interpreted_log_output = ""
         interpreted_log_output += self.generate_win32app_first_line_log_output(depth)
         interpreted_log_output += self.generate_msfb_pre_download_log_output(depth)
