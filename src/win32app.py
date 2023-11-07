@@ -1393,11 +1393,11 @@ class Win32App:
         interpreted_log_output = ""
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:', self.app_id), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:', self.app_id), depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:', self.app_name), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:', self.app_name), depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:', self.app_type), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:', self.app_type), depth)
         left_string = 'Target Type:'
         right_string = ""
         if self.target_type == 0:
@@ -1407,7 +1407,7 @@ class Win32App:
         elif self.target_type == 2:
             right_string = 'Device Group'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'App Intent:'
         right_string = ""
@@ -1426,7 +1426,7 @@ class Win32App:
             right_string = "Required Uninstall"
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'App Context:'
         right_string = ""
@@ -1436,33 +1436,33 @@ class Win32App:
             right_string = "System"
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Last Enforcement State:'
         right_string = self.last_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'Current Enforcement State:'
         right_string = self.cur_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'Has Dependent Apps:'
         right_string = 'No'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'GRS time:'
         right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'GRS expired:'
         right_string = str(self.grs_expiry)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         # if not self.grs_expiry:
         #     log_line += 'Win32 app GRS is not expired. Win32 app will be reevaluated after last GRS time + 24 hours\n'
@@ -1474,13 +1474,13 @@ class Win32App:
         interpreted_log_output = ""
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:',
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:',
                                                                                  self.app_id), depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:',
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:',
                                                                                  self.app_name), depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:',
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:',
                                                                                  self.app_type), depth)
         left_string = 'Target Type:'
         right_string = ""
@@ -1491,7 +1491,7 @@ class Win32App:
         elif self.target_type == 2:
             right_string = 'Device Group'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'App Intent:'
@@ -1506,7 +1506,7 @@ class Win32App:
             right_string = "Required Uninstall"
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'App Context:'
@@ -1517,25 +1517,25 @@ class Win32App:
             right_string = "System"
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Last Enforcement State:'
         right_string = self.last_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Current Enforcement State:'
         right_string = self.cur_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Has Dependent Apps:'
         right_string = 'Yes'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
         # List Dependent apps
 
@@ -1556,19 +1556,19 @@ class Win32App:
             right_string += ('[' + child_app_name + ']')
             interpreted_log_output += \
                 constructinterpretedlog.write_log_output_line_with_indent_depth(
-                    write_two_string_at_left_and_middle_with_filled_spaces_to_log_output \
+                    constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output \
                         ("", right_string, CONST_META_DEPENDENT_APP_VALUE_INDEX), depth)
 
         left_string = 'GRS time:'
         right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'GRS expired:'
         right_string = str(self.grs_expiry)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         return interpreted_log_output
@@ -1582,11 +1582,11 @@ class Win32App:
         interpreted_log_output = ""
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:', self.app_id), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:', self.app_id), depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:', self.app_name), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:', self.app_name), depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:', self.app_type), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:', self.app_type), depth)
         left_string = 'Target Type:'
         right_string = ""
         if self.target_type == 0:
@@ -1596,7 +1596,7 @@ class Win32App:
         elif self.target_type == 2:
             right_string = 'Device Group'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'App Intent:'
         right_string = ""
@@ -1615,7 +1615,7 @@ class Win32App:
             right_string = "Required Uninstall"
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'App Context:'
         right_string = ""
@@ -1625,18 +1625,18 @@ class Win32App:
             right_string = "System"
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Last Enforcement State:'
         right_string = self.last_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'Current Enforcement State:'
         right_string = self.cur_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'Detected Version:'
         if self.msfb_detected_version != "":
@@ -1644,7 +1644,7 @@ class Win32App:
         else:
             right_string = "None"
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Installed Version:'
@@ -1653,18 +1653,18 @@ class Win32App:
         else:
             right_string = "None"
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'GRS time:'
         right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'GRS expired:'
         right_string = str(self.grs_expiry)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         # if not self.grs_expiry:
         #     log_line += 'Win32 app GRS is not expired. Win32 app will be reevaluated after last GRS time + 24 hours\n'
