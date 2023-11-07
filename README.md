@@ -5,11 +5,11 @@ IME tool to analyze IntuneManagementExtension.log
 
 Normal log output(igonoring non expired Subgraphs):
 
-"IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file"
+"IME Interpreter V4.0.exe" "path_to_ime_log_folder" "path_to_output_file"
 
 Full log output:
 
-"IME_Interpreter_UI 3.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL
+"IME Interpreter V4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL
 
 
 ## Tool screenshots:
