@@ -193,6 +193,7 @@ class ImeInterpreter:
                                         ems_agent_restart_reasons[index_lifecycle_log]))
 
     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):
+        import constructinterpretedlog
         interpreted_log_output = ""
         if self.full_log is None:
             interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
@@ -204,7 +205,7 @@ class ImeInterpreter:
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++IME Service Starts+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             """
-            interpreted_log_output += write_ime_service_start_by_reason(cur_lifecycle_log.boot_reason)
+            interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log.boot_reason)
             interpreted_log_output += '\n'
             interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
 

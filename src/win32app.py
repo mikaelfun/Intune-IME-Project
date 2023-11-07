@@ -1385,17 +1385,18 @@ class Win32App:
         #     self.process_msfb_system_context_app_log()
 
     def generate_standalone_win32_app_meta_log_output(self, depth=0):
+        import constructinterpretedlog
         """
         Include Win32
         :return:
         """
         interpreted_log_output = ""
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:', self.app_id), depth)
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:', self.app_name), depth)
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:', self.app_type), depth)
         left_string = 'Target Type:'
         right_string = ""
@@ -1405,7 +1406,7 @@ class Win32App:
             right_string = 'User Group'
         elif self.target_type == 2:
             right_string = 'Device Group'
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'App Intent:'
@@ -1424,7 +1425,7 @@ class Win32App:
         elif self.intent == 4:
             right_string = "Required Uninstall"
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'App Context:'
@@ -1434,33 +1435,33 @@ class Win32App:
         elif self.install_context == 2:
             right_string = "System"
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Last Enforcement State:'
         right_string = self.last_enforcement_state
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'Current Enforcement State:'
         right_string = self.cur_enforcement_state
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'Has Dependent Apps:'
         right_string = 'No'
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'GRS time:'
         right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'GRS expired:'
         right_string = str(self.grs_expiry)
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         # if not self.grs_expiry:
@@ -1469,15 +1470,16 @@ class Win32App:
         return interpreted_log_output
 
     def generate_dependency_win32_app_meta_log_output(self, depth=0):
+        import constructinterpretedlog
         interpreted_log_output = ""
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:',
                                                                                  self.app_id), depth)
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:',
                                                                                  self.app_name), depth)
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:',
                                                                                  self.app_type), depth)
         left_string = 'Target Type:'
@@ -1488,7 +1490,7 @@ class Win32App:
             right_string = 'User Group'
         elif self.target_type == 2:
             right_string = 'Device Group'
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
@@ -1503,7 +1505,7 @@ class Win32App:
         elif self.intent == 4:
             right_string = "Required Uninstall"
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
@@ -1514,25 +1516,25 @@ class Win32App:
         elif self.install_context == 2:
             right_string = "System"
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Last Enforcement State:'
         right_string = self.last_enforcement_state
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Current Enforcement State:'
         right_string = self.cur_enforcement_state
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Has Dependent Apps:'
         right_string = 'Yes'
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
         # List Dependent apps
@@ -1553,19 +1555,19 @@ class Win32App:
 
             right_string += ('[' + child_app_name + ']')
             interpreted_log_output += \
-                write_log_output_line_with_indent_depth(
+                constructinterpretedlog.write_log_output_line_with_indent_depth(
                     write_two_string_at_left_and_middle_with_filled_spaces_to_log_output \
                         ("", right_string, CONST_META_DEPENDENT_APP_VALUE_INDEX), depth)
 
         left_string = 'GRS time:'
         right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'GRS expired:'
         right_string = str(self.grs_expiry)
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
@@ -1576,13 +1578,14 @@ class Win32App:
         Include MSFB
         :return:
         """
+        import constructinterpretedlog
         interpreted_log_output = ""
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:', self.app_id), depth)
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:', self.app_name), depth)
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:', self.app_type), depth)
         left_string = 'Target Type:'
         right_string = ""
@@ -1592,7 +1595,7 @@ class Win32App:
             right_string = 'User Group'
         elif self.target_type == 2:
             right_string = 'Device Group'
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'App Intent:'
@@ -1611,7 +1614,7 @@ class Win32App:
         elif self.intent == 4:
             right_string = "Required Uninstall"
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'App Context:'
@@ -1621,18 +1624,18 @@ class Win32App:
         elif self.install_context == 2:
             right_string = "System"
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'Last Enforcement State:'
         right_string = self.last_enforcement_state
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'Current Enforcement State:'
         right_string = self.cur_enforcement_state
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'Detected Version:'
@@ -1640,7 +1643,7 @@ class Win32App:
             right_string = self.msfb_detected_version
         else:
             right_string = "None"
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
@@ -1649,18 +1652,18 @@ class Win32App:
             right_string = self.msfb_installed_version
         else:
             right_string = "None"
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                  right_string), depth)
 
         left_string = 'GRS time:'
         right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         left_string = 'GRS expired:'
         right_string = str(self.grs_expiry)
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
 
         # if not self.grs_expiry:
@@ -1669,131 +1672,133 @@ class Win32App:
         return interpreted_log_output
 
     def generate_msfb_post_download_log_output(self, depth=0):
+        import constructinterpretedlog
         # This works for MSFB UWP
         interpreted_log_output = ""
         if not self.has_enforcement:
             if self.reason_need_output:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + " No action required for this app. " + self.no_enforcement_reason + '\n', depth)
             return interpreted_log_output
 
         if self.intent != 4:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_start_time + ' Start downloading app using WinGet.\n', )
         if self.download_success:
             if self.intent != 4:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.download_finish_time + ' WinGet mode download completed.\n')
                 computed_size_str, computed_speed_str = self.compute_download_size_and_speed()
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.download_finish_time + ' ' + computed_size_str + '\n', depth)
 
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
         else:
             if self.intent != 4:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' WinGet mode download FAILED! \n')
                 computed_size_str, computed_speed_str = self.compute_download_size_and_speed()
                 if self.download_finish_time and self.download_file_size > -1:
-                    interpreted_log_output += write_log_output_line_with_indent_depth(
+                    interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                         self.download_finish_time + ' ' + computed_size_str + '\n', depth)
                     if self.app_file_size > 0:
                         total_size_str = "Total file size is: " + self.convert_file_size_to_readable_string(self.app_file_size)
-                        interpreted_log_output += write_log_output_line_with_indent_depth(
+                        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                             self.download_finish_time + ' ' + total_size_str + '\n', depth)
-                    interpreted_log_output += write_log_output_line_with_indent_depth(
+                    interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                         self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Installation Result: ' + result + '\n')
                 return interpreted_log_output
 
         if self.install_context == 1:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_finish_time + ' Install Context: User\n')
         elif self.install_context == 2:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_finish_time + ' Install Context: System\n')
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_finish_time + ' Install Context: Unknown!\n')
         if self.installer_created_success:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_start_time + ' Installer process created successfully. Installer time out is 60 minutes.\n')
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' Error creating installer process!\n')
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
             if self.intent == 4:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Uninstallation Result: ' + result + '\n')
             else:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Installation Result: ' + result + '\n')
             return interpreted_log_output
         if self.installer_exit_success:
             if self.intent == 4:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.install_finish_time + ' Uninstallation is done.\n')
             else:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.install_finish_time + ' Installation is done.\n')
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' Installer process timeout!\n')
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
             if self.install_error_message != "":
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' Install Error message: ' + self.install_error_message + '\n')
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n')
             return interpreted_log_output
         if self.installation_result == "":
             self.installation_result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
         if self.intent == 4:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_finish_time + ' Uninstallation Result: ' + self.installation_result + '\n')
         else:
             # print(self.installation_result)
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_finish_time + ' Installation Result: ' + self.installation_result + '\n')
 
         if self.install_error_message != "":
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' Install Error message: ' + self.install_error_message + '\n')
 
         if self.post_install_detection:
-            interpreted_log_output += write_log_output_line_with_indent_depth(self.post_install_detection_time +
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(self.post_install_detection_time +
                                                                               ' Detect app after processing: App is detected.\n'
                                                                               if self.post_install_detection_time != ""
                                                                               else self.install_finish_time +
                                                                                    ' Detect app after processing: App is detected.\n')
             if self.intent == 4:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Uninstallation Result: ' + result + '\n')
                 return interpreted_log_output
             else:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Installation Result: ' + result + '\n')
         else:
             if self.post_install_detection_time != "":
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n')
             if self.intent == 4:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Uninstallation Result: ' + result + '\n')
             else:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Installation Result: ' + result + '\n')
                 return interpreted_log_output
         return interpreted_log_output
 
     def generate_win32app_post_download_log_output(self, depth=0):
+        import constructinterpretedlog
         # This works for Win32, not MSFB UWP
         interpreted_log_output = ""
 
@@ -1805,138 +1810,138 @@ class Win32App:
 
         if not self.has_enforcement:
             if self.reason_need_output:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + " No action required for this app. " + self.no_enforcement_reason + '\n', depth)
             return interpreted_log_output
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             self.download_start_time + ' Start downloading app using DO.\n', depth)
         if self.download_do_mode != "":
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_start_time + ' DO Download priority is: ' + self.download_do_mode + '\n', depth)
         if self.proxy_url != "":
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_start_time + ' Current Proxy is: ' + self.proxy_url + '\n', depth)
         if self.download_url != "":
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_start_time + ' Current Download URL is: ' + self.download_url + '\n', depth)
         if self.download_success:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_finish_time + ' DO mode download completed.\n', depth)
             computed_size_str, computed_speed_str = self.compute_download_size_and_speed()
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_finish_time + ' ' + computed_size_str + '\n', depth)
 
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' DO mode download FAILED! \n', depth)
             if self.download_finish_time and self.download_file_size > -1:
                 computed_size_str, computed_speed_str = self.compute_download_size_and_speed()
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.download_finish_time + ' ' + computed_size_str + '\n', depth)
 
                 if self.app_file_size > 0:
                     total_size_str = "Total file size is: " + self.convert_file_size_to_readable_string(
                         self.app_file_size)
-                    interpreted_log_output += write_log_output_line_with_indent_depth(
+                    interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                         self.download_finish_time + ' ' + total_size_str + '\n', depth)
 
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
 
 
 
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output
         if self.hash_validate_success:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.hash_validate_success_time + ' Hash validation pass.\n', depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' Hash validation FAILED! \n', depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output
         if self.decryption_success:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.decryption_success_time + ' Decryption success.\n', depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' Decryption FAILED!\n',
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(self.end_time + ' Decryption FAILED!\n',
                                                                               depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output
         if self.unzipping_success:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.decryption_success_time + ' Unzipping success.\n', depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(self.end_time + ' Unzipping FAILED!\n',
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(self.end_time + ' Unzipping FAILED!\n',
                                                                               depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output
         if self.skip_installation:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.post_download_detection_time + ' Aborting installation as app is detected.\n', depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output
         if self.install_context == 1:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_start_time + ' Install Context: User\n', depth)
         elif self.install_context == 2:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_start_time + ' Install Context: System\n', depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_start_time + ' Install Context: Unknown!\n', depth)
         if self.intent == 4:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_start_time + ' Uninstall Command: ' + self.uninstall_command + '\n', depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_start_time + ' Install Command: ' + self.install_command + '\n', depth)
         if self.installer_created_success:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_start_time + ' Installer process created successfully. Installer time out is 60 minutes.\n',
                 depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' Error creating installer process!\n', depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output
         if self.installer_exit_success:
             if self.intent == 4:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.install_finish_time + ' Uninstallation is done. Exit code is: ' + str(
                         self.install_exit_code) + '\n', depth)
             else:
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.install_finish_time + ' Installation is done. Exit code is: ' + str(
                         self.install_exit_code) + '\n', depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' Installer process timeout!\n', depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output
         if self.intent == 4:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_finish_time + ' Uninstallation Result: ' + self.installation_result + '\n', depth)
         else:
             # print(self.installation_result)
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_finish_time + ' Installation Result: ' + self.installation_result + '\n', depth)
 
         '''
@@ -1947,53 +1952,54 @@ class Win32App:
         3: Intune will force a mandatory device restart
         '''
         if self.device_restart_behavior == 0:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_finish_time + ' Reboot Behavior: [Restart determined by return codes]\n', depth)
         elif self.device_restart_behavior == 1:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_finish_time + ' Reboot Behavior: [App install may force a device restart]\n', depth)
         elif self.device_restart_behavior == 2:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_finish_time + ' Reboot Status: [No specific action]\n', depth)
         elif self.device_restart_behavior == 3:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_finish_time + ' Reboot Behavior: [Intune will force a mandatory device restart]\n', depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_finish_time + ' Reboot Status: [Unknown]\n', depth)
 
         if self.post_install_detection:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.post_install_detection_time + ' Detect app after processing: App is detected.\n', depth) \
                 if self.post_install_detection_time != "" \
-                else write_log_output_line_with_indent_depth(
+                else constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.install_finish_time + ' Detect app after processing: App is detected.\n', depth)
             if self.intent == 4:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Uninstallation Result: ' + result + '\n', depth)
                 return interpreted_log_output
             else:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Installation Result: ' + result + '\n', depth)
         else:
             if self.post_install_detection_time != "":
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n', depth)
             if self.intent == 4:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Uninstallation Result: ' + result + '\n', depth)
             else:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Installation Result: ' + result + '\n', depth)
                 return interpreted_log_output
 
         return interpreted_log_output
 
     def generate_win32app_pre_download_log_output(self, depth=0):
+        import constructinterpretedlog
         # including predetection, grs, applicability logging.
         # This works for Win32 apps
         interpreted_log_output = ""
@@ -2002,54 +2008,55 @@ class Win32App:
         Filtered app does not have pre detection.
         """
         if self.filter_state == 1010:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + " App is not Applicable due to assignment filter.\n", depth)
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: Not Applicable\n', depth)
             self.has_enforcement = False
             return interpreted_log_output
 
         if self.pre_install_detection:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)
             if self.intent != 4:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
                 return interpreted_log_output
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
             if self.intent == 4:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
                 return interpreted_log_output
 
         if not self.grs_expiry:
             # Output detection results only
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.pre_install_detection_time + " Win32 app GRS is not expired. App will be detected only and NOT enforced.\n",
                 depth)
             return interpreted_log_output
 
         if self.applicability:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.applicability_time + ' Applicability Check: Applicable \n', depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.applicability_time + ' Applicability Check: NOT Applicable \n', depth)
             if self.applicability_reason != "":
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.applicability_time + ' Not Applicable Reason: ' + self.applicability_reason + '\n', depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "NOT Applicable"
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.applicability_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output
 
         return interpreted_log_output
 
     def generate_msfb_pre_download_log_output(self, depth):
+        import constructinterpretedlog
         # including predetection, grs, applicability logging.
         # This works for MSFB apps
         interpreted_log_output = ""
@@ -2058,57 +2065,58 @@ class Win32App:
         Filtered app does not have pre detection.
         """
         if self.filter_state == 1010:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + " App is not Applicable due to assignment filter.\n", depth)
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: Not Applicable\n', depth)
             self.has_enforcement = False
             return interpreted_log_output
 
         if self.pre_install_detection:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)
             if self.intent != 4:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
                 return interpreted_log_output
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
             if self.intent == 4:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
                 return interpreted_log_output
 
         if not self.grs_expiry:
             # Output detection results only
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.pre_install_detection_time + " Win32 app GRS is not expired. App will be detected only and NOT enforced.\n",
                 depth)
             return interpreted_log_output
 
         if self.applicability:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.applicability_time + ' Applicability Check: Applicable \n', depth)
         else:
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.applicability_time + ' Applicability Check: NOT Applicable \n', depth)
             if self.applicability_reason != "":
-                interpreted_log_output += write_log_output_line_with_indent_depth(
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.applicability_time + ' Not Applicable Reason: ' + self.applicability_reason +  '\n', depth)
             # if self.no_enforcement_reason != "":
-            #     interpreted_log_output += write_log_output_line_with_indent_depth(
+            #     interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             #         self.applicability_time + ' No Enforcement Reason: ' + self.no_enforcement_reason + '\n', depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "NOT Applicable"
-            interpreted_log_output += write_log_output_line_with_indent_depth(
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.applicability_time + ' App Installation Result: ' + result + '\n', depth)
             return interpreted_log_output
 
         return interpreted_log_output
 
     def generate_win32app_first_line_log_output(self, depth):
+        import constructinterpretedlog
         interpreted_log_output = ""
         temp_log = ""
         temp_log += self.start_time + " Processing "
@@ -2145,10 +2153,11 @@ class Win32App:
             temp_log += "Required Uninstall"
         temp_log += '\n'
 
-        interpreted_log_output += write_log_output_line_with_indent_depth(temp_log, depth)
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(temp_log, depth)
         return interpreted_log_output
 
     def generate_standalone_win32app_log_output(self, depth=0):
+        import constructinterpretedlog
         interpreted_log_output = ""
         interpreted_log_output += self.generate_win32app_first_line_log_output(depth)
         interpreted_log_output += self.generate_win32app_pre_download_log_output(depth)
@@ -2158,6 +2167,7 @@ class Win32App:
         return interpreted_log_output
 
     def generate_msfb_log_output(self, depth=0):
+        import constructinterpretedlog
         interpreted_log_output = ""
         interpreted_log_output += self.generate_win32app_first_line_log_output(depth)
         interpreted_log_output += self.generate_msfb_pre_download_log_output(depth)
