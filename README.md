@@ -15,7 +15,7 @@ Full log output:
 ## Tool screenshots:
 ![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/826850da-7507-42d1-a576-05a58f6adb1f)
 ![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/89a29853-390e-41b3-be97-7aee58e0dfba)
-![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/a2c2fea2-a4be-4446-b658-6aab16a69a33)
+![Uploading image.png…]()
 ![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/3a608a15-8ff7-4bd1-87cc-ee982b7cc24d)
 ![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/50c72966-7f3e-4221-96e0-a7e5d37cfcb7)
 ![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/7c639896-bc13-4711-a857-4d69814b985a)
