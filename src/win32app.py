@@ -1344,8 +1344,14 @@ class Win32App:
                     if self.download_file_size <= 100:
                         self.download_file_size = download_file_size
                         self.download_finish_time = cur_time
-            elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_SUCCESS_INDICATOR']):
-                pass
+            elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_TRANSITION_DOWNLOAD_FINISH_STATE_INDICATOR']):
+                if self.download_file_size == -1 or self.app_file_size == -1:
+                    self.download_file_size = 100
+                    self.app_file_size = 100
+                self.download_finish_time = cur_time
+                self.download_success = True
+                post_download = True
+
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_TRANSITION_INSTALL_STATE_INDICATOR']):
                 self.download_success = True
                 self.install_start_time = cur_time

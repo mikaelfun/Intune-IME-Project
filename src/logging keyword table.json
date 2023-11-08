@@ -80,6 +80,7 @@
   "LOG_MSFB_SYSTEM_EXECUTING_START_INDICATOR": "<![LOG[[Win32App][WinGetApp][WinGetAppExecutionExecutor] Starting execution of app with id: ",
   "LOG_MSFB_TRANSITION_CURRENT_STATE_INDICATOR" : "<![LOG[Processing state transition - Current State",
   "LOG_MSFB_TRANSITION_DOWNLOAD_STATE_INDICATOR" : "<![LOG[Processing state transition - Current State:Install In Progress With Event: Download Started.",
+  "LOG_MSFB_TRANSITION_DOWNLOAD_FINISH_STATE_INDICATOR" : "<![LOG[Processing state transition - Current State:Download In Progress With Event: Download Finished.",
   "LOG_MSFB_TRANSITION_INSTALL_STATE_INDICATOR" : "<![LOG[Processing state transition - Current State:Download Complete With Event: Continue Install.",
   "LOG_MSFB_FINISH_EXECUTING_INDICATOR": "<![LOG[[Win32App][WinGetApp][WinGetAppExecutionExecutor] Completed execution for app with id: ",
   "LOG_MSFB_EXECUTION_STATE_REPORT_INDICATOR": "<![LOG[[Win32App][ReportingManager] Execution state for app with id: ",
