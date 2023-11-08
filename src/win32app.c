@@ -2324,7 +2324,6 @@ static const char __pyx_k__61[] = "?";
 static const char __pyx_k_doc[] = "__doc__";
 static const char __pyx_k_pop[] = "pop";
 static const char __pyx_k_FAIL[] = "FAIL";
-static const char __pyx_k_Fail[] = "Fail";
 static const char __pyx_k_KB_s[] = " KB/s";
 static const char __pyx_k_MB_s[] = " MB/s";
 static const char __pyx_k_MSFB[] = "MSFB";
@@ -2367,7 +2366,6 @@ static const char __pyx_k_module[] = "__module__";
 static const char __pyx_k_of_app[] = "of app: ";
 static const char __pyx_k_result[] = "result";
 static const char __pyx_k_ChildId[] = "ChildId";
-static const char __pyx_k_Success[] = "Success";
 static const char __pyx_k_UNKNOWN[] = "UNKNOWN";
 static const char __pyx_k_Unknown[] = "Unknown";
 static const char __pyx_k_prepare[] = "__prepare__";
@@ -2973,7 +2971,6 @@ typedef struct {
   PyObject *__pyx_kp_s_Error_creating_installer_proces;
   PyObject *__pyx_n_s_FAIL;
   PyObject *__pyx_kp_s_FOREGROUND_12_hour_timeout;
-  PyObject *__pyx_n_s_Fail;
   PyObject *__pyx_kp_s_Fatal_Win32App_not_found_in_get;
   PyObject *__pyx_kp_s_Filtered_by_Assignment_filter;
   PyObject *__pyx_n_s_FlatDependencies;
@@ -3123,7 +3120,6 @@ typedef struct {
   PyObject *__pyx_kp_s_Start_downloading_app_using_DO;
   PyObject *__pyx_kp_s_Start_downloading_app_using_Win;
   PyObject *__pyx_kp_s_Subgraph_may_be_missing_required;
-  PyObject *__pyx_n_s_Success;
   PyObject *__pyx_kp_s_Supercedence_app;
   PyObject *__pyx_kp_s_Supercedence_app_2;
   PyObject *__pyx_kp_s_Supersedence;
@@ -3650,7 +3646,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_s_Error_creating_installer_proces);
   Py_CLEAR(clear_module_state->__pyx_n_s_FAIL);
   Py_CLEAR(clear_module_state->__pyx_kp_s_FOREGROUND_12_hour_timeout);
-  Py_CLEAR(clear_module_state->__pyx_n_s_Fail);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Fatal_Win32App_not_found_in_get);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Filtered_by_Assignment_filter);
   Py_CLEAR(clear_module_state->__pyx_n_s_FlatDependencies);
@@ -3800,7 +3795,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_s_Start_downloading_app_using_DO);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Start_downloading_app_using_Win);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Subgraph_may_be_missing_required);
-  Py_CLEAR(clear_module_state->__pyx_n_s_Success);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Supercedence_app);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Supercedence_app_2);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Supersedence);
@@ -4305,7 +4299,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_s_Error_creating_installer_proces);
   Py_VISIT(traverse_module_state->__pyx_n_s_FAIL);
   Py_VISIT(traverse_module_state->__pyx_kp_s_FOREGROUND_12_hour_timeout);
-  Py_VISIT(traverse_module_state->__pyx_n_s_Fail);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Fatal_Win32App_not_found_in_get);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Filtered_by_Assignment_filter);
   Py_VISIT(traverse_module_state->__pyx_n_s_FlatDependencies);
@@ -4455,7 +4448,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_s_Start_downloading_app_using_DO);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Start_downloading_app_using_Win);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Subgraph_may_be_missing_required);
-  Py_VISIT(traverse_module_state->__pyx_n_s_Success);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Supercedence_app);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Supercedence_app_2);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Supersedence);
@@ -4970,7 +4962,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_s_Error_creating_installer_proces __pyx_mstate_global->__pyx_kp_s_Error_creating_installer_proces
 #define __pyx_n_s_FAIL __pyx_mstate_global->__pyx_n_s_FAIL
 #define __pyx_kp_s_FOREGROUND_12_hour_timeout __pyx_mstate_global->__pyx_kp_s_FOREGROUND_12_hour_timeout
-#define __pyx_n_s_Fail __pyx_mstate_global->__pyx_n_s_Fail
 #define __pyx_kp_s_Fatal_Win32App_not_found_in_get __pyx_mstate_global->__pyx_kp_s_Fatal_Win32App_not_found_in_get
 #define __pyx_kp_s_Filtered_by_Assignment_filter __pyx_mstate_global->__pyx_kp_s_Filtered_by_Assignment_filter
 #define __pyx_n_s_FlatDependencies __pyx_mstate_global->__pyx_n_s_FlatDependencies
@@ -5120,7 +5111,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_s_Start_downloading_app_using_DO __pyx_mstate_global->__pyx_kp_s_Start_downloading_app_using_DO
 #define __pyx_kp_s_Start_downloading_app_using_Win __pyx_mstate_global->__pyx_kp_s_Start_downloading_app_using_Win
 #define __pyx_kp_s_Subgraph_may_be_missing_required __pyx_mstate_global->__pyx_kp_s_Subgraph_may_be_missing_required
-#define __pyx_n_s_Success __pyx_mstate_global->__pyx_n_s_Success
 #define __pyx_kp_s_Supercedence_app __pyx_mstate_global->__pyx_kp_s_Supercedence_app
 #define __pyx_kp_s_Supercedence_app_2 __pyx_mstate_global->__pyx_kp_s_Supercedence_app_2
 #define __pyx_kp_s_Supersedence __pyx_mstate_global->__pyx_kp_s_Supersedence
@@ -35867,7 +35857,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n')
  *                 return interpreted_log_output             # <<<<<<<<<<<<<<
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  */
       __Pyx_XDECREF(__pyx_r);
       __Pyx_INCREF(__pyx_v_interpreted_log_output);
@@ -35886,7 +35876,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
     /* "win32app.py":1787
  *                 return interpreted_log_output
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"             # <<<<<<<<<<<<<<
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Installation Result: ' + result + '\n')
  */
@@ -35901,15 +35891,15 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
         __pyx_t_1 = __pyx_t_6;
         __pyx_t_6 = 0;
       } else {
-        __Pyx_INCREF(__pyx_n_s_Success);
-        __pyx_t_1 = __pyx_n_s_Success;
+        __Pyx_INCREF(__pyx_n_s_SUCCEEDED);
+        __pyx_t_1 = __pyx_n_s_SUCCEEDED;
       }
       __pyx_v_result = __pyx_t_1;
       __pyx_t_1 = 0;
 
       /* "win32app.py":1788
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Installation Result: ' + result + '\n')
  *         else:
@@ -35921,7 +35911,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
       /* "win32app.py":1789
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Installation Result: ' + result + '\n')             # <<<<<<<<<<<<<<
  *         else:
@@ -35964,7 +35954,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
 
       /* "win32app.py":1788
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Installation Result: ' + result + '\n')
  *         else:
@@ -36018,7 +36008,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n')             # <<<<<<<<<<<<<<
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  */
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_post_install_detection_time); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1793, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -36075,7 +36065,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n')
  *             if self.intent == 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
     __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_intent); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1794, __pyx_L1_error)
@@ -36087,7 +36077,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
       /* "win32app.py":1795
  *                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n')
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"             # <<<<<<<<<<<<<<
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n')
  */
@@ -36101,15 +36091,15 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
         __pyx_t_5 = __pyx_t_7;
         __pyx_t_7 = 0;
       } else {
-        __Pyx_INCREF(__pyx_n_s_Success);
-        __pyx_t_5 = __pyx_n_s_Success;
+        __Pyx_INCREF(__pyx_n_s_SUCCEEDED);
+        __pyx_t_5 = __pyx_n_s_SUCCEEDED;
       }
       __pyx_v_result = __pyx_t_5;
       __pyx_t_5 = 0;
 
       /* "win32app.py":1796
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n')
  *             else:
@@ -36121,11 +36111,11 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
       /* "win32app.py":1797
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n')             # <<<<<<<<<<<<<<
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
  */
       __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_end_time); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1797, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
@@ -36164,7 +36154,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
 
       /* "win32app.py":1796
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n')
  *             else:
@@ -36179,7 +36169,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n')
  *             if self.intent == 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
       goto __pyx_L29;
@@ -36188,7 +36178,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
     /* "win32app.py":1799
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n')
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"             # <<<<<<<<<<<<<<
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Installation Result: ' + result + '\n')
  */
@@ -36203,15 +36193,15 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
         __pyx_t_6 = __pyx_t_5;
         __pyx_t_5 = 0;
       } else {
-        __Pyx_INCREF(__pyx_n_s_Fail);
-        __pyx_t_6 = __pyx_n_s_Fail;
+        __Pyx_INCREF(__pyx_n_s_FAIL);
+        __pyx_t_6 = __pyx_n_s_FAIL;
       }
       __pyx_v_result = __pyx_t_6;
       __pyx_t_6 = 0;
 
       /* "win32app.py":1800
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Installation Result: ' + result + '\n')
  *                 return interpreted_log_output
@@ -36223,7 +36213,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
       /* "win32app.py":1801
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Installation Result: ' + result + '\n')             # <<<<<<<<<<<<<<
  *                 return interpreted_log_output
@@ -36266,7 +36256,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_36generate_msfb_post_download_log_
 
       /* "win32app.py":1800
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Installation Result: ' + result + '\n')
  *                 return interpreted_log_output
@@ -40708,7 +40698,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output             # <<<<<<<<<<<<<<
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  */
       __Pyx_XDECREF(__pyx_r);
       __Pyx_INCREF(__pyx_v_interpreted_log_output);
@@ -40727,7 +40717,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
     /* "win32app.py":1986
  *                 return interpreted_log_output
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"             # <<<<<<<<<<<<<<
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Installation Result: ' + result + '\n', depth)
  */
@@ -40742,15 +40732,15 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
         __pyx_t_5 = __pyx_t_4;
         __pyx_t_4 = 0;
       } else {
-        __Pyx_INCREF(__pyx_n_s_Success);
-        __pyx_t_5 = __pyx_n_s_Success;
+        __Pyx_INCREF(__pyx_n_s_SUCCEEDED);
+        __pyx_t_5 = __pyx_n_s_SUCCEEDED;
       }
       __pyx_v_result = __pyx_t_5;
       __pyx_t_5 = 0;
 
       /* "win32app.py":1987
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Installation Result: ' + result + '\n', depth)
  *         else:
@@ -40762,7 +40752,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
       /* "win32app.py":1988
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Installation Result: ' + result + '\n', depth)             # <<<<<<<<<<<<<<
  *         else:
@@ -40805,7 +40795,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
 
       /* "win32app.py":1987
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Installation Result: ' + result + '\n', depth)
  *         else:
@@ -40859,7 +40849,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n', depth)             # <<<<<<<<<<<<<<
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  */
       __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_post_install_detection_time); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1992, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
@@ -40916,7 +40906,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n', depth)
  *             if self.intent == 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
     __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_intent); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1993, __pyx_L1_error)
@@ -40928,7 +40918,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
       /* "win32app.py":1994
  *                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n', depth)
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"             # <<<<<<<<<<<<<<
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n', depth)
  */
@@ -40942,15 +40932,15 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
         __pyx_t_7 = __pyx_t_1;
         __pyx_t_1 = 0;
       } else {
-        __Pyx_INCREF(__pyx_n_s_Success);
-        __pyx_t_7 = __pyx_n_s_Success;
+        __Pyx_INCREF(__pyx_n_s_SUCCEEDED);
+        __pyx_t_7 = __pyx_n_s_SUCCEEDED;
       }
       __pyx_v_result = __pyx_t_7;
       __pyx_t_7 = 0;
 
       /* "win32app.py":1995
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n', depth)
  *             else:
@@ -40962,11 +40952,11 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
       /* "win32app.py":1996
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n', depth)             # <<<<<<<<<<<<<<
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
  */
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_end_time); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1996, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -41005,7 +40995,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
 
       /* "win32app.py":1995
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n', depth)
  *             else:
@@ -41020,7 +41010,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n', depth)
  *             if self.intent == 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
       goto __pyx_L32;
@@ -41029,7 +41019,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
     /* "win32app.py":1998
  *                     self.end_time + ' App Uninstallation Result: ' + result + '\n', depth)
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"             # <<<<<<<<<<<<<<
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Installation Result: ' + result + '\n', depth)
  */
@@ -41044,15 +41034,15 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
         __pyx_t_4 = __pyx_t_7;
         __pyx_t_7 = 0;
       } else {
-        __Pyx_INCREF(__pyx_n_s_Fail);
-        __pyx_t_4 = __pyx_n_s_Fail;
+        __Pyx_INCREF(__pyx_n_s_FAIL);
+        __pyx_t_4 = __pyx_n_s_FAIL;
       }
       __pyx_v_result = __pyx_t_4;
       __pyx_t_4 = 0;
 
       /* "win32app.py":1999
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Installation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output
@@ -41064,7 +41054,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
       /* "win32app.py":2000
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.end_time + ' App Installation Result: ' + result + '\n', depth)             # <<<<<<<<<<<<<<
  *                 return interpreted_log_output
@@ -41107,7 +41097,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_38generate_win32app_post_download_
 
       /* "win32app.py":1999
  *             else:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.end_time + ' App Installation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output
@@ -41520,7 +41510,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)             # <<<<<<<<<<<<<<
  *             if self.intent != 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  */
     __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_pre_install_detection_time); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 2023, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
@@ -41568,7 +41558,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)
  *             if self.intent != 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_intent); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 2024, __pyx_L1_error)
@@ -41580,7 +41570,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
       /* "win32app.py":2025
  *                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)
  *             if self.intent != 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"             # <<<<<<<<<<<<<<
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
  */
@@ -41594,15 +41584,15 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
         __pyx_t_3 = __pyx_t_5;
         __pyx_t_5 = 0;
       } else {
-        __Pyx_INCREF(__pyx_n_s_Success);
-        __pyx_t_3 = __pyx_n_s_Success;
+        __Pyx_INCREF(__pyx_n_s_SUCCEEDED);
+        __pyx_t_3 = __pyx_n_s_SUCCEEDED;
       }
       __pyx_v_result = __pyx_t_3;
       __pyx_t_3 = 0;
 
       /* "win32app.py":2026
  *             if self.intent != 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output
@@ -41614,7 +41604,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
       /* "win32app.py":2027
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)             # <<<<<<<<<<<<<<
  *                 return interpreted_log_output
@@ -41657,7 +41647,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
 
       /* "win32app.py":2026
  *             if self.intent != 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output
@@ -41684,7 +41674,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)
  *             if self.intent != 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
     }
@@ -41718,7 +41708,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)             # <<<<<<<<<<<<<<
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_pre_install_detection_time); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 2031, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
@@ -41766,7 +41756,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
  *             if self.intent == 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
     __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_intent); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 2032, __pyx_L1_error)
@@ -41778,7 +41768,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
       /* "win32app.py":2033
  *                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"             # <<<<<<<<<<<<<<
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
  */
@@ -41792,15 +41782,15 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
         __pyx_t_4 = __pyx_t_1;
         __pyx_t_1 = 0;
       } else {
-        __Pyx_INCREF(__pyx_n_s_Success);
-        __pyx_t_4 = __pyx_n_s_Success;
+        __Pyx_INCREF(__pyx_n_s_SUCCEEDED);
+        __pyx_t_4 = __pyx_n_s_SUCCEEDED;
       }
       __pyx_v_result = __pyx_t_4;
       __pyx_t_4 = 0;
 
       /* "win32app.py":2034
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output
@@ -41812,7 +41802,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
       /* "win32app.py":2035
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)             # <<<<<<<<<<<<<<
  *                 return interpreted_log_output
@@ -41855,7 +41845,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
 
       /* "win32app.py":2034
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output
@@ -41882,7 +41872,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_40generate_win32app_pre_download_l
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
  *             if self.intent == 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
     }
@@ -42722,7 +42712,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)             # <<<<<<<<<<<<<<
  *             if self.intent != 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  */
     __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_pre_install_detection_time); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 2079, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
@@ -42770,7 +42760,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)
  *             if self.intent != 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_intent); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 2080, __pyx_L1_error)
@@ -42782,7 +42772,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
       /* "win32app.py":2081
  *                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)
  *             if self.intent != 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"             # <<<<<<<<<<<<<<
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
  */
@@ -42796,15 +42786,15 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
         __pyx_t_3 = __pyx_t_5;
         __pyx_t_5 = 0;
       } else {
-        __Pyx_INCREF(__pyx_n_s_Success);
-        __pyx_t_3 = __pyx_n_s_Success;
+        __Pyx_INCREF(__pyx_n_s_SUCCEEDED);
+        __pyx_t_3 = __pyx_n_s_SUCCEEDED;
       }
       __pyx_v_result = __pyx_t_3;
       __pyx_t_3 = 0;
 
       /* "win32app.py":2082
  *             if self.intent != 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output
@@ -42816,7 +42806,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
       /* "win32app.py":2083
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)             # <<<<<<<<<<<<<<
  *                 return interpreted_log_output
@@ -42859,7 +42849,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
 
       /* "win32app.py":2082
  *             if self.intent != 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output
@@ -42886,7 +42876,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)
  *             if self.intent != 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
     }
@@ -42920,7 +42910,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)             # <<<<<<<<<<<<<<
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_pre_install_detection_time); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 2087, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
@@ -42968,7 +42958,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
  *             if self.intent == 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
     __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_intent); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 2088, __pyx_L1_error)
@@ -42980,7 +42970,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
       /* "win32app.py":2089
  *                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"             # <<<<<<<<<<<<<<
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
  */
@@ -42994,15 +42984,15 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
         __pyx_t_4 = __pyx_t_1;
         __pyx_t_1 = 0;
       } else {
-        __Pyx_INCREF(__pyx_n_s_Success);
-        __pyx_t_4 = __pyx_n_s_Success;
+        __Pyx_INCREF(__pyx_n_s_SUCCEEDED);
+        __pyx_t_4 = __pyx_n_s_SUCCEEDED;
       }
       __pyx_v_result = __pyx_t_4;
       __pyx_t_4 = 0;
 
       /* "win32app.py":2090
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output
@@ -43014,7 +43004,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
       /* "win32app.py":2091
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)             # <<<<<<<<<<<<<<
  *                 return interpreted_log_output
@@ -43057,7 +43047,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
 
       /* "win32app.py":2090
  *             if self.intent == 4:
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(             # <<<<<<<<<<<<<<
  *                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
  *                 return interpreted_log_output
@@ -43084,7 +43074,7 @@ static PyObject *__pyx_pf_8win32app_8Win32App_42generate_msfb_pre_download_log_o
  *             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  *                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
  *             if self.intent == 4:             # <<<<<<<<<<<<<<
- *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+ *                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
  *                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
  */
     }
@@ -44865,7 +44855,6 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_kp_s_Error_creating_installer_proces, __pyx_k_Error_creating_installer_proces, sizeof(__pyx_k_Error_creating_installer_proces), 0, 0, 1, 0},
     {&__pyx_n_s_FAIL, __pyx_k_FAIL, sizeof(__pyx_k_FAIL), 0, 0, 1, 1},
     {&__pyx_kp_s_FOREGROUND_12_hour_timeout, __pyx_k_FOREGROUND_12_hour_timeout, sizeof(__pyx_k_FOREGROUND_12_hour_timeout), 0, 0, 1, 0},
-    {&__pyx_n_s_Fail, __pyx_k_Fail, sizeof(__pyx_k_Fail), 0, 0, 1, 1},
     {&__pyx_kp_s_Fatal_Win32App_not_found_in_get, __pyx_k_Fatal_Win32App_not_found_in_get, sizeof(__pyx_k_Fatal_Win32App_not_found_in_get), 0, 0, 1, 0},
     {&__pyx_kp_s_Filtered_by_Assignment_filter, __pyx_k_Filtered_by_Assignment_filter, sizeof(__pyx_k_Filtered_by_Assignment_filter), 0, 0, 1, 0},
     {&__pyx_n_s_FlatDependencies, __pyx_k_FlatDependencies, sizeof(__pyx_k_FlatDependencies), 0, 0, 1, 1},
@@ -45015,7 +45004,6 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_kp_s_Start_downloading_app_using_DO, __pyx_k_Start_downloading_app_using_DO, sizeof(__pyx_k_Start_downloading_app_using_DO), 0, 0, 1, 0},
     {&__pyx_kp_s_Start_downloading_app_using_Win, __pyx_k_Start_downloading_app_using_Win, sizeof(__pyx_k_Start_downloading_app_using_Win), 0, 0, 1, 0},
     {&__pyx_kp_s_Subgraph_may_be_missing_required, __pyx_k_Subgraph_may_be_missing_required, sizeof(__pyx_k_Subgraph_may_be_missing_required), 0, 0, 1, 0},
-    {&__pyx_n_s_Success, __pyx_k_Success, sizeof(__pyx_k_Success), 0, 0, 1, 1},
     {&__pyx_kp_s_Supercedence_app, __pyx_k_Supercedence_app, sizeof(__pyx_k_Supercedence_app), 0, 0, 1, 0},
     {&__pyx_kp_s_Supercedence_app_2, __pyx_k_Supercedence_app_2, sizeof(__pyx_k_Supercedence_app_2), 0, 0, 1, 0},
     {&__pyx_kp_s_Supersedence, __pyx_k_Supersedence, sizeof(__pyx_k_Supersedence), 0, 0, 1, 0},

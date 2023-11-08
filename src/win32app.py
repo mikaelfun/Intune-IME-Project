@@ -1784,7 +1784,7 @@ class Win32App:
                     self.end_time + ' App Uninstallation Result: ' + result + '\n')
                 return interpreted_log_output
             else:
-                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Installation Result: ' + result + '\n')
         else:
@@ -1792,11 +1792,11 @@ class Win32App:
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n')
             if self.intent == 4:
-                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Uninstallation Result: ' + result + '\n')
             else:
-                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Installation Result: ' + result + '\n')
                 return interpreted_log_output
@@ -1983,7 +1983,7 @@ class Win32App:
                     self.end_time + ' App Uninstallation Result: ' + result + '\n', depth)
                 return interpreted_log_output
             else:
-                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Installation Result: ' + result + '\n', depth)
         else:
@@ -1991,11 +1991,11 @@ class Win32App:
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.post_install_detection_time + ' Detect app after processing: App is NOT detected.\n', depth)
             if self.intent == 4:
-                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Uninstallation Result: ' + result + '\n', depth)
             else:
-                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Fail"
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.end_time + ' App Installation Result: ' + result + '\n', depth)
                 return interpreted_log_output
@@ -2022,7 +2022,7 @@ class Win32App:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)
             if self.intent != 4:
-                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
                 return interpreted_log_output
@@ -2030,7 +2030,7 @@ class Win32App:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
             if self.intent == 4:
-                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
                 return interpreted_log_output
@@ -2078,7 +2078,7 @@ class Win32App:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.pre_install_detection_time + ' Detect app before processing: App is detected.\n', depth)
             if self.intent != 4:
-                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + ' App Installation Result: ' + result + '\n', depth)
                 return interpreted_log_output
@@ -2086,7 +2086,7 @@ class Win32App:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.pre_install_detection_time + ' Detect app before processing: App is NOT detected.\n', depth)
             if self.intent == 4:
-                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "Success"
+                result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "SUCCEEDED"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.pre_install_detection_time + ' App Uninstallation Result: ' + result + '\n', depth)
                 return interpreted_log_output
