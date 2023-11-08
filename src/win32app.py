@@ -252,7 +252,8 @@ class Win32App:
         return computed_size_str
 
     def compute_download_size_and_speed(self):
-        computed_size_str = 'Downloaded file size is: ' + self.convert_file_size_to_readable_string(self.download_file_size)
+        computed_size_str = 'Downloaded file size is: ' + self.convert_file_size_to_readable_string(
+            self.download_file_size)
 
         computed_speed_str = 'Average download speed is: ' + self.download_average_speed
 
@@ -323,10 +324,10 @@ class Win32App:
                 if self.current_enforcement_status_report['EnforcementState'] in self.enforcement_dict.keys():
                     self.cur_enforcement_state = self.enforcement_dict[
                         self.current_enforcement_status_report['EnforcementState']]
-                else:
-                    self.cur_enforcement_state = self.current_enforcement_status_report['EnforcementState']
             else:
-                self.cur_enforcement_state = self.last_enforcement_state
+                # Fix a bug that Uninstallation enforcement state will be Null if not detected app. It is by design
+                if self.intent == 4 and not self.pre_install_detection:
+                    self.cur_enforcement_state = "SUCCEEDED"
         else:
             self.cur_enforcement_state = self.last_enforcement_state
 
@@ -335,7 +336,8 @@ class Win32App:
             if 'EnforcementState' in self.last_enforcement_json:
                 if self.last_enforcement_json['EnforcementState'] is not None:
                     if self.last_enforcement_json['EnforcementState'] in self.enforcement_dict.keys():
-                        self.last_enforcement_state = self.enforcement_dict[self.last_enforcement_json['EnforcementState']]
+                        self.last_enforcement_state = self.enforcement_dict[
+                            self.last_enforcement_json['EnforcementState']]
                     else:
                         self.last_enforcement_state = self.last_enforcement_json['EnforcementState']
                 else:
@@ -488,7 +490,7 @@ class Win32App:
                         self.applicability = False
                         self.applicability_time = cur_time
             elif cur_line.startswith(
-                            self.log_keyword_table['LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR']):
+                    self.log_keyword_table['LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR']):
                 cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
                     'LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR'])
                 if cur_app_id != self.app_id:
@@ -827,7 +829,8 @@ class Win32App:
                     cur_line[applicability_state_json_start_index: applicability_state_json_stop_index])
                 if self.applicability_state_json['ApplicabilityState']['NewValue'] == "Applicable":
                     self.applicability = True
-                elif self.applicability_state_json['ApplicabilityState']['NewValue'] == "AppUnsupportedDueToUnknownReason":
+                elif self.applicability_state_json['ApplicabilityState'][
+                    'NewValue'] == "AppUnsupportedDueToUnknownReason":
                     self.applicability = False
                     self.applicability_reason = "User Context App will be processed after user logon."
                 else:
@@ -904,13 +907,15 @@ class Win32App:
                 
                 <![LOG[[StatusService] Downloading app (id = e765119c-6af3-4d39-8eac-3e86fd7642b0, name Adobe Acrobat DC) via DO, bytes 720928912/721977488 for user 37ed0412-d13e-481c-a784-6447007aa208]LOG]!><time="09:49:19.3750179" date="10-26-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">                
                 """
-                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR'])
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
                 downloaded_size_index_start = cur_line.find(self.log_keyword_table[
                                                                 'LOG_WIN32_DOWNLOADED_START_INDICATOR']) + \
                                               len(self.log_keyword_table['LOG_WIN32_DOWNLOADED_START_INDICATOR'])
-                downloaded_size_index_stop = cur_line.find(self.log_keyword_table['LOG_WIN32_DOWNLOADED_STOP_INDICATOR'])
+                downloaded_size_index_stop = cur_line.find(
+                    self.log_keyword_table['LOG_WIN32_DOWNLOADED_STOP_INDICATOR'])
                 percent_size = cur_line[downloaded_size_index_start: downloaded_size_index_stop].split('/')
                 downloaded_size = int(percent_size[0])
                 app_size = int(percent_size[1])
@@ -1158,9 +1163,11 @@ class Win32App:
                 if 'has both detection and applicability errors' in cur_line:
                     applicability_error_code_index_start = cur_line.find(
                         self.log_keyword_table['LOG_MSFB_APPLICABILITY_ERROR_CODE_INDICATOR']) + \
-                                                           len(self.log_keyword_table['LOG_MSFB_APPLICABILITY_ERROR_CODE_INDICATOR'])
+                                                           len(self.log_keyword_table[
+                                                                   'LOG_MSFB_APPLICABILITY_ERROR_CODE_INDICATOR'])
                     applicability_error_code_index_stop = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
-                    applicability_error_code = cur_line[applicability_error_code_index_start: applicability_error_code_index_stop - 1]
+                    applicability_error_code = cur_line[
+                                               applicability_error_code_index_start: applicability_error_code_index_stop - 1]
                     if applicability_error_code == "-2146233079":
                         self.applicability_reason = "Network Issue when trying to Invoke WinGet command. Try removing Proxy/Firewall or switch to different network."
                         self.applicability = False
@@ -1218,7 +1225,8 @@ class Win32App:
                             self.post_install_detection = True
                             self.post_install_detection_time = cur_time
                             if 'DetectedIdentityVersion' in self.detection_state_json:
-                                self.msfb_detected_version = self.detection_state_json['DetectedIdentityVersion']['NewValue']
+                                self.msfb_detected_version = self.detection_state_json['DetectedIdentityVersion'][
+                                    'NewValue']
                         elif self.detection_state_json['DetectionState']['NewValue'] == "NotInstalled":
                             self.post_install_detection = False
                             self.post_install_detection_time = cur_time
@@ -1273,7 +1281,8 @@ class Win32App:
                 if cur_app_id != self.app_id:
                     continue
                 if not post_download and not post_install:
-                    detection_old_start_index = len(self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_RESULT_INDICATOR'])
+                    detection_old_start_index = len(
+                        self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_RESULT_INDICATOR'])
                     if cur_line[detection_old_start_index:detection_old_start_index + 10] == "Applicable":
                         self.applicability = True
                         self.applicability_time = cur_time
@@ -1311,8 +1320,11 @@ class Win32App:
                 """
                 # Only Non 0 BytesRequired reflect actual download progress
                 if not cur_line.startswith("<![LOG[[Package Manager] BytesRequired - 0BytesDownloaded "):
-                    donwloaded_size_index_start = cur_line.find(self.log_keyword_table['LOG_MFSB_DOWNLOADED_SIZE_INDEX_INDICATOR']) + len(self.log_keyword_table['LOG_MFSB_DOWNLOADED_SIZE_INDEX_INDICATOR'])
-                    donwloaded_size_index_stop = cur_line.find(self.log_keyword_table['LOG_MFSB_DOWNLOADED_SIZE_INDEX_END_INDICATOR'])
+                    donwloaded_size_index_start = cur_line.find(
+                        self.log_keyword_table['LOG_MFSB_DOWNLOADED_SIZE_INDEX_INDICATOR']) + len(
+                        self.log_keyword_table['LOG_MFSB_DOWNLOADED_SIZE_INDEX_INDICATOR'])
+                    donwloaded_size_index_stop = cur_line.find(
+                        self.log_keyword_table['LOG_MFSB_DOWNLOADED_SIZE_INDEX_END_INDICATOR'])
                     self.download_file_size = int(cur_line[donwloaded_size_index_start: donwloaded_size_index_stop])
                     if self.app_file_size <= 0:
                         self.app_file_size = 100
@@ -1333,8 +1345,11 @@ class Win32App:
 
                 """
                 if self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_SIZE_INDICATOR'] in cur_line:
-                    donwloaded_size_index_start = cur_line.find(self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_SIZE_INDICATOR']) + len(self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_SIZE_INDICATOR'])
-                    donwloaded_size_index_stop = cur_line.find(self.log_keyword_table['LOG_MSFB_USER_TOTAL_SIZE_INDICATOR'])
+                    donwloaded_size_index_start = cur_line.find(
+                        self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_SIZE_INDICATOR']) + len(
+                        self.log_keyword_table['LOG_MSFB_USER_DOWNLOAD_SIZE_INDICATOR'])
+                    donwloaded_size_index_stop = cur_line.find(
+                        self.log_keyword_table['LOG_MSFB_USER_TOTAL_SIZE_INDICATOR'])
 
                     download_file_size = int(cur_line[donwloaded_size_index_start: donwloaded_size_index_stop])
                     if download_file_size == 0:
@@ -1363,19 +1378,25 @@ class Win32App:
                 MSFB UWP install stop indicator
                 <![LOG[[Win32App][WinGetApp][WinGetAppExecutionExecutor] Completed execution for app with id:
                 """
-                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table['LOG_MSFB_FINISH_EXECUTING_INDICATOR'])
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_MSFB_FINISH_EXECUTING_INDICATOR'])
                 if cur_app_id != self.app_id:
                     continue
 
                 self.installer_exit_success = True
 
-                install_action_status_index_start = cur_line.find(self.log_keyword_table['LOG_MSFB_INSTALL_ACTION_STATUS_INDICATOR']) + len(self.log_keyword_table['LOG_MSFB_INSTALL_ACTION_STATUS_INDICATOR'])
-                install_action_status_index_end = cur_line.find(self.log_keyword_table['LOG_MSFB_INSTALL_ENFORCEMENT_INDICATOR']) - 3
+                install_action_status_index_start = cur_line.find(
+                    self.log_keyword_table['LOG_MSFB_INSTALL_ACTION_STATUS_INDICATOR']) + len(
+                    self.log_keyword_table['LOG_MSFB_INSTALL_ACTION_STATUS_INDICATOR'])
+                install_action_status_index_end = cur_line.find(
+                    self.log_keyword_table['LOG_MSFB_INSTALL_ENFORCEMENT_INDICATOR']) - 3
                 self.installation_result = cur_line[install_action_status_index_start:install_action_status_index_end]
 
-                install_message_status_index_start = cur_line.find(self.log_keyword_table['LOG_MSFB_INSTALL_EXCEPTION_INDICATOR']) + len(
+                install_message_status_index_start = cur_line.find(
+                    self.log_keyword_table['LOG_MSFB_INSTALL_EXCEPTION_INDICATOR']) + len(
                     self.log_keyword_table['LOG_MSFB_INSTALL_EXCEPTION_INDICATOR'])
-                install_message_status_index_end = cur_line.find(self.log_keyword_table['LOG_MSFB_INSTALL_EXECUTION_RESULT_INDICATOR']) - 3
+                install_message_status_index_end = cur_line.find(
+                    self.log_keyword_table['LOG_MSFB_INSTALL_EXECUTION_RESULT_INDICATOR']) - 3
                 self.install_error_message = cur_line[
                                              install_message_status_index_start:install_message_status_index_end]
 
@@ -1401,11 +1422,17 @@ class Win32App:
         interpreted_log_output = ""
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:', self.app_id), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:',
+                                                                                                         self.app_id),
+            depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:', self.app_name), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:',
+                                                                                                         self.app_name),
+            depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:', self.app_type), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:',
+                                                                                                         self.app_type),
+            depth)
         left_string = 'Target Type:'
         right_string = ""
         if self.target_type == 0:
@@ -1415,7 +1442,9 @@ class Win32App:
         elif self.target_type == 2:
             right_string = 'Device Group'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'App Intent:'
         right_string = ""
@@ -1434,7 +1463,9 @@ class Win32App:
             right_string = "Required Uninstall"
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'App Context:'
         right_string = ""
@@ -1445,32 +1476,43 @@ class Win32App:
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         left_string = 'Last Enforcement State:'
         right_string = self.last_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'Current Enforcement State:'
         right_string = self.cur_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'Has Dependent Apps:'
         right_string = 'No'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'GRS time:'
         right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'GRS expired:'
         right_string = str(self.grs_expiry)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         # if not self.grs_expiry:
         #     log_line += 'Win32 app GRS is not expired. Win32 app will be reevaluated after last GRS time + 24 hours\n'
@@ -1482,13 +1524,16 @@ class Win32App:
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:',
-                                                                                 self.app_id), depth)
+                                                                                                         self.app_id),
+            depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:',
-                                                                                 self.app_name), depth)
+                                                                                                         self.app_name),
+            depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:',
-                                                                                 self.app_type), depth)
+                                                                                                         self.app_type),
+            depth)
         left_string = 'Target Type:'
         right_string = ""
         if self.target_type == 0:
@@ -1499,7 +1544,8 @@ class Win32App:
             right_string = 'Device Group'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         left_string = 'App Intent:'
         right_string = ""
@@ -1514,7 +1560,8 @@ class Win32App:
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         left_string = 'App Context:'
         right_string = ""
@@ -1525,25 +1572,29 @@ class Win32App:
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         left_string = 'Last Enforcement State:'
         right_string = self.last_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         left_string = 'Current Enforcement State:'
         right_string = self.cur_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         left_string = 'Has Dependent Apps:'
         right_string = 'Yes'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
         # List Dependent apps
 
         for each_dependent_app_index in range(len(self.dependent_apps_list)):
@@ -1570,13 +1621,15 @@ class Win32App:
         right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         left_string = 'GRS expired:'
         right_string = str(self.grs_expiry)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         return interpreted_log_output
 
@@ -1588,11 +1641,17 @@ class Win32App:
         interpreted_log_output = ""
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:', self.app_id), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:',
+                                                                                                         self.app_id),
+            depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:', self.app_name), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:',
+                                                                                                         self.app_name),
+            depth)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:', self.app_type), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:',
+                                                                                                         self.app_type),
+            depth)
         left_string = 'Target Type:'
         right_string = ""
         if self.target_type == 0:
@@ -1602,7 +1661,9 @@ class Win32App:
         elif self.target_type == 2:
             right_string = 'Device Group'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'App Intent:'
         right_string = ""
@@ -1621,7 +1682,9 @@ class Win32App:
             right_string = "Required Uninstall"
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'App Context:'
         right_string = ""
@@ -1632,17 +1695,22 @@ class Win32App:
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         left_string = 'Last Enforcement State:'
         right_string = self.last_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'Current Enforcement State:'
         right_string = self.cur_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'Detected Version:'
         if self.msfb_detected_version != "":
@@ -1651,7 +1719,8 @@ class Win32App:
             right_string = "None"
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         left_string = 'Installed Version:'
         if self.msfb_installed_version != "":
@@ -1660,17 +1729,22 @@ class Win32App:
             right_string = "None"
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
-                                                                                 right_string), depth)
+                                                                                                         right_string),
+            depth)
 
         left_string = 'GRS time:'
         right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         left_string = 'GRS expired:'
         right_string = str(self.grs_expiry)
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string, right_string), depth)
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
 
         # if not self.grs_expiry:
         #     log_line += 'Win32 app GRS is not expired. Win32 app will be reevaluated after last GRS time + 24 hours\n'
@@ -1708,7 +1782,8 @@ class Win32App:
                     interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                         self.download_finish_time + ' ' + computed_size_str + '\n', depth)
                     if self.app_file_size > 0:
-                        total_size_str = "Total file size is: " + self.convert_file_size_to_readable_string(self.app_file_size)
+                        total_size_str = "Total file size is: " + self.convert_file_size_to_readable_string(
+                            self.app_file_size)
                         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                             self.download_finish_time + ' ' + total_size_str + '\n', depth)
                     interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
@@ -1773,11 +1848,12 @@ class Win32App:
                 self.end_time + ' Install Error message: ' + self.install_error_message + '\n')
 
         if self.post_install_detection:
-            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(self.post_install_detection_time +
-                                                                              ' Detect app after processing: App is detected.\n'
-                                                                              if self.post_install_detection_time != ""
-                                                                              else self.install_finish_time +
-                                                                                   ' Detect app after processing: App is detected.\n')
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+                self.post_install_detection_time +
+                ' Detect app after processing: App is detected.\n'
+                if self.post_install_detection_time != ""
+                else self.install_finish_time +
+                     ' Detect app after processing: App is detected.\n')
             if self.intent == 4:
                 result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
@@ -1855,8 +1931,6 @@ class Win32App:
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                     self.download_finish_time + ' ' + computed_speed_str + '\n', depth)
 
-
-
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n', depth)
@@ -1875,8 +1949,9 @@ class Win32App:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.decryption_success_time + ' Decryption success.\n', depth)
         else:
-            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(self.end_time + ' Decryption FAILED!\n',
-                                                                              depth)
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+                self.end_time + ' Decryption FAILED!\n',
+                depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n', depth)
@@ -1885,8 +1960,9 @@ class Win32App:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.decryption_success_time + ' Unzipping success.\n', depth)
         else:
-            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(self.end_time + ' Unzipping FAILED!\n',
-                                                                              depth)
+            interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+                self.end_time + ' Unzipping FAILED!\n',
+                depth)
             result = self.cur_enforcement_state if self.cur_enforcement_state != "No enforcement state found" else "FAIL"
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' App Installation Result: ' + result + '\n', depth)
@@ -2106,7 +2182,7 @@ class Win32App:
                 self.applicability_time + ' Applicability Check: NOT Applicable \n', depth)
             if self.applicability_reason != "":
                 interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-                    self.applicability_time + ' Not Applicable Reason: ' + self.applicability_reason +  '\n', depth)
+                    self.applicability_time + ' Not Applicable Reason: ' + self.applicability_reason + '\n', depth)
             # if self.no_enforcement_reason != "":
             #     interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             #         self.applicability_time + ' No Enforcement Reason: ' + self.no_enforcement_reason + '\n', depth)
