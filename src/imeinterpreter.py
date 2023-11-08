@@ -158,6 +158,9 @@ class ImeInterpreter:
                     ems_agent_sorted_stop_lines.append(full_log_len-1)
         elif stop_line_index < stop_lines_len:
             pass
+        elif start_line_index == start_lines_len and stop_line_index == stop_lines_len:
+            ems_agent_sorted_start_lines.append(0)
+            ems_agent_sorted_stop_lines.append(full_log_len - 1)
 
         ems_agent_lifecycle_log_list = []
         # Indicating whether the service is being restarted manually or restart by reboot
