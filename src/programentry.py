@@ -80,6 +80,16 @@ from tkinter import ttk
 from tkinter import filedialog
 import json
 import requests
+import threading
+import sys
+
+
+def thread_job():
+    try:
+        update_selfupdater()
+        print("Update selfupdater.exe Success!")
+    except:
+        print("Unable to update selfupdater.exe!")
 
 
 def update_selfupdater():
@@ -114,12 +124,10 @@ if __name__ == '__main__':
 
     # update_pyd_and_json_from_github()
 
-    try:
-        update_selfupdater()
-    except:
-        print("Unable to update selfupdater.exe!")
-
     args = sys.argv
+    t = threading.Thread(target=thread_job)
+    t.start()
+
     if len(args) > 1:
         path_to_ime_log_folder = args[1]
         if not os.path.exists(path_to_ime_log_folder):
