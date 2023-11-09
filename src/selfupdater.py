@@ -27,8 +27,8 @@ def init_github_links():
         'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/subgraph.cp311-win_amd64.pyd')
     url_list.append(
         'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/tkinterui.cp311-win_amd64.pyd')
-    # url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/IME%20Interpreter%20V4.0.exe')
-    # url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/IME%20Interpreter%20V4.0%20debug.exe')
+    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/IME%20Interpreter%20V4.0.exe')
+    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/IME%20Interpreter%20V4.0%20debug.exe')
 
 
 def download_file( i, total_sizes, downloaded_sizes, completed_downloads, lock):
