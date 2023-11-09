@@ -272,14 +272,19 @@ class Win32App:
         if self.download_time > 0 and self.download_file_size > 0:
             download_average_speed_raw = self.download_file_size * 1.0 / self.download_time
         elif not self.download_finish_time:
-            # print("No self.download_finish_time, exit in convert_speedraw_to_string")
+            print("No self.download_finish_time, exit in convert_speedraw_to_string")
             return ""
         else:
             download_finish_time = datetime.datetime.strptime(self.download_finish_time[:-4],
                                                               '%m-%d-%Y %H:%M:%S')
             download_start_time = datetime.datetime.strptime(self.download_start_time[:-4], '%m-%d-%Y %H:%M:%S')
-            download_average_speed_raw = self.download_file_size * 1.0 / (
-                    download_finish_time - download_start_time).total_seconds()
+            time_difference = (download_finish_time - download_start_time).total_seconds()
+            if time_difference <= 0:
+                print("download_finish_time = download_start_time, download not finished")
+                self.download_success = False
+                download_average_speed_raw = 0
+            else:
+                download_average_speed_raw = self.download_file_size * 1.0 / time_difference
 
         if download_average_speed_raw > 1000000:
             download_average_speed_converted = str(
