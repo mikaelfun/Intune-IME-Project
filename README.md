@@ -1,6 +1,15 @@
 # Intune-IME-Project
 IME tool to analyze IntuneManagementExtension.log
 
+# How to use:
+Download and unzip IME Interpreter V4.0.zip from release/
+There are 3 programs:
+1. IME Interpreter V4.0.exe: Main program for general use.
+2. IME Interpreter V4.0 debug.exe: Debug version program with console window. Used when some logs return empty output or has any exceptions that can be printed in the console to help debugging.
+3. selfupdater.exe: Updater program which is used to update *.pyd and *.json files from GitHub src folder. Whenever there is a hotpatch, run this program and it can be updated right away.
+
+
+
 ## Command line argument format:
 
 Normal log output(igonoring non expired Subgraphs):
