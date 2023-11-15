@@ -143,6 +143,7 @@ class Win32App:
         self.unzipping_success_time = ""
         self.install_context = -1
         self.install_command = ""
+        self.installer_timeout_str = ""
         self.install_error_message = ""
         self.current_attempt_num = '0'  # 0, 1, 2    3 times in total
         self.install_start_time = ""
@@ -687,6 +688,13 @@ class Win32App:
                         cur_line[installer_thread_id_index_start:installer_thread_id_index_stop]
                 else:
                     continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_INSTALLER_TIMEOUT_INDICATOR']):
+                timeout_index_start = cur_line.find(
+                    self.log_keyword_table['LOG_WIN32_INSTALLER_TIMEOUT_INDICATOR']) + \
+                                      len(self.log_keyword_table['LOG_WIN32_INSTALLER_TIMEOUT_INDICATOR'])
+                timeout_index_stop = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING']) - 1
+                time_str_raw = cur_line[timeout_index_start: timeout_index_stop]
+                self.installer_timeout_str = str(int(int(time_str_raw) / 1000 / 60))
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_INSTALL_FINISH_INDICATOR']):
                 if self.install_finish_time == "":
                     self.install_finish_time = cur_time
@@ -1009,6 +1017,13 @@ class Win32App:
                         cur_line[installer_thread_id_index_start:installer_thread_id_index_stop]
                 else:
                     continue  # Means this is the line for other dependent apps
+
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_INSTALLER_TIMEOUT_INDICATOR']):
+                timeout_index_start = cur_line.find(self.log_keyword_table['LOG_WIN32_INSTALLER_TIMEOUT_INDICATOR']) + \
+                                      len(self.log_keyword_table['LOG_WIN32_INSTALLER_TIMEOUT_INDICATOR'])
+                timeout_index_stop = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING']) - 1
+                time_str_raw = cur_line[timeout_index_start: timeout_index_stop]
+                self.installer_timeout_str = str(int(int(time_str_raw)/1000/60))
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_INSTALL_FINISH_INDICATOR']):
                 if self.install_finish_time == "":
                     self.install_finish_time = cur_time
@@ -1809,7 +1824,7 @@ class Win32App:
                 self.download_finish_time + ' Install Context: Unknown!\n')
         if self.installer_created_success:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-                self.install_start_time + ' Installer process created successfully. Installer time out is 60 minutes.\n')
+                self.install_start_time + ' Installer process created successfully. Installer time out is ' + self.installer_timeout_str + ' minutes.\n')
         else:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' Error creating installer process!\n')
@@ -1996,8 +2011,8 @@ class Win32App:
                 self.install_start_time + ' Install Command: ' + self.install_command + '\n', depth)
         if self.installer_created_success:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-                self.install_start_time + ' Installer process created successfully. Installer time out is 60 minutes.\n',
-                depth)
+                self.install_start_time + ' Installer process created successfully. Installer time out is ' +
+                self.installer_timeout_str + ' minutes.\n', depth)
         else:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.end_time + ' Error creating installer process!\n', depth)
