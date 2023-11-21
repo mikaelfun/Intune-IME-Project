@@ -41,10 +41,20 @@ class ImeInterpreter:
                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
                 return None
             #exit(1100)
-        current_log_file = open(ime_log_file_path, mode='r', encoding='utf-8-sig')
-        current_ime_log_as_lines = current_log_file.readlines()
+        try:
+            current_log_file = open(ime_log_file_path, mode='r', encoding='utf-8-sig')
+            current_ime_log_as_lines = current_log_file.readlines()
+            current_log_file.close()
+        except:
+            print("Unable to load log via utf-8")
+            try:
+                current_log_file = open(ime_log_file_path, mode='r', encoding='ISO-8859-1')
+                current_ime_log_as_lines = current_log_file.readlines()
+                current_log_file.close()
+            except:
+                print("Unable to load log via ISO-8859-1")
+
         full_log = []
-        current_log_file.close()
 
         # Listing older IME logs
         dir_list = os.listdir(self.log_folder_path)

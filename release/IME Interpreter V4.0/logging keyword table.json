@@ -61,6 +61,7 @@
   "LOG_WIN32_EXECUTE_INDICATOR" : "<![LOG[[Win32App] ===Step=== Execute retry ",
   "LOG_WIN32_INSTALLER_CREATE_INDICATOR" : "<![LOG[[Win32App] Create installer process successfully.]LOG]",
   "LOG_WIN32_INSTALLER_ID_INDICATOR" : "<![LOG[[Win32App] process id = ",
+  "LOG_WIN32_INSTALLER_TIMEOUT_INDICATOR" : "<![LOG[[Win32App] Installer process timeout milliseconds: ",
   "LOG_WIN32_INSTALL_FINISH_INDICATOR" : "<![LOG[[Win32App] Installation is done, collecting result]LOG]!",
   "LOG_WIN32_INSTALL_EXIT_CODE_INDICATOR" : "<![LOG[[Win32App] lpExitCode ",
   "LOG_WIN32_INSTALL_EXIT_CODE_DEF_INDICATOR" : "<![LOG[[Win32App] lpExitCode is defined as ",
