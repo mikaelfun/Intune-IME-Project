@@ -149,6 +149,8 @@ class ImeInterpreter:
                         """
                         ems_agent_sorted_stop_lines.append(ems_agent_stop_lines[stop_line_index])
                         stop_line_index += 1
+                else:
+                    ems_agent_sorted_stop_lines.append(ems_agent_stop_lines[stop_line_index])
             else:
                 ems_agent_sorted_start_lines.append(0)
                 ems_agent_sorted_stop_lines.append(cur_stop_line_top_index)
