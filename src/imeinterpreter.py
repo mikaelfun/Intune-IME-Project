@@ -25,7 +25,7 @@ class ImeInterpreter:
         self.log_folder_path = log_folder_path
         self.life_cycle_list = []
 
-        self.full_log = self.load_all_ime_logs()  # full log as line of string list
+        self.full_log = self.load_full_logs()  # full log as line of string list
         self.initialize_life_cycle_list()
         self.life_cycle_num = len(self.life_cycle_list)
 
@@ -33,29 +33,23 @@ class ImeInterpreter:
         # saving uploaded log locally for further improvement
         pass
 
-    def load_all_ime_logs(self):
-        ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
-        if not (os.path.isfile(ime_log_file_path)):
-            ime_log_file_path = self.log_folder_path + '\\intunemanagementextension.log'
-            if not (os.path.isfile(ime_log_file_path)):
-                print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
-                return None
-            #exit(1100)
+    def open_log_file(self, log_path):
         try:
-            current_log_file = open(ime_log_file_path, mode='r', encoding='utf-8-sig')
-            current_ime_log_as_lines = current_log_file.readlines()
-            current_log_file.close()
+            log_file = open(log_path, mode='r', encoding='utf-8-sig')
+            log_as_lines = log_file.readlines()
+            log_file.close()
         except:
             print("Unable to load log via utf-8")
             try:
-                current_log_file = open(ime_log_file_path, mode='r', encoding='ISO-8859-1')
-                current_ime_log_as_lines = current_log_file.readlines()
-                current_log_file.close()
+                log_file = open(log_path, mode='r', encoding='ISO-8859-1')
+                log_as_lines = log_file.readlines()
+                log_file.close()
             except:
                 print("Unable to load log via ISO-8859-1")
+                log_as_lines = ""
+        return log_as_lines
 
-        full_log = []
-
+    def load_all_ime_logs(self):
         # Listing older IME logs
         dir_list = os.listdir(self.log_folder_path)
         # filtering IME logs only
@@ -68,27 +62,123 @@ class ImeInterpreter:
         else:
             print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.1")
             return None
-        #print(dir_list)
+        # print(dir_list)
         # Sorting based on date in file name, first log should be the oldest log
         sorted(dir_list)
-        #print(dir_list)
+        # print(dir_list)
+        full_log = []
         for each_log in dir_list:
             current_log_file_path = self.log_folder_path + '\\' + each_log
-            current_log_file = open(current_log_file_path, mode='r', encoding='utf-8-sig')
-            current_log_as_lines = current_log_file.readlines()
+            current_ime_log_as_lines = self.open_log_file(current_log_file_path)
+            full_log = full_log + current_ime_log_as_lines
             '''
             There is an issue that sometimes after concatenating 2 log files, the EMS Agent stop will be missing.
             Force adding at the beginning.
             '''
-            if current_log_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[-1].startswith('<![LOG[EMS Agent Stopped]'):
-                post_part_start_index = full_log[-1].find('LOG]!>')
-                made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
-                current_log_as_lines.insert(0, made_up_line)
-            full_log = full_log + current_log_as_lines
-            current_log_file.close()
+        ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
+        ime_log_file_lower_path = self.log_folder_path + '\\intunemanagementextension.log'
 
-        full_log = full_log + current_ime_log_as_lines
+        if not (os.path.isfile(ime_log_file_path)):
+            ime_log_file_path = ime_log_file_lower_path
+            if not (os.path.isfile(ime_log_file_lower_path)):
+                print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
+                return None
+            # exit(1100)
+        most_recent_log_file_as_lines = self.open_log_file(ime_log_file_path)
+        if most_recent_log_file_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[
+            -1].startswith('<![LOG[EMS Agent Stopped]'):
+            post_part_start_index = full_log[-1].find('LOG]!>')
+            made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
+            most_recent_log_file_as_lines.insert(0, made_up_line)
+        full_log = full_log + most_recent_log_file_as_lines
         return full_log
+
+    def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):
+        full_log = []
+        left, right = 0, 0
+        ime_log_len = len(ime_logs)
+        app_workload_log_len = len(app_workload_logs)
+        while left < ime_log_len and right < app_workload_log_len:
+            left_line = ime_logs[left]
+            right_line = app_workload_logs[right]
+            left_time = logprocessinglibrary.get_timestamp_by_line(left_line)
+            right_time = logprocessinglibrary.get_timestamp_by_line(right_line)
+            if left_time > right_time:
+                full_log.append(right_line)
+                right = right + 1
+            else:
+                full_log.append(left_line)
+                left = left + 1
+
+        while left < ime_log_len:
+            full_log.append(ime_logs[left])
+            left = left + 1
+        while right < app_workload_log_len:
+            full_log.append(app_workload_logs[right])
+            right = right + 1
+        # with open('C:\\temp\\temp\\imeout.log', 'a') as outfile:
+        #     for i in range(len(full_log)):
+        #         outfile.writelines(full_log[i])
+        return full_log
+
+    def load_all_app_workload_logs(self):
+        """
+        Fix the change in log structure in 2407 that Win32 log entries are separated into AppWorkload.log
+        Adding the ability to merge the separated logs if exists.
+        """
+        app_workload_log_file_path = self.log_folder_path + '\\AppWorkload.log'
+        app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
+
+        dir_list = os.listdir(self.log_folder_path)
+        # filtering AppWorkload logs only
+        dir_list = [i for i in dir_list if i.lower().startswith('AppWorkload') and i.endswith('.log')]
+        # Remove Current IME log, which is most recent
+        if 'appworkload.log' in dir_list:
+            dir_list.remove('appworkload.log')
+        elif 'AppWorkload.log' in dir_list:
+            dir_list.remove('AppWorkload.log')
+        else:
+            # print("Error! Path does not contain AppWorkload.log! Exit 1.2")
+            pass
+        # print(dir_list)
+        # Sorting based on date in file name, first log should be the oldest log
+        sorted(dir_list)
+        # print(dir_list)
+        full_log = []
+        for each_log in dir_list:
+            current_log_file_path = self.log_folder_path + '\\' + each_log
+            current_app_workload_log_as_lines = self.open_log_file(current_log_file_path)
+            full_log = full_log + current_app_workload_log_as_lines
+            '''
+            There is an issue that sometimes after concatenating 2 log files, the EMS Agent stop will be missing.
+            Force adding at the beginning.
+            '''
+
+        if not (os.path.isfile(app_workload_log_file_path)):
+            app_workload_log_file_path = app_workload_log_lower_file_path
+            if not (os.path.isfile(app_workload_log_lower_file_path)):
+                print("Error! Path does not contain AppWorkload.log! Exit 1.3")
+                return full_log
+            # exit(1100)
+        most_recent_log_file_as_lines = self.open_log_file(app_workload_log_file_path)
+
+        full_log = full_log + most_recent_log_file_as_lines
+        return full_log
+
+    def load_full_logs(self):
+        app_workload_log_file_path = self.log_folder_path + '\\AppWorkload.log'
+        app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
+
+        app_workload_log_exists = (os.path.isfile(app_workload_log_file_path)) or (os.path.isfile(app_workload_log_lower_file_path))
+
+        if not app_workload_log_exists:
+            full_log = self.load_all_ime_logs()
+            return full_log
+        else:
+            ime_log = self.load_all_ime_logs()
+            app_workload_log = self.load_all_app_workload_logs()
+            full_log = self.merge_ime_and_app_workload_logs(ime_log, app_workload_log)
+            return full_log
 
     def separate_log_into_service_lifecycle(self):
         ems_agent_start_lines = []
