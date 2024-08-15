@@ -1756,6 +1756,30 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject
 #define __Pyx_PyObject_FastCall(func, args, nargs)  __Pyx_PyObject_FastCallDict(func, args, (size_t)(nargs), NULL)
 static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject **args, size_t nargs, PyObject *kwargs);
 
+/* GetTopmostException.proto */
+#if CYTHON_USE_EXC_INFO_STACK && CYTHON_FAST_THREAD_STATE
+static _PyErr_StackItem * __Pyx_PyErr_GetTopmostException(PyThreadState *tstate);
+#endif
+
+/* SaveResetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_ExceptionSave(type, value, tb)  __Pyx__ExceptionSave(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#define __Pyx_ExceptionReset(type, value, tb)  __Pyx__ExceptionReset(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb);
+#else
+#define __Pyx_ExceptionSave(type, value, tb)   PyErr_GetExcInfo(type, value, tb)
+#define __Pyx_ExceptionReset(type, value, tb)  PyErr_SetExcInfo(type, value, tb)
+#endif
+
+/* GetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
+static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#else
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
+#endif
+
 /* PyDictVersioning.proto */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
 #define __PYX_DICT_VERSION_INIT  ((PY_UINT64_T) -1)
@@ -1801,30 +1825,6 @@ static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_ve
 #define __Pyx_GetModuleGlobalName(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
 #define __Pyx_GetModuleGlobalNameUncached(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
 static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
-#endif
-
-/* GetTopmostException.proto */
-#if CYTHON_USE_EXC_INFO_STACK && CYTHON_FAST_THREAD_STATE
-static _PyErr_StackItem * __Pyx_PyErr_GetTopmostException(PyThreadState *tstate);
-#endif
-
-/* SaveResetException.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_ExceptionSave(type, value, tb)  __Pyx__ExceptionSave(__pyx_tstate, type, value, tb)
-static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
-#define __Pyx_ExceptionReset(type, value, tb)  __Pyx__ExceptionReset(__pyx_tstate, type, value, tb)
-static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb);
-#else
-#define __Pyx_ExceptionSave(type, value, tb)   PyErr_GetExcInfo(type, value, tb)
-#define __Pyx_ExceptionReset(type, value, tb)  PyErr_SetExcInfo(type, value, tb)
-#endif
-
-/* GetException.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
-static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
-#else
-static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
 #endif
 
 /* ListCompAppend.proto */
@@ -1889,9 +1889,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(
         PyObject* obj, Py_ssize_t cstart, Py_ssize_t cstop,
         PyObject** py_start, PyObject** py_stop, PyObject** py_slice,
         int has_cstart, int has_cstop, int wraparound);
-
-/* RaiseUnboundLocalError.proto */
-static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname);
 
 /* PyObjectCallOneArg.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
@@ -2233,24 +2230,25 @@ int __pyx_module_is_main_imeinterpreter = 0;
 
 /* Implementation of "imeinterpreter" */
 /* #### Code section: global_var ### */
-static PyObject *__pyx_builtin_print;
 static PyObject *__pyx_builtin_open;
+static PyObject *__pyx_builtin_print;
 static PyObject *__pyx_builtin_range;
 /* #### Code section: string_decls ### */
 static const char __pyx_k_i[] = "i";
 static const char __pyx_k_r[] = "r";
+static const char __pyx_k__3[] = "";
 static const char __pyx_k__5[] = "\\";
-static const char __pyx_k__8[] = "";
-static const char __pyx_k__9[] = "\n";
 static const char __pyx_k_os[] = "os";
 static const char __pyx_k_LOG[] = "LOG]!>";
-static const char __pyx_k__10[] = "*";
-static const char __pyx_k__24[] = "?";
+static const char __pyx_k__10[] = "\n";
+static const char __pyx_k__11[] = "*";
+static const char __pyx_k__33[] = "?";
 static const char __pyx_k_doc[] = "__doc__";
 static const char __pyx_k_log[] = ".log";
 static const char __pyx_k_dict[] = "__dict__";
 static const char __pyx_k_find[] = "find";
 static const char __pyx_k_init[] = "__init__";
+static const char __pyx_k_left[] = "left";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_mode[] = "mode";
 static const char __pyx_k_name[] = "__name__";
@@ -2264,6 +2262,7 @@ static const char __pyx_k_index[] = "index";
 static const char __pyx_k_lower[] = "lower";
 static const char __pyx_k_print[] = "print";
 static const char __pyx_k_range[] = "range";
+static const char __pyx_k_right[] = "right";
 static const char __pyx_k_super[] = "super";
 static const char __pyx_k_append[] = "append";
 static const char __pyx_k_import[] = "__import__";
@@ -2271,6 +2270,7 @@ static const char __pyx_k_insert[] = "insert";
 static const char __pyx_k_isfile[] = "isfile";
 static const char __pyx_k_module[] = "__module__";
 static const char __pyx_k_remove[] = "remove";
+static const char __pyx_k_ime_log[] = "ime_log";
 static const char __pyx_k_listdir[] = "listdir";
 static const char __pyx_k_prepare[] = "__prepare__";
 static const char __pyx_k_seconds[] = "seconds";
@@ -2281,39 +2281,56 @@ static const char __pyx_k_each_log[] = "each_log";
 static const char __pyx_k_encoding[] = "encoding";
 static const char __pyx_k_endswith[] = "endswith";
 static const char __pyx_k_full_log[] = "full_log";
+static const char __pyx_k_ime_logs[] = "ime_logs";
+static const char __pyx_k_log_file[] = "log_file";
+static const char __pyx_k_log_path[] = "log_path";
 static const char __pyx_k_qualname[] = "__qualname__";
 static const char __pyx_k_set_name[] = "__set_name__";
 static const char __pyx_k_strptime[] = "strptime";
+static const char __pyx_k_left_line[] = "left_line";
+static const char __pyx_k_left_time[] = "left_time";
 static const char __pyx_k_metaclass[] = "__metaclass__";
 static const char __pyx_k_readlines[] = "readlines";
 static const char __pyx_k_timedelta[] = "timedelta";
 static const char __pyx_k_utf_8_sig[] = "utf-8-sig";
 static const char __pyx_k_ISO_8859_1[] = "ISO-8859-1";
+static const char __pyx_k_right_line[] = "right_line";
+static const char __pyx_k_right_time[] = "right_time";
 static const char __pyx_k_startswith[] = "startswith";
+static const char __pyx_k_AppWorkload[] = "AppWorkload";
 static const char __pyx_k_boot_reason[] = "boot_reason";
+static const char __pyx_k_ime_log_len[] = "ime_log_len";
 static const char __pyx_k_m_d_Y_H_M_S[] = "%m-%d-%Y %H:%M:%S";
 static const char __pyx_k_EMSLifeCycle[] = "EMSLifeCycle";
 static const char __pyx_k_emslifecycle[] = "emslifecycle";
 static const char __pyx_k_full_log_len[] = "full_log_len";
 static const char __pyx_k_initializing[] = "_initializing";
 static const char __pyx_k_is_coroutine[] = "_is_coroutine";
+static const char __pyx_k_log_as_lines[] = "log_as_lines";
 static const char __pyx_k_made_up_line[] = "made_up_line";
 static const char __pyx_k_Device_Reboot[] = "Device Reboot";
 static const char __pyx_k_class_getitem[] = "__class_getitem__";
 static const char __pyx_k_init_subclass[] = "__init_subclass__";
+static const char __pyx_k_open_log_file[] = "open_log_file";
 static const char __pyx_k_ImeInterpreter[] = "ImeInterpreter";
 static const char __pyx_k_imeinterpreter[] = "imeinterpreter";
 static const char __pyx_k_last_stop_time[] = "last_stop_time";
 static const char __pyx_k_life_cycle_num[] = "life_cycle_num";
+static const char __pyx_k_load_full_logs[] = "load_full_logs";
 static const char __pyx_k_stop_lines_len[] = "stop_lines_len";
+static const char __pyx_k_AppWorkload_log[] = "\\AppWorkload.log";
 static const char __pyx_k_agent_stop_time[] = "agent_stop_time";
+static const char __pyx_k_appworkload_log[] = "\\appworkload.log";
 static const char __pyx_k_last_start_time[] = "last_start_time";
 static const char __pyx_k_life_cycle_list[] = "life_cycle_list";
 static const char __pyx_k_log_folder_path[] = "log_folder_path";
 static const char __pyx_k_start_lines_len[] = "start_lines_len";
 static const char __pyx_k_stop_line_index[] = "stop_line_index";
-static const char __pyx_k_current_log_file[] = "current_log_file";
+static const char __pyx_k_app_workload_log[] = "app_workload_log";
 static const char __pyx_k_start_line_index[] = "start_line_index";
+static const char __pyx_k_AppWorkload_log_2[] = "AppWorkload.log";
+static const char __pyx_k_app_workload_logs[] = "app_workload_logs";
+static const char __pyx_k_appworkload_log_2[] = "appworkload.log";
 static const char __pyx_k_cur_lifecycle_log[] = "cur_lifecycle_log";
 static const char __pyx_k_ime_log_file_path[] = "ime_log_file_path";
 static const char __pyx_k_imeinterpreter_py[] = "imeinterpreter.py";
@@ -2323,7 +2340,7 @@ static const char __pyx_k_asyncio_coroutines[] = "asyncio.coroutines";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_index_lifecycle_log[] = "index_lifecycle_log";
 static const char __pyx_k_save_log_to_service[] = "save_log_to_service";
-static const char __pyx_k_current_log_as_lines[] = "current_log_as_lines";
+static const char __pyx_k_app_workload_log_len[] = "app_workload_log_len";
 static const char __pyx_k_ems_agent_stop_lines[] = "ems_agent_stop_lines";
 static const char __pyx_k_logprocessinglibrary[] = "logprocessinglibrary";
 static const char __pyx_k_ImeInterpreter___init[] = "ImeInterpreter.__init__";
@@ -2338,9 +2355,11 @@ static const char __pyx_k_post_part_start_index[] = "post_part_start_index";
 static const char __pyx_k_Service_Manual_Restart[] = "Service Manual Restart";
 static const char __pyx_k_ems_agent_start_string[] = "ems_agent_start_string";
 static const char __pyx_k_interpreted_log_output[] = "interpreted_log_output";
+static const char __pyx_k_app_workload_log_exists[] = "app_workload_log_exists";
 static const char __pyx_k_constructinterpretedlog[] = "constructinterpretedlog";
 static const char __pyx_k_cur_lifecycle_log_index[] = "cur_lifecycle_log_index";
 static const char __pyx_k_cur_stop_line_top_index[] = "cur_stop_line_top_index";
+static const char __pyx_k_ime_log_file_lower_path[] = "ime_log_file_lower_path";
 static const char __pyx_k_agent_life_ending_reason[] = "agent_life_ending_reason";
 static const char __pyx_k_agent_stop_time_datetime[] = "agent_stop_time_datetime";
 static const char __pyx_k_cur_start_line_top_index[] = "cur_start_line_top_index";
@@ -2350,39 +2369,54 @@ static const char __pyx_k_agent_lifecycle_log_index[] = "agent_lifecycle_log_ind
 static const char __pyx_k_ems_agent_restart_reasons[] = "ems_agent_restart_reasons";
 static const char __pyx_k_intunemanagementextension[] = "intunemanagementextension";
 static const char __pyx_k_show_not_expired_subgraph[] = "show_not_expired_subgraph";
+static const char __pyx_k_app_workload_log_file_path[] = "app_workload_log_file_path";
 static const char __pyx_k_initialize_life_cycle_list[] = "initialize_life_cycle_list";
+static const char __pyx_k_load_all_app_workload_logs[] = "load_all_app_workload_logs";
 static const char __pyx_k_ems_agent_sorted_stop_lines[] = "ems_agent_sorted_stop_lines";
+static const char __pyx_k_ImeInterpreter_open_log_file[] = "ImeInterpreter.open_log_file";
 static const char __pyx_k_Unable_to_load_log_via_utf_8[] = "Unable to load log via utf-8";
 static const char __pyx_k_ems_agent_lifecycle_log_list[] = "ems_agent_lifecycle_log_list";
 static const char __pyx_k_ems_agent_sorted_start_lines[] = "ems_agent_sorted_start_lines";
-static const char __pyx_k_IntuneManagementExtension_log[] = "\\IntuneManagementExtension.log";
-static const char __pyx_k_intunemanagementextension_log[] = "\\intunemanagementextension.log";
+static const char __pyx_k_ImeInterpreter_load_full_logs[] = "ImeInterpreter.load_full_logs";
+static const char __pyx_k_IntuneManagementExtension_log[] = "IntuneManagementExtension.log";
+static const char __pyx_k_intunemanagementextension_log[] = "intunemanagementextension.log";
+static const char __pyx_k_most_recent_log_file_as_lines[] = "most_recent_log_file_as_lines";
 static const char __pyx_k_This_is_root_Class_def_for_IME[] = "\nThis is root Class def for IME interpreter.\nAs service app, it will process multiple interpret requests at the same time.\nCreate this class object for each request.\n\nError Code range: 1000 - 1999\n\nClass hierarchy:\n- ImeInterpreter\n    - EMSLifeCycle\n        - ApplicationPoller\n            - SubGraph\n                - Win32App\n\n";
 static const char __pyx_k_agent_next_start_time_datetime[] = "agent_next_start_time_datetime";
-static const char __pyx_k_IntuneManagementExtension_log_2[] = "IntuneManagementExtension.log";
+static const char __pyx_k_IntuneManagementExtension_log_2[] = "\\IntuneManagementExtension.log";
 static const char __pyx_k_Unable_to_load_log_via_ISO_8859[] = "Unable to load log via ISO-8859-1";
-static const char __pyx_k_intunemanagementextension_log_2[] = "intunemanagementextension.log";
-static const char __pyx_k_Error_Path_does_not_contain_Intu[] = "Error! Path does not contain IntuneManagementExtension.log! Exit 1.0";
+static const char __pyx_k_intunemanagementextension_log_2[] = "\\intunemanagementextension.log";
+static const char __pyx_k_merge_ime_and_app_workload_logs[] = "merge_ime_and_app_workload_logs";
+static const char __pyx_k_Error_Path_does_not_contain_AppW[] = "Error! Path does not contain AppWorkload.log! Exit 1.3";
+static const char __pyx_k_Error_Path_does_not_contain_Intu[] = "Error! Path does not contain IntuneManagementExtension.log! Exit 1.1";
 static const char __pyx_k_Error_len_ems_agent_lifecycle_lo[] = "Error len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons)";
 static const char __pyx_k_ImeInterpreter_generate_ime_inte[] = "ImeInterpreter.generate_ime_interpreter_log_output";
 static const char __pyx_k_ImeInterpreter_initialize_life_c[] = "ImeInterpreter.initialize_life_cycle_list";
+static const char __pyx_k_ImeInterpreter_load_all_app_work[] = "ImeInterpreter.load_all_app_workload_logs";
 static const char __pyx_k_ImeInterpreter_load_all_ime_logs[] = "ImeInterpreter.load_all_ime_logs";
+static const char __pyx_k_ImeInterpreter_merge_ime_and_app[] = "ImeInterpreter.merge_ime_and_app_workload_logs";
 static const char __pyx_k_ImeInterpreter_save_log_to_servi[] = "ImeInterpreter.save_log_to_service";
 static const char __pyx_k_ImeInterpreter_separate_log_into[] = "ImeInterpreter.separate_log_into_service_lifecycle";
+static const char __pyx_k_app_workload_log_lower_file_path[] = "app_workload_log_lower_file_path";
 static const char __pyx_k_convert_date_string_to_date_time[] = "convert_date_string_to_date_time";
+static const char __pyx_k_current_app_workload_log_as_line[] = "current_app_workload_log_as_lines";
 static const char __pyx_k_generate_ems_lifecycle_log_outpu[] = "generate_ems_lifecycle_log_output";
 static const char __pyx_k_generate_ime_interpreter_log_out[] = "generate_ime_interpreter_log_output";
 static const char __pyx_k_separate_log_into_service_lifecy[] = "separate_log_into_service_lifecycle";
 static const char __pyx_k_write_ime_service_start_by_reaso[] = "write_ime_service_start_by_reason";
-static const char __pyx_k_Error_Path_does_not_contain_Intu_2[] = "Error! Path does not contain IntuneManagementExtension.log! Exit 1.1";
+static const char __pyx_k_Error_Path_does_not_contain_Intu_2[] = "Error! Path does not contain IntuneManagementExtension.log! Exit 1.0";
 static const char __pyx_k_Error_Path_does_not_contain_Intu_3[] = "Error! Path does not contain IntuneManagementExtension.log!";
 /* #### Code section: decls ### */
 static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter___init__(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_log_folder_path); /* proto */
 static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_2save_log_to_service(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_service_lifecycle(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cycle_list(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_interpreter_log_output(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_show_not_expired_subgraph); /* proto */
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4open_log_file(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_self, PyObject *__pyx_v_log_path); /* proto */
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6load_all_ime_logs(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8merge_ime_and_app_workload_logs(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_self, PyObject *__pyx_v_ime_logs, PyObject *__pyx_v_app_workload_logs); /* proto */
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10load_all_app_workload_logs(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_12load_full_logs(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_14separate_log_into_service_lifecycle(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_16initialize_life_cycle_list(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_18generate_ime_interpreter_log_output(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_show_not_expired_subgraph); /* proto */
 /* #### Code section: late_includes ### */
 /* #### Code section: module_state ### */
 typedef struct {
@@ -2412,8 +2446,12 @@ typedef struct {
   #endif
   #if CYTHON_USE_MODULE_STATE
   #endif
+  PyObject *__pyx_n_s_AppWorkload;
+  PyObject *__pyx_kp_s_AppWorkload_log;
+  PyObject *__pyx_kp_s_AppWorkload_log_2;
   PyObject *__pyx_kp_s_Device_Reboot;
   PyObject *__pyx_n_s_EMSLifeCycle;
+  PyObject *__pyx_kp_s_Error_Path_does_not_contain_AppW;
   PyObject *__pyx_kp_s_Error_Path_does_not_contain_Intu;
   PyObject *__pyx_kp_s_Error_Path_does_not_contain_Intu_2;
   PyObject *__pyx_kp_s_Error_Path_does_not_contain_Intu_3;
@@ -2424,7 +2462,11 @@ typedef struct {
   PyObject *__pyx_n_s_ImeInterpreter___init;
   PyObject *__pyx_n_s_ImeInterpreter_generate_ime_inte;
   PyObject *__pyx_n_s_ImeInterpreter_initialize_life_c;
+  PyObject *__pyx_n_s_ImeInterpreter_load_all_app_work;
   PyObject *__pyx_n_s_ImeInterpreter_load_all_ime_logs;
+  PyObject *__pyx_n_s_ImeInterpreter_load_full_logs;
+  PyObject *__pyx_n_s_ImeInterpreter_merge_ime_and_app;
+  PyObject *__pyx_n_s_ImeInterpreter_open_log_file;
   PyObject *__pyx_n_s_ImeInterpreter_save_log_to_servi;
   PyObject *__pyx_n_s_ImeInterpreter_separate_log_into;
   PyObject *__pyx_kp_s_IntuneManagementExtension_log;
@@ -2436,18 +2478,26 @@ typedef struct {
   PyObject *__pyx_kp_s_Service_Manual_Restart;
   PyObject *__pyx_kp_s_Unable_to_load_log_via_ISO_8859;
   PyObject *__pyx_kp_s_Unable_to_load_log_via_utf_8;
-  PyObject *__pyx_n_s__10;
-  PyObject *__pyx_n_s__24;
+  PyObject *__pyx_kp_s__10;
+  PyObject *__pyx_n_s__11;
+  PyObject *__pyx_kp_s__3;
+  PyObject *__pyx_n_s__33;
   PyObject *__pyx_kp_s__5;
-  PyObject *__pyx_kp_s__8;
-  PyObject *__pyx_kp_s__9;
   PyObject *__pyx_n_s_agent_life_ending_reason;
   PyObject *__pyx_n_s_agent_lifecycle_log_index;
   PyObject *__pyx_n_s_agent_next_start_time;
   PyObject *__pyx_n_s_agent_next_start_time_datetime;
   PyObject *__pyx_n_s_agent_stop_time;
   PyObject *__pyx_n_s_agent_stop_time_datetime;
+  PyObject *__pyx_n_s_app_workload_log;
+  PyObject *__pyx_n_s_app_workload_log_exists;
+  PyObject *__pyx_n_s_app_workload_log_file_path;
+  PyObject *__pyx_n_s_app_workload_log_len;
+  PyObject *__pyx_n_s_app_workload_log_lower_file_path;
+  PyObject *__pyx_n_s_app_workload_logs;
   PyObject *__pyx_n_s_append;
+  PyObject *__pyx_kp_s_appworkload_log;
+  PyObject *__pyx_kp_s_appworkload_log_2;
   PyObject *__pyx_n_s_asyncio_coroutines;
   PyObject *__pyx_n_s_boot_reason;
   PyObject *__pyx_n_s_class_getitem;
@@ -2460,9 +2510,8 @@ typedef struct {
   PyObject *__pyx_n_s_cur_line;
   PyObject *__pyx_n_s_cur_start_line_top_index;
   PyObject *__pyx_n_s_cur_stop_line_top_index;
+  PyObject *__pyx_n_s_current_app_workload_log_as_line;
   PyObject *__pyx_n_s_current_ime_log_as_lines;
-  PyObject *__pyx_n_s_current_log_as_lines;
-  PyObject *__pyx_n_s_current_log_file;
   PyObject *__pyx_n_s_current_log_file_path;
   PyObject *__pyx_n_s_datetime;
   PyObject *__pyx_n_s_dict;
@@ -2487,7 +2536,11 @@ typedef struct {
   PyObject *__pyx_n_s_generate_ime_interpreter_log_out;
   PyObject *__pyx_n_s_get_timestamp_by_line;
   PyObject *__pyx_n_s_i;
+  PyObject *__pyx_n_s_ime_log;
+  PyObject *__pyx_n_s_ime_log_file_lower_path;
   PyObject *__pyx_n_s_ime_log_file_path;
+  PyObject *__pyx_n_s_ime_log_len;
+  PyObject *__pyx_n_s_ime_logs;
   PyObject *__pyx_n_s_imeinterpreter;
   PyObject *__pyx_kp_s_imeinterpreter_py;
   PyObject *__pyx_n_s_import;
@@ -2506,22 +2559,33 @@ typedef struct {
   PyObject *__pyx_n_s_isfile;
   PyObject *__pyx_n_s_last_start_time;
   PyObject *__pyx_n_s_last_stop_time;
+  PyObject *__pyx_n_s_left;
+  PyObject *__pyx_n_s_left_line;
+  PyObject *__pyx_n_s_left_time;
   PyObject *__pyx_n_s_life_cycle_list;
   PyObject *__pyx_n_s_life_cycle_num;
   PyObject *__pyx_n_s_listdir;
+  PyObject *__pyx_n_s_load_all_app_workload_logs;
   PyObject *__pyx_n_s_load_all_ime_logs;
+  PyObject *__pyx_n_s_load_full_logs;
   PyObject *__pyx_kp_s_log;
+  PyObject *__pyx_n_s_log_as_lines;
+  PyObject *__pyx_n_s_log_file;
   PyObject *__pyx_n_s_log_folder_path;
+  PyObject *__pyx_n_s_log_path;
   PyObject *__pyx_n_s_logprocessinglibrary;
   PyObject *__pyx_n_s_lower;
   PyObject *__pyx_kp_s_m_d_Y_H_M_S;
   PyObject *__pyx_n_s_made_up_line;
   PyObject *__pyx_n_s_main;
+  PyObject *__pyx_n_s_merge_ime_and_app_workload_logs;
   PyObject *__pyx_n_s_metaclass;
   PyObject *__pyx_n_s_mode;
   PyObject *__pyx_n_s_module;
+  PyObject *__pyx_n_s_most_recent_log_file_as_lines;
   PyObject *__pyx_n_s_name;
   PyObject *__pyx_n_s_open;
+  PyObject *__pyx_n_s_open_log_file;
   PyObject *__pyx_n_s_os;
   PyObject *__pyx_n_s_path;
   PyObject *__pyx_n_s_post_part_start_index;
@@ -2532,6 +2596,9 @@ typedef struct {
   PyObject *__pyx_n_s_range;
   PyObject *__pyx_n_s_readlines;
   PyObject *__pyx_n_s_remove;
+  PyObject *__pyx_n_s_right;
+  PyObject *__pyx_n_s_right_line;
+  PyObject *__pyx_n_s_right_time;
   PyObject *__pyx_n_s_save_log_to_service;
   PyObject *__pyx_n_s_seconds;
   PyObject *__pyx_n_s_self;
@@ -2556,24 +2623,33 @@ typedef struct {
   PyObject *__pyx_int_10;
   PyObject *__pyx_int_neg_4;
   PyObject *__pyx_tuple_;
-  PyObject *__pyx_slice__6;
+  PyObject *__pyx_slice__8;
   PyObject *__pyx_tuple__2;
-  PyObject *__pyx_tuple__3;
   PyObject *__pyx_tuple__4;
+  PyObject *__pyx_tuple__6;
   PyObject *__pyx_tuple__7;
-  PyObject *__pyx_tuple__11;
-  PyObject *__pyx_tuple__13;
-  PyObject *__pyx_tuple__15;
-  PyObject *__pyx_tuple__17;
-  PyObject *__pyx_tuple__19;
-  PyObject *__pyx_tuple__21;
-  PyObject *__pyx_tuple__23;
-  PyObject *__pyx_codeobj__12;
-  PyObject *__pyx_codeobj__14;
-  PyObject *__pyx_codeobj__16;
-  PyObject *__pyx_codeobj__18;
-  PyObject *__pyx_codeobj__20;
-  PyObject *__pyx_codeobj__22;
+  PyObject *__pyx_tuple__9;
+  PyObject *__pyx_tuple__12;
+  PyObject *__pyx_tuple__14;
+  PyObject *__pyx_tuple__16;
+  PyObject *__pyx_tuple__18;
+  PyObject *__pyx_tuple__20;
+  PyObject *__pyx_tuple__22;
+  PyObject *__pyx_tuple__24;
+  PyObject *__pyx_tuple__26;
+  PyObject *__pyx_tuple__28;
+  PyObject *__pyx_tuple__30;
+  PyObject *__pyx_tuple__32;
+  PyObject *__pyx_codeobj__13;
+  PyObject *__pyx_codeobj__15;
+  PyObject *__pyx_codeobj__17;
+  PyObject *__pyx_codeobj__19;
+  PyObject *__pyx_codeobj__21;
+  PyObject *__pyx_codeobj__23;
+  PyObject *__pyx_codeobj__25;
+  PyObject *__pyx_codeobj__27;
+  PyObject *__pyx_codeobj__29;
+  PyObject *__pyx_codeobj__31;
 } __pyx_mstate;
 
 #if CYTHON_USE_MODULE_STATE
@@ -2616,8 +2692,12 @@ static int __pyx_m_clear(PyObject *m) {
   #ifdef __Pyx_FusedFunction_USED
   Py_CLEAR(clear_module_state->__pyx_FusedFunctionType);
   #endif
+  Py_CLEAR(clear_module_state->__pyx_n_s_AppWorkload);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_AppWorkload_log);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_AppWorkload_log_2);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Device_Reboot);
   Py_CLEAR(clear_module_state->__pyx_n_s_EMSLifeCycle);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_Error_Path_does_not_contain_AppW);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Error_Path_does_not_contain_Intu);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Error_Path_does_not_contain_Intu_2);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Error_Path_does_not_contain_Intu_3);
@@ -2628,7 +2708,11 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_ImeInterpreter___init);
   Py_CLEAR(clear_module_state->__pyx_n_s_ImeInterpreter_generate_ime_inte);
   Py_CLEAR(clear_module_state->__pyx_n_s_ImeInterpreter_initialize_life_c);
+  Py_CLEAR(clear_module_state->__pyx_n_s_ImeInterpreter_load_all_app_work);
   Py_CLEAR(clear_module_state->__pyx_n_s_ImeInterpreter_load_all_ime_logs);
+  Py_CLEAR(clear_module_state->__pyx_n_s_ImeInterpreter_load_full_logs);
+  Py_CLEAR(clear_module_state->__pyx_n_s_ImeInterpreter_merge_ime_and_app);
+  Py_CLEAR(clear_module_state->__pyx_n_s_ImeInterpreter_open_log_file);
   Py_CLEAR(clear_module_state->__pyx_n_s_ImeInterpreter_save_log_to_servi);
   Py_CLEAR(clear_module_state->__pyx_n_s_ImeInterpreter_separate_log_into);
   Py_CLEAR(clear_module_state->__pyx_kp_s_IntuneManagementExtension_log);
@@ -2640,18 +2724,26 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_s_Service_Manual_Restart);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Unable_to_load_log_via_ISO_8859);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Unable_to_load_log_via_utf_8);
-  Py_CLEAR(clear_module_state->__pyx_n_s__10);
-  Py_CLEAR(clear_module_state->__pyx_n_s__24);
+  Py_CLEAR(clear_module_state->__pyx_kp_s__10);
+  Py_CLEAR(clear_module_state->__pyx_n_s__11);
+  Py_CLEAR(clear_module_state->__pyx_kp_s__3);
+  Py_CLEAR(clear_module_state->__pyx_n_s__33);
   Py_CLEAR(clear_module_state->__pyx_kp_s__5);
-  Py_CLEAR(clear_module_state->__pyx_kp_s__8);
-  Py_CLEAR(clear_module_state->__pyx_kp_s__9);
   Py_CLEAR(clear_module_state->__pyx_n_s_agent_life_ending_reason);
   Py_CLEAR(clear_module_state->__pyx_n_s_agent_lifecycle_log_index);
   Py_CLEAR(clear_module_state->__pyx_n_s_agent_next_start_time);
   Py_CLEAR(clear_module_state->__pyx_n_s_agent_next_start_time_datetime);
   Py_CLEAR(clear_module_state->__pyx_n_s_agent_stop_time);
   Py_CLEAR(clear_module_state->__pyx_n_s_agent_stop_time_datetime);
+  Py_CLEAR(clear_module_state->__pyx_n_s_app_workload_log);
+  Py_CLEAR(clear_module_state->__pyx_n_s_app_workload_log_exists);
+  Py_CLEAR(clear_module_state->__pyx_n_s_app_workload_log_file_path);
+  Py_CLEAR(clear_module_state->__pyx_n_s_app_workload_log_len);
+  Py_CLEAR(clear_module_state->__pyx_n_s_app_workload_log_lower_file_path);
+  Py_CLEAR(clear_module_state->__pyx_n_s_app_workload_logs);
   Py_CLEAR(clear_module_state->__pyx_n_s_append);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_appworkload_log);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_appworkload_log_2);
   Py_CLEAR(clear_module_state->__pyx_n_s_asyncio_coroutines);
   Py_CLEAR(clear_module_state->__pyx_n_s_boot_reason);
   Py_CLEAR(clear_module_state->__pyx_n_s_class_getitem);
@@ -2664,9 +2756,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_cur_line);
   Py_CLEAR(clear_module_state->__pyx_n_s_cur_start_line_top_index);
   Py_CLEAR(clear_module_state->__pyx_n_s_cur_stop_line_top_index);
+  Py_CLEAR(clear_module_state->__pyx_n_s_current_app_workload_log_as_line);
   Py_CLEAR(clear_module_state->__pyx_n_s_current_ime_log_as_lines);
-  Py_CLEAR(clear_module_state->__pyx_n_s_current_log_as_lines);
-  Py_CLEAR(clear_module_state->__pyx_n_s_current_log_file);
   Py_CLEAR(clear_module_state->__pyx_n_s_current_log_file_path);
   Py_CLEAR(clear_module_state->__pyx_n_s_datetime);
   Py_CLEAR(clear_module_state->__pyx_n_s_dict);
@@ -2691,7 +2782,11 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_generate_ime_interpreter_log_out);
   Py_CLEAR(clear_module_state->__pyx_n_s_get_timestamp_by_line);
   Py_CLEAR(clear_module_state->__pyx_n_s_i);
+  Py_CLEAR(clear_module_state->__pyx_n_s_ime_log);
+  Py_CLEAR(clear_module_state->__pyx_n_s_ime_log_file_lower_path);
   Py_CLEAR(clear_module_state->__pyx_n_s_ime_log_file_path);
+  Py_CLEAR(clear_module_state->__pyx_n_s_ime_log_len);
+  Py_CLEAR(clear_module_state->__pyx_n_s_ime_logs);
   Py_CLEAR(clear_module_state->__pyx_n_s_imeinterpreter);
   Py_CLEAR(clear_module_state->__pyx_kp_s_imeinterpreter_py);
   Py_CLEAR(clear_module_state->__pyx_n_s_import);
@@ -2710,22 +2805,33 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_isfile);
   Py_CLEAR(clear_module_state->__pyx_n_s_last_start_time);
   Py_CLEAR(clear_module_state->__pyx_n_s_last_stop_time);
+  Py_CLEAR(clear_module_state->__pyx_n_s_left);
+  Py_CLEAR(clear_module_state->__pyx_n_s_left_line);
+  Py_CLEAR(clear_module_state->__pyx_n_s_left_time);
   Py_CLEAR(clear_module_state->__pyx_n_s_life_cycle_list);
   Py_CLEAR(clear_module_state->__pyx_n_s_life_cycle_num);
   Py_CLEAR(clear_module_state->__pyx_n_s_listdir);
+  Py_CLEAR(clear_module_state->__pyx_n_s_load_all_app_workload_logs);
   Py_CLEAR(clear_module_state->__pyx_n_s_load_all_ime_logs);
+  Py_CLEAR(clear_module_state->__pyx_n_s_load_full_logs);
   Py_CLEAR(clear_module_state->__pyx_kp_s_log);
+  Py_CLEAR(clear_module_state->__pyx_n_s_log_as_lines);
+  Py_CLEAR(clear_module_state->__pyx_n_s_log_file);
   Py_CLEAR(clear_module_state->__pyx_n_s_log_folder_path);
+  Py_CLEAR(clear_module_state->__pyx_n_s_log_path);
   Py_CLEAR(clear_module_state->__pyx_n_s_logprocessinglibrary);
   Py_CLEAR(clear_module_state->__pyx_n_s_lower);
   Py_CLEAR(clear_module_state->__pyx_kp_s_m_d_Y_H_M_S);
   Py_CLEAR(clear_module_state->__pyx_n_s_made_up_line);
   Py_CLEAR(clear_module_state->__pyx_n_s_main);
+  Py_CLEAR(clear_module_state->__pyx_n_s_merge_ime_and_app_workload_logs);
   Py_CLEAR(clear_module_state->__pyx_n_s_metaclass);
   Py_CLEAR(clear_module_state->__pyx_n_s_mode);
   Py_CLEAR(clear_module_state->__pyx_n_s_module);
+  Py_CLEAR(clear_module_state->__pyx_n_s_most_recent_log_file_as_lines);
   Py_CLEAR(clear_module_state->__pyx_n_s_name);
   Py_CLEAR(clear_module_state->__pyx_n_s_open);
+  Py_CLEAR(clear_module_state->__pyx_n_s_open_log_file);
   Py_CLEAR(clear_module_state->__pyx_n_s_os);
   Py_CLEAR(clear_module_state->__pyx_n_s_path);
   Py_CLEAR(clear_module_state->__pyx_n_s_post_part_start_index);
@@ -2736,6 +2842,9 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_range);
   Py_CLEAR(clear_module_state->__pyx_n_s_readlines);
   Py_CLEAR(clear_module_state->__pyx_n_s_remove);
+  Py_CLEAR(clear_module_state->__pyx_n_s_right);
+  Py_CLEAR(clear_module_state->__pyx_n_s_right_line);
+  Py_CLEAR(clear_module_state->__pyx_n_s_right_time);
   Py_CLEAR(clear_module_state->__pyx_n_s_save_log_to_service);
   Py_CLEAR(clear_module_state->__pyx_n_s_seconds);
   Py_CLEAR(clear_module_state->__pyx_n_s_self);
@@ -2760,24 +2869,33 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_int_10);
   Py_CLEAR(clear_module_state->__pyx_int_neg_4);
   Py_CLEAR(clear_module_state->__pyx_tuple_);
-  Py_CLEAR(clear_module_state->__pyx_slice__6);
+  Py_CLEAR(clear_module_state->__pyx_slice__8);
   Py_CLEAR(clear_module_state->__pyx_tuple__2);
-  Py_CLEAR(clear_module_state->__pyx_tuple__3);
   Py_CLEAR(clear_module_state->__pyx_tuple__4);
+  Py_CLEAR(clear_module_state->__pyx_tuple__6);
   Py_CLEAR(clear_module_state->__pyx_tuple__7);
-  Py_CLEAR(clear_module_state->__pyx_tuple__11);
-  Py_CLEAR(clear_module_state->__pyx_tuple__13);
-  Py_CLEAR(clear_module_state->__pyx_tuple__15);
-  Py_CLEAR(clear_module_state->__pyx_tuple__17);
-  Py_CLEAR(clear_module_state->__pyx_tuple__19);
-  Py_CLEAR(clear_module_state->__pyx_tuple__21);
-  Py_CLEAR(clear_module_state->__pyx_tuple__23);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__12);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__14);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__16);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__18);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__20);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__22);
+  Py_CLEAR(clear_module_state->__pyx_tuple__9);
+  Py_CLEAR(clear_module_state->__pyx_tuple__12);
+  Py_CLEAR(clear_module_state->__pyx_tuple__14);
+  Py_CLEAR(clear_module_state->__pyx_tuple__16);
+  Py_CLEAR(clear_module_state->__pyx_tuple__18);
+  Py_CLEAR(clear_module_state->__pyx_tuple__20);
+  Py_CLEAR(clear_module_state->__pyx_tuple__22);
+  Py_CLEAR(clear_module_state->__pyx_tuple__24);
+  Py_CLEAR(clear_module_state->__pyx_tuple__26);
+  Py_CLEAR(clear_module_state->__pyx_tuple__28);
+  Py_CLEAR(clear_module_state->__pyx_tuple__30);
+  Py_CLEAR(clear_module_state->__pyx_tuple__32);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__13);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__15);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__17);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__19);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__21);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__23);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__25);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__27);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__29);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__31);
   return 0;
 }
 #endif
@@ -2798,8 +2916,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   #ifdef __Pyx_FusedFunction_USED
   Py_VISIT(traverse_module_state->__pyx_FusedFunctionType);
   #endif
+  Py_VISIT(traverse_module_state->__pyx_n_s_AppWorkload);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_AppWorkload_log);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_AppWorkload_log_2);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Device_Reboot);
   Py_VISIT(traverse_module_state->__pyx_n_s_EMSLifeCycle);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_Error_Path_does_not_contain_AppW);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Error_Path_does_not_contain_Intu);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Error_Path_does_not_contain_Intu_2);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Error_Path_does_not_contain_Intu_3);
@@ -2810,7 +2932,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_ImeInterpreter___init);
   Py_VISIT(traverse_module_state->__pyx_n_s_ImeInterpreter_generate_ime_inte);
   Py_VISIT(traverse_module_state->__pyx_n_s_ImeInterpreter_initialize_life_c);
+  Py_VISIT(traverse_module_state->__pyx_n_s_ImeInterpreter_load_all_app_work);
   Py_VISIT(traverse_module_state->__pyx_n_s_ImeInterpreter_load_all_ime_logs);
+  Py_VISIT(traverse_module_state->__pyx_n_s_ImeInterpreter_load_full_logs);
+  Py_VISIT(traverse_module_state->__pyx_n_s_ImeInterpreter_merge_ime_and_app);
+  Py_VISIT(traverse_module_state->__pyx_n_s_ImeInterpreter_open_log_file);
   Py_VISIT(traverse_module_state->__pyx_n_s_ImeInterpreter_save_log_to_servi);
   Py_VISIT(traverse_module_state->__pyx_n_s_ImeInterpreter_separate_log_into);
   Py_VISIT(traverse_module_state->__pyx_kp_s_IntuneManagementExtension_log);
@@ -2822,18 +2948,26 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_s_Service_Manual_Restart);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Unable_to_load_log_via_ISO_8859);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Unable_to_load_log_via_utf_8);
-  Py_VISIT(traverse_module_state->__pyx_n_s__10);
-  Py_VISIT(traverse_module_state->__pyx_n_s__24);
+  Py_VISIT(traverse_module_state->__pyx_kp_s__10);
+  Py_VISIT(traverse_module_state->__pyx_n_s__11);
+  Py_VISIT(traverse_module_state->__pyx_kp_s__3);
+  Py_VISIT(traverse_module_state->__pyx_n_s__33);
   Py_VISIT(traverse_module_state->__pyx_kp_s__5);
-  Py_VISIT(traverse_module_state->__pyx_kp_s__8);
-  Py_VISIT(traverse_module_state->__pyx_kp_s__9);
   Py_VISIT(traverse_module_state->__pyx_n_s_agent_life_ending_reason);
   Py_VISIT(traverse_module_state->__pyx_n_s_agent_lifecycle_log_index);
   Py_VISIT(traverse_module_state->__pyx_n_s_agent_next_start_time);
   Py_VISIT(traverse_module_state->__pyx_n_s_agent_next_start_time_datetime);
   Py_VISIT(traverse_module_state->__pyx_n_s_agent_stop_time);
   Py_VISIT(traverse_module_state->__pyx_n_s_agent_stop_time_datetime);
+  Py_VISIT(traverse_module_state->__pyx_n_s_app_workload_log);
+  Py_VISIT(traverse_module_state->__pyx_n_s_app_workload_log_exists);
+  Py_VISIT(traverse_module_state->__pyx_n_s_app_workload_log_file_path);
+  Py_VISIT(traverse_module_state->__pyx_n_s_app_workload_log_len);
+  Py_VISIT(traverse_module_state->__pyx_n_s_app_workload_log_lower_file_path);
+  Py_VISIT(traverse_module_state->__pyx_n_s_app_workload_logs);
   Py_VISIT(traverse_module_state->__pyx_n_s_append);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_appworkload_log);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_appworkload_log_2);
   Py_VISIT(traverse_module_state->__pyx_n_s_asyncio_coroutines);
   Py_VISIT(traverse_module_state->__pyx_n_s_boot_reason);
   Py_VISIT(traverse_module_state->__pyx_n_s_class_getitem);
@@ -2846,9 +2980,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_cur_line);
   Py_VISIT(traverse_module_state->__pyx_n_s_cur_start_line_top_index);
   Py_VISIT(traverse_module_state->__pyx_n_s_cur_stop_line_top_index);
+  Py_VISIT(traverse_module_state->__pyx_n_s_current_app_workload_log_as_line);
   Py_VISIT(traverse_module_state->__pyx_n_s_current_ime_log_as_lines);
-  Py_VISIT(traverse_module_state->__pyx_n_s_current_log_as_lines);
-  Py_VISIT(traverse_module_state->__pyx_n_s_current_log_file);
   Py_VISIT(traverse_module_state->__pyx_n_s_current_log_file_path);
   Py_VISIT(traverse_module_state->__pyx_n_s_datetime);
   Py_VISIT(traverse_module_state->__pyx_n_s_dict);
@@ -2873,7 +3006,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_generate_ime_interpreter_log_out);
   Py_VISIT(traverse_module_state->__pyx_n_s_get_timestamp_by_line);
   Py_VISIT(traverse_module_state->__pyx_n_s_i);
+  Py_VISIT(traverse_module_state->__pyx_n_s_ime_log);
+  Py_VISIT(traverse_module_state->__pyx_n_s_ime_log_file_lower_path);
   Py_VISIT(traverse_module_state->__pyx_n_s_ime_log_file_path);
+  Py_VISIT(traverse_module_state->__pyx_n_s_ime_log_len);
+  Py_VISIT(traverse_module_state->__pyx_n_s_ime_logs);
   Py_VISIT(traverse_module_state->__pyx_n_s_imeinterpreter);
   Py_VISIT(traverse_module_state->__pyx_kp_s_imeinterpreter_py);
   Py_VISIT(traverse_module_state->__pyx_n_s_import);
@@ -2892,22 +3029,33 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_isfile);
   Py_VISIT(traverse_module_state->__pyx_n_s_last_start_time);
   Py_VISIT(traverse_module_state->__pyx_n_s_last_stop_time);
+  Py_VISIT(traverse_module_state->__pyx_n_s_left);
+  Py_VISIT(traverse_module_state->__pyx_n_s_left_line);
+  Py_VISIT(traverse_module_state->__pyx_n_s_left_time);
   Py_VISIT(traverse_module_state->__pyx_n_s_life_cycle_list);
   Py_VISIT(traverse_module_state->__pyx_n_s_life_cycle_num);
   Py_VISIT(traverse_module_state->__pyx_n_s_listdir);
+  Py_VISIT(traverse_module_state->__pyx_n_s_load_all_app_workload_logs);
   Py_VISIT(traverse_module_state->__pyx_n_s_load_all_ime_logs);
+  Py_VISIT(traverse_module_state->__pyx_n_s_load_full_logs);
   Py_VISIT(traverse_module_state->__pyx_kp_s_log);
+  Py_VISIT(traverse_module_state->__pyx_n_s_log_as_lines);
+  Py_VISIT(traverse_module_state->__pyx_n_s_log_file);
   Py_VISIT(traverse_module_state->__pyx_n_s_log_folder_path);
+  Py_VISIT(traverse_module_state->__pyx_n_s_log_path);
   Py_VISIT(traverse_module_state->__pyx_n_s_logprocessinglibrary);
   Py_VISIT(traverse_module_state->__pyx_n_s_lower);
   Py_VISIT(traverse_module_state->__pyx_kp_s_m_d_Y_H_M_S);
   Py_VISIT(traverse_module_state->__pyx_n_s_made_up_line);
   Py_VISIT(traverse_module_state->__pyx_n_s_main);
+  Py_VISIT(traverse_module_state->__pyx_n_s_merge_ime_and_app_workload_logs);
   Py_VISIT(traverse_module_state->__pyx_n_s_metaclass);
   Py_VISIT(traverse_module_state->__pyx_n_s_mode);
   Py_VISIT(traverse_module_state->__pyx_n_s_module);
+  Py_VISIT(traverse_module_state->__pyx_n_s_most_recent_log_file_as_lines);
   Py_VISIT(traverse_module_state->__pyx_n_s_name);
   Py_VISIT(traverse_module_state->__pyx_n_s_open);
+  Py_VISIT(traverse_module_state->__pyx_n_s_open_log_file);
   Py_VISIT(traverse_module_state->__pyx_n_s_os);
   Py_VISIT(traverse_module_state->__pyx_n_s_path);
   Py_VISIT(traverse_module_state->__pyx_n_s_post_part_start_index);
@@ -2918,6 +3066,9 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_range);
   Py_VISIT(traverse_module_state->__pyx_n_s_readlines);
   Py_VISIT(traverse_module_state->__pyx_n_s_remove);
+  Py_VISIT(traverse_module_state->__pyx_n_s_right);
+  Py_VISIT(traverse_module_state->__pyx_n_s_right_line);
+  Py_VISIT(traverse_module_state->__pyx_n_s_right_time);
   Py_VISIT(traverse_module_state->__pyx_n_s_save_log_to_service);
   Py_VISIT(traverse_module_state->__pyx_n_s_seconds);
   Py_VISIT(traverse_module_state->__pyx_n_s_self);
@@ -2942,24 +3093,33 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_int_10);
   Py_VISIT(traverse_module_state->__pyx_int_neg_4);
   Py_VISIT(traverse_module_state->__pyx_tuple_);
-  Py_VISIT(traverse_module_state->__pyx_slice__6);
+  Py_VISIT(traverse_module_state->__pyx_slice__8);
   Py_VISIT(traverse_module_state->__pyx_tuple__2);
-  Py_VISIT(traverse_module_state->__pyx_tuple__3);
   Py_VISIT(traverse_module_state->__pyx_tuple__4);
+  Py_VISIT(traverse_module_state->__pyx_tuple__6);
   Py_VISIT(traverse_module_state->__pyx_tuple__7);
-  Py_VISIT(traverse_module_state->__pyx_tuple__11);
-  Py_VISIT(traverse_module_state->__pyx_tuple__13);
-  Py_VISIT(traverse_module_state->__pyx_tuple__15);
-  Py_VISIT(traverse_module_state->__pyx_tuple__17);
-  Py_VISIT(traverse_module_state->__pyx_tuple__19);
-  Py_VISIT(traverse_module_state->__pyx_tuple__21);
-  Py_VISIT(traverse_module_state->__pyx_tuple__23);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__12);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__14);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__16);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__18);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__20);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__22);
+  Py_VISIT(traverse_module_state->__pyx_tuple__9);
+  Py_VISIT(traverse_module_state->__pyx_tuple__12);
+  Py_VISIT(traverse_module_state->__pyx_tuple__14);
+  Py_VISIT(traverse_module_state->__pyx_tuple__16);
+  Py_VISIT(traverse_module_state->__pyx_tuple__18);
+  Py_VISIT(traverse_module_state->__pyx_tuple__20);
+  Py_VISIT(traverse_module_state->__pyx_tuple__22);
+  Py_VISIT(traverse_module_state->__pyx_tuple__24);
+  Py_VISIT(traverse_module_state->__pyx_tuple__26);
+  Py_VISIT(traverse_module_state->__pyx_tuple__28);
+  Py_VISIT(traverse_module_state->__pyx_tuple__30);
+  Py_VISIT(traverse_module_state->__pyx_tuple__32);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__13);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__15);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__17);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__19);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__21);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__23);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__25);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__27);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__29);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__31);
   return 0;
 }
 #endif
@@ -2990,8 +3150,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #endif
 #if CYTHON_USE_MODULE_STATE
 #endif
+#define __pyx_n_s_AppWorkload __pyx_mstate_global->__pyx_n_s_AppWorkload
+#define __pyx_kp_s_AppWorkload_log __pyx_mstate_global->__pyx_kp_s_AppWorkload_log
+#define __pyx_kp_s_AppWorkload_log_2 __pyx_mstate_global->__pyx_kp_s_AppWorkload_log_2
 #define __pyx_kp_s_Device_Reboot __pyx_mstate_global->__pyx_kp_s_Device_Reboot
 #define __pyx_n_s_EMSLifeCycle __pyx_mstate_global->__pyx_n_s_EMSLifeCycle
+#define __pyx_kp_s_Error_Path_does_not_contain_AppW __pyx_mstate_global->__pyx_kp_s_Error_Path_does_not_contain_AppW
 #define __pyx_kp_s_Error_Path_does_not_contain_Intu __pyx_mstate_global->__pyx_kp_s_Error_Path_does_not_contain_Intu
 #define __pyx_kp_s_Error_Path_does_not_contain_Intu_2 __pyx_mstate_global->__pyx_kp_s_Error_Path_does_not_contain_Intu_2
 #define __pyx_kp_s_Error_Path_does_not_contain_Intu_3 __pyx_mstate_global->__pyx_kp_s_Error_Path_does_not_contain_Intu_3
@@ -3002,7 +3166,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_ImeInterpreter___init __pyx_mstate_global->__pyx_n_s_ImeInterpreter___init
 #define __pyx_n_s_ImeInterpreter_generate_ime_inte __pyx_mstate_global->__pyx_n_s_ImeInterpreter_generate_ime_inte
 #define __pyx_n_s_ImeInterpreter_initialize_life_c __pyx_mstate_global->__pyx_n_s_ImeInterpreter_initialize_life_c
+#define __pyx_n_s_ImeInterpreter_load_all_app_work __pyx_mstate_global->__pyx_n_s_ImeInterpreter_load_all_app_work
 #define __pyx_n_s_ImeInterpreter_load_all_ime_logs __pyx_mstate_global->__pyx_n_s_ImeInterpreter_load_all_ime_logs
+#define __pyx_n_s_ImeInterpreter_load_full_logs __pyx_mstate_global->__pyx_n_s_ImeInterpreter_load_full_logs
+#define __pyx_n_s_ImeInterpreter_merge_ime_and_app __pyx_mstate_global->__pyx_n_s_ImeInterpreter_merge_ime_and_app
+#define __pyx_n_s_ImeInterpreter_open_log_file __pyx_mstate_global->__pyx_n_s_ImeInterpreter_open_log_file
 #define __pyx_n_s_ImeInterpreter_save_log_to_servi __pyx_mstate_global->__pyx_n_s_ImeInterpreter_save_log_to_servi
 #define __pyx_n_s_ImeInterpreter_separate_log_into __pyx_mstate_global->__pyx_n_s_ImeInterpreter_separate_log_into
 #define __pyx_kp_s_IntuneManagementExtension_log __pyx_mstate_global->__pyx_kp_s_IntuneManagementExtension_log
@@ -3014,18 +3182,26 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_s_Service_Manual_Restart __pyx_mstate_global->__pyx_kp_s_Service_Manual_Restart
 #define __pyx_kp_s_Unable_to_load_log_via_ISO_8859 __pyx_mstate_global->__pyx_kp_s_Unable_to_load_log_via_ISO_8859
 #define __pyx_kp_s_Unable_to_load_log_via_utf_8 __pyx_mstate_global->__pyx_kp_s_Unable_to_load_log_via_utf_8
-#define __pyx_n_s__10 __pyx_mstate_global->__pyx_n_s__10
-#define __pyx_n_s__24 __pyx_mstate_global->__pyx_n_s__24
+#define __pyx_kp_s__10 __pyx_mstate_global->__pyx_kp_s__10
+#define __pyx_n_s__11 __pyx_mstate_global->__pyx_n_s__11
+#define __pyx_kp_s__3 __pyx_mstate_global->__pyx_kp_s__3
+#define __pyx_n_s__33 __pyx_mstate_global->__pyx_n_s__33
 #define __pyx_kp_s__5 __pyx_mstate_global->__pyx_kp_s__5
-#define __pyx_kp_s__8 __pyx_mstate_global->__pyx_kp_s__8
-#define __pyx_kp_s__9 __pyx_mstate_global->__pyx_kp_s__9
 #define __pyx_n_s_agent_life_ending_reason __pyx_mstate_global->__pyx_n_s_agent_life_ending_reason
 #define __pyx_n_s_agent_lifecycle_log_index __pyx_mstate_global->__pyx_n_s_agent_lifecycle_log_index
 #define __pyx_n_s_agent_next_start_time __pyx_mstate_global->__pyx_n_s_agent_next_start_time
 #define __pyx_n_s_agent_next_start_time_datetime __pyx_mstate_global->__pyx_n_s_agent_next_start_time_datetime
 #define __pyx_n_s_agent_stop_time __pyx_mstate_global->__pyx_n_s_agent_stop_time
 #define __pyx_n_s_agent_stop_time_datetime __pyx_mstate_global->__pyx_n_s_agent_stop_time_datetime
+#define __pyx_n_s_app_workload_log __pyx_mstate_global->__pyx_n_s_app_workload_log
+#define __pyx_n_s_app_workload_log_exists __pyx_mstate_global->__pyx_n_s_app_workload_log_exists
+#define __pyx_n_s_app_workload_log_file_path __pyx_mstate_global->__pyx_n_s_app_workload_log_file_path
+#define __pyx_n_s_app_workload_log_len __pyx_mstate_global->__pyx_n_s_app_workload_log_len
+#define __pyx_n_s_app_workload_log_lower_file_path __pyx_mstate_global->__pyx_n_s_app_workload_log_lower_file_path
+#define __pyx_n_s_app_workload_logs __pyx_mstate_global->__pyx_n_s_app_workload_logs
 #define __pyx_n_s_append __pyx_mstate_global->__pyx_n_s_append
+#define __pyx_kp_s_appworkload_log __pyx_mstate_global->__pyx_kp_s_appworkload_log
+#define __pyx_kp_s_appworkload_log_2 __pyx_mstate_global->__pyx_kp_s_appworkload_log_2
 #define __pyx_n_s_asyncio_coroutines __pyx_mstate_global->__pyx_n_s_asyncio_coroutines
 #define __pyx_n_s_boot_reason __pyx_mstate_global->__pyx_n_s_boot_reason
 #define __pyx_n_s_class_getitem __pyx_mstate_global->__pyx_n_s_class_getitem
@@ -3038,9 +3214,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_cur_line __pyx_mstate_global->__pyx_n_s_cur_line
 #define __pyx_n_s_cur_start_line_top_index __pyx_mstate_global->__pyx_n_s_cur_start_line_top_index
 #define __pyx_n_s_cur_stop_line_top_index __pyx_mstate_global->__pyx_n_s_cur_stop_line_top_index
+#define __pyx_n_s_current_app_workload_log_as_line __pyx_mstate_global->__pyx_n_s_current_app_workload_log_as_line
 #define __pyx_n_s_current_ime_log_as_lines __pyx_mstate_global->__pyx_n_s_current_ime_log_as_lines
-#define __pyx_n_s_current_log_as_lines __pyx_mstate_global->__pyx_n_s_current_log_as_lines
-#define __pyx_n_s_current_log_file __pyx_mstate_global->__pyx_n_s_current_log_file
 #define __pyx_n_s_current_log_file_path __pyx_mstate_global->__pyx_n_s_current_log_file_path
 #define __pyx_n_s_datetime __pyx_mstate_global->__pyx_n_s_datetime
 #define __pyx_n_s_dict __pyx_mstate_global->__pyx_n_s_dict
@@ -3065,7 +3240,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_generate_ime_interpreter_log_out __pyx_mstate_global->__pyx_n_s_generate_ime_interpreter_log_out
 #define __pyx_n_s_get_timestamp_by_line __pyx_mstate_global->__pyx_n_s_get_timestamp_by_line
 #define __pyx_n_s_i __pyx_mstate_global->__pyx_n_s_i
+#define __pyx_n_s_ime_log __pyx_mstate_global->__pyx_n_s_ime_log
+#define __pyx_n_s_ime_log_file_lower_path __pyx_mstate_global->__pyx_n_s_ime_log_file_lower_path
 #define __pyx_n_s_ime_log_file_path __pyx_mstate_global->__pyx_n_s_ime_log_file_path
+#define __pyx_n_s_ime_log_len __pyx_mstate_global->__pyx_n_s_ime_log_len
+#define __pyx_n_s_ime_logs __pyx_mstate_global->__pyx_n_s_ime_logs
 #define __pyx_n_s_imeinterpreter __pyx_mstate_global->__pyx_n_s_imeinterpreter
 #define __pyx_kp_s_imeinterpreter_py __pyx_mstate_global->__pyx_kp_s_imeinterpreter_py
 #define __pyx_n_s_import __pyx_mstate_global->__pyx_n_s_import
@@ -3084,22 +3263,33 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_isfile __pyx_mstate_global->__pyx_n_s_isfile
 #define __pyx_n_s_last_start_time __pyx_mstate_global->__pyx_n_s_last_start_time
 #define __pyx_n_s_last_stop_time __pyx_mstate_global->__pyx_n_s_last_stop_time
+#define __pyx_n_s_left __pyx_mstate_global->__pyx_n_s_left
+#define __pyx_n_s_left_line __pyx_mstate_global->__pyx_n_s_left_line
+#define __pyx_n_s_left_time __pyx_mstate_global->__pyx_n_s_left_time
 #define __pyx_n_s_life_cycle_list __pyx_mstate_global->__pyx_n_s_life_cycle_list
 #define __pyx_n_s_life_cycle_num __pyx_mstate_global->__pyx_n_s_life_cycle_num
 #define __pyx_n_s_listdir __pyx_mstate_global->__pyx_n_s_listdir
+#define __pyx_n_s_load_all_app_workload_logs __pyx_mstate_global->__pyx_n_s_load_all_app_workload_logs
 #define __pyx_n_s_load_all_ime_logs __pyx_mstate_global->__pyx_n_s_load_all_ime_logs
+#define __pyx_n_s_load_full_logs __pyx_mstate_global->__pyx_n_s_load_full_logs
 #define __pyx_kp_s_log __pyx_mstate_global->__pyx_kp_s_log
+#define __pyx_n_s_log_as_lines __pyx_mstate_global->__pyx_n_s_log_as_lines
+#define __pyx_n_s_log_file __pyx_mstate_global->__pyx_n_s_log_file
 #define __pyx_n_s_log_folder_path __pyx_mstate_global->__pyx_n_s_log_folder_path
+#define __pyx_n_s_log_path __pyx_mstate_global->__pyx_n_s_log_path
 #define __pyx_n_s_logprocessinglibrary __pyx_mstate_global->__pyx_n_s_logprocessinglibrary
 #define __pyx_n_s_lower __pyx_mstate_global->__pyx_n_s_lower
 #define __pyx_kp_s_m_d_Y_H_M_S __pyx_mstate_global->__pyx_kp_s_m_d_Y_H_M_S
 #define __pyx_n_s_made_up_line __pyx_mstate_global->__pyx_n_s_made_up_line
 #define __pyx_n_s_main __pyx_mstate_global->__pyx_n_s_main
+#define __pyx_n_s_merge_ime_and_app_workload_logs __pyx_mstate_global->__pyx_n_s_merge_ime_and_app_workload_logs
 #define __pyx_n_s_metaclass __pyx_mstate_global->__pyx_n_s_metaclass
 #define __pyx_n_s_mode __pyx_mstate_global->__pyx_n_s_mode
 #define __pyx_n_s_module __pyx_mstate_global->__pyx_n_s_module
+#define __pyx_n_s_most_recent_log_file_as_lines __pyx_mstate_global->__pyx_n_s_most_recent_log_file_as_lines
 #define __pyx_n_s_name __pyx_mstate_global->__pyx_n_s_name
 #define __pyx_n_s_open __pyx_mstate_global->__pyx_n_s_open
+#define __pyx_n_s_open_log_file __pyx_mstate_global->__pyx_n_s_open_log_file
 #define __pyx_n_s_os __pyx_mstate_global->__pyx_n_s_os
 #define __pyx_n_s_path __pyx_mstate_global->__pyx_n_s_path
 #define __pyx_n_s_post_part_start_index __pyx_mstate_global->__pyx_n_s_post_part_start_index
@@ -3110,6 +3300,9 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_range __pyx_mstate_global->__pyx_n_s_range
 #define __pyx_n_s_readlines __pyx_mstate_global->__pyx_n_s_readlines
 #define __pyx_n_s_remove __pyx_mstate_global->__pyx_n_s_remove
+#define __pyx_n_s_right __pyx_mstate_global->__pyx_n_s_right
+#define __pyx_n_s_right_line __pyx_mstate_global->__pyx_n_s_right_line
+#define __pyx_n_s_right_time __pyx_mstate_global->__pyx_n_s_right_time
 #define __pyx_n_s_save_log_to_service __pyx_mstate_global->__pyx_n_s_save_log_to_service
 #define __pyx_n_s_seconds __pyx_mstate_global->__pyx_n_s_seconds
 #define __pyx_n_s_self __pyx_mstate_global->__pyx_n_s_self
@@ -3134,24 +3327,33 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_int_10 __pyx_mstate_global->__pyx_int_10
 #define __pyx_int_neg_4 __pyx_mstate_global->__pyx_int_neg_4
 #define __pyx_tuple_ __pyx_mstate_global->__pyx_tuple_
-#define __pyx_slice__6 __pyx_mstate_global->__pyx_slice__6
+#define __pyx_slice__8 __pyx_mstate_global->__pyx_slice__8
 #define __pyx_tuple__2 __pyx_mstate_global->__pyx_tuple__2
-#define __pyx_tuple__3 __pyx_mstate_global->__pyx_tuple__3
 #define __pyx_tuple__4 __pyx_mstate_global->__pyx_tuple__4
+#define __pyx_tuple__6 __pyx_mstate_global->__pyx_tuple__6
 #define __pyx_tuple__7 __pyx_mstate_global->__pyx_tuple__7
-#define __pyx_tuple__11 __pyx_mstate_global->__pyx_tuple__11
-#define __pyx_tuple__13 __pyx_mstate_global->__pyx_tuple__13
-#define __pyx_tuple__15 __pyx_mstate_global->__pyx_tuple__15
-#define __pyx_tuple__17 __pyx_mstate_global->__pyx_tuple__17
-#define __pyx_tuple__19 __pyx_mstate_global->__pyx_tuple__19
-#define __pyx_tuple__21 __pyx_mstate_global->__pyx_tuple__21
-#define __pyx_tuple__23 __pyx_mstate_global->__pyx_tuple__23
-#define __pyx_codeobj__12 __pyx_mstate_global->__pyx_codeobj__12
-#define __pyx_codeobj__14 __pyx_mstate_global->__pyx_codeobj__14
-#define __pyx_codeobj__16 __pyx_mstate_global->__pyx_codeobj__16
-#define __pyx_codeobj__18 __pyx_mstate_global->__pyx_codeobj__18
-#define __pyx_codeobj__20 __pyx_mstate_global->__pyx_codeobj__20
-#define __pyx_codeobj__22 __pyx_mstate_global->__pyx_codeobj__22
+#define __pyx_tuple__9 __pyx_mstate_global->__pyx_tuple__9
+#define __pyx_tuple__12 __pyx_mstate_global->__pyx_tuple__12
+#define __pyx_tuple__14 __pyx_mstate_global->__pyx_tuple__14
+#define __pyx_tuple__16 __pyx_mstate_global->__pyx_tuple__16
+#define __pyx_tuple__18 __pyx_mstate_global->__pyx_tuple__18
+#define __pyx_tuple__20 __pyx_mstate_global->__pyx_tuple__20
+#define __pyx_tuple__22 __pyx_mstate_global->__pyx_tuple__22
+#define __pyx_tuple__24 __pyx_mstate_global->__pyx_tuple__24
+#define __pyx_tuple__26 __pyx_mstate_global->__pyx_tuple__26
+#define __pyx_tuple__28 __pyx_mstate_global->__pyx_tuple__28
+#define __pyx_tuple__30 __pyx_mstate_global->__pyx_tuple__30
+#define __pyx_tuple__32 __pyx_mstate_global->__pyx_tuple__32
+#define __pyx_codeobj__13 __pyx_mstate_global->__pyx_codeobj__13
+#define __pyx_codeobj__15 __pyx_mstate_global->__pyx_codeobj__15
+#define __pyx_codeobj__17 __pyx_mstate_global->__pyx_codeobj__17
+#define __pyx_codeobj__19 __pyx_mstate_global->__pyx_codeobj__19
+#define __pyx_codeobj__21 __pyx_mstate_global->__pyx_codeobj__21
+#define __pyx_codeobj__23 __pyx_mstate_global->__pyx_codeobj__23
+#define __pyx_codeobj__25 __pyx_mstate_global->__pyx_codeobj__25
+#define __pyx_codeobj__27 __pyx_mstate_global->__pyx_codeobj__27
+#define __pyx_codeobj__29 __pyx_mstate_global->__pyx_codeobj__29
+#define __pyx_codeobj__31 __pyx_mstate_global->__pyx_codeobj__31
 /* #### Code section: module_code ### */
 
 /* "imeinterpreter.py":24
@@ -3300,7 +3502,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter___init__(CYTHON_UNUS
  *         self.log_folder_path = log_folder_path
  *         self.life_cycle_list = []             # <<<<<<<<<<<<<<
  * 
- *         self.full_log = self.load_all_ime_logs()  # full log as line of string list
+ *         self.full_log = self.load_full_logs()  # full log as line of string list
  */
   __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3310,11 +3512,11 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter___init__(CYTHON_UNUS
   /* "imeinterpreter.py":28
  *         self.life_cycle_list = []
  * 
- *         self.full_log = self.load_all_ime_logs()  # full log as line of string list             # <<<<<<<<<<<<<<
+ *         self.full_log = self.load_full_logs()  # full log as line of string list             # <<<<<<<<<<<<<<
  *         self.initialize_life_cycle_list()
  *         self.life_cycle_num = len(self.life_cycle_list)
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_load_all_ime_logs); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_load_full_logs); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -3343,7 +3545,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter___init__(CYTHON_UNUS
 
   /* "imeinterpreter.py":29
  * 
- *         self.full_log = self.load_all_ime_logs()  # full log as line of string list
+ *         self.full_log = self.load_full_logs()  # full log as line of string list
  *         self.initialize_life_cycle_list()             # <<<<<<<<<<<<<<
  *         self.life_cycle_num = len(self.life_cycle_list)
  * 
@@ -3375,7 +3577,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter___init__(CYTHON_UNUS
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "imeinterpreter.py":30
- *         self.full_log = self.load_all_ime_logs()  # full log as line of string list
+ *         self.full_log = self.load_full_logs()  # full log as line of string list
  *         self.initialize_life_cycle_list()
  *         self.life_cycle_num = len(self.life_cycle_list)             # <<<<<<<<<<<<<<
  * 
@@ -3532,21 +3734,561 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_2save_log_to_service
 /* "imeinterpreter.py":36
  *         pass
  * 
- *     def load_all_ime_logs(self):             # <<<<<<<<<<<<<<
- *         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
- *         if not (os.path.isfile(ime_log_file_path)):
+ *     def open_log_file(self, log_path):             # <<<<<<<<<<<<<<
+ *         try:
+ *             log_file = open(log_path, mode='r', encoding='utf-8-sig')
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_5load_all_ime_logs(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_5open_log_file(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_5load_all_ime_logs = {"load_all_ime_logs", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_5load_all_ime_logs, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_5load_all_ime_logs(PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_5open_log_file = {"open_log_file", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_5open_log_file, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_5open_log_file(PyObject *__pyx_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  CYTHON_UNUSED PyObject *__pyx_v_self = 0;
+  PyObject *__pyx_v_log_path = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[2] = {0,0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("open_log_file (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_MACROS
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject **__pyx_pyargnames[] = {&__pyx_n_s_self,&__pyx_n_s_log_path,0};
+    if (__pyx_kwds) {
+      Py_ssize_t kw_args;
+      switch (__pyx_nargs) {
+        case  2: values[1] = __Pyx_Arg_FASTCALL(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = __Pyx_NumKwargs_FASTCALL(__pyx_kwds);
+      switch (__pyx_nargs) {
+        case  0:
+        if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_self)) != 0)) {
+          (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
+          kw_args--;
+        }
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 36, __pyx_L3_error)
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_log_path)) != 0)) {
+          (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
+          kw_args--;
+        }
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 36, __pyx_L3_error)
+        else {
+          __Pyx_RaiseArgtupleInvalid("open_log_file", 1, 2, 2, 1); __PYX_ERR(0, 36, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        const Py_ssize_t kwd_pos_args = __pyx_nargs;
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "open_log_file") < 0)) __PYX_ERR(0, 36, __pyx_L3_error)
+      }
+    } else if (unlikely(__pyx_nargs != 2)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
+      values[1] = __Pyx_Arg_FASTCALL(__pyx_args, 1);
+    }
+    __pyx_v_self = values[0];
+    __pyx_v_log_path = values[1];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("open_log_file", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 36, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  {
+    Py_ssize_t __pyx_temp;
+    for (__pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+      __Pyx_Arg_XDECREF_FASTCALL(values[__pyx_temp]);
+    }
+  }
+  __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.open_log_file", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_4open_log_file(__pyx_self, __pyx_v_self, __pyx_v_log_path);
+
+  /* function exit code */
+  {
+    Py_ssize_t __pyx_temp;
+    for (__pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+      __Pyx_Arg_XDECREF_FASTCALL(values[__pyx_temp]);
+    }
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4open_log_file(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_self, PyObject *__pyx_v_log_path) {
+  PyObject *__pyx_v_log_file = NULL;
+  PyObject *__pyx_v_log_as_lines = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *__pyx_t_12 = NULL;
+  PyObject *__pyx_t_13 = NULL;
+  PyObject *__pyx_t_14 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("open_log_file", 1);
+
+  /* "imeinterpreter.py":37
+ * 
+ *     def open_log_file(self, log_path):
+ *         try:             # <<<<<<<<<<<<<<
+ *             log_file = open(log_path, mode='r', encoding='utf-8-sig')
+ *             log_as_lines = log_file.readlines()
+ */
+  {
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ExceptionSave(&__pyx_t_1, &__pyx_t_2, &__pyx_t_3);
+    __Pyx_XGOTREF(__pyx_t_1);
+    __Pyx_XGOTREF(__pyx_t_2);
+    __Pyx_XGOTREF(__pyx_t_3);
+    /*try:*/ {
+
+      /* "imeinterpreter.py":38
+ *     def open_log_file(self, log_path):
+ *         try:
+ *             log_file = open(log_path, mode='r', encoding='utf-8-sig')             # <<<<<<<<<<<<<<
+ *             log_as_lines = log_file.readlines()
+ *             log_file.close()
+ */
+      __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 38, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx_v_log_path);
+      __Pyx_GIVEREF(__pyx_v_log_path);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_log_path)) __PYX_ERR(0, 38, __pyx_L3_error);
+      __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 38, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_mode, __pyx_n_s_r) < 0) __PYX_ERR(0, 38, __pyx_L3_error)
+      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_encoding, __pyx_kp_s_utf_8_sig) < 0) __PYX_ERR(0, 38, __pyx_L3_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 38, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __pyx_v_log_file = __pyx_t_6;
+      __pyx_t_6 = 0;
+
+      /* "imeinterpreter.py":39
+ *         try:
+ *             log_file = open(log_path, mode='r', encoding='utf-8-sig')
+ *             log_as_lines = log_file.readlines()             # <<<<<<<<<<<<<<
+ *             log_file.close()
+ *         except:
+ */
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_log_file, __pyx_n_s_readlines); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 39, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_4 = NULL;
+      __pyx_t_7 = 0;
+      #if CYTHON_UNPACK_METHODS
+      if (likely(PyMethod_Check(__pyx_t_5))) {
+        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_5);
+        if (likely(__pyx_t_4)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
+          __Pyx_INCREF(__pyx_t_4);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_5, function);
+          __pyx_t_7 = 1;
+        }
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+        __pyx_t_6 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_7, 0+__pyx_t_7);
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 39, __pyx_L3_error)
+        __Pyx_GOTREF(__pyx_t_6);
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      }
+      __pyx_v_log_as_lines = __pyx_t_6;
+      __pyx_t_6 = 0;
+
+      /* "imeinterpreter.py":40
+ *             log_file = open(log_path, mode='r', encoding='utf-8-sig')
+ *             log_as_lines = log_file.readlines()
+ *             log_file.close()             # <<<<<<<<<<<<<<
+ *         except:
+ *             print("Unable to load log via utf-8")
+ */
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_log_file, __pyx_n_s_close); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 40, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_4 = NULL;
+      __pyx_t_7 = 0;
+      #if CYTHON_UNPACK_METHODS
+      if (likely(PyMethod_Check(__pyx_t_5))) {
+        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_5);
+        if (likely(__pyx_t_4)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
+          __Pyx_INCREF(__pyx_t_4);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_5, function);
+          __pyx_t_7 = 1;
+        }
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+        __pyx_t_6 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_7, 0+__pyx_t_7);
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 40, __pyx_L3_error)
+        __Pyx_GOTREF(__pyx_t_6);
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      }
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+      /* "imeinterpreter.py":37
+ * 
+ *     def open_log_file(self, log_path):
+ *         try:             # <<<<<<<<<<<<<<
+ *             log_file = open(log_path, mode='r', encoding='utf-8-sig')
+ *             log_as_lines = log_file.readlines()
+ */
+    }
+    __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    goto __pyx_L8_try_end;
+    __pyx_L3_error:;
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+    /* "imeinterpreter.py":41
+ *             log_as_lines = log_file.readlines()
+ *             log_file.close()
+ *         except:             # <<<<<<<<<<<<<<
+ *             print("Unable to load log via utf-8")
+ *             try:
+ */
+    /*except:*/ {
+      __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.open_log_file", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      if (__Pyx_GetException(&__pyx_t_6, &__pyx_t_5, &__pyx_t_4) < 0) __PYX_ERR(0, 41, __pyx_L5_except_error)
+      __Pyx_XGOTREF(__pyx_t_6);
+      __Pyx_XGOTREF(__pyx_t_5);
+      __Pyx_XGOTREF(__pyx_t_4);
+
+      /* "imeinterpreter.py":42
+ *             log_file.close()
+ *         except:
+ *             print("Unable to load log via utf-8")             # <<<<<<<<<<<<<<
+ *             try:
+ *                 log_file = open(log_path, mode='r', encoding='ISO-8859-1')
+ */
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 42, __pyx_L5_except_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+
+      /* "imeinterpreter.py":43
+ *         except:
+ *             print("Unable to load log via utf-8")
+ *             try:             # <<<<<<<<<<<<<<
+ *                 log_file = open(log_path, mode='r', encoding='ISO-8859-1')
+ *                 log_as_lines = log_file.readlines()
+ */
+      {
+        __Pyx_PyThreadState_declare
+        __Pyx_PyThreadState_assign
+        __Pyx_ExceptionSave(&__pyx_t_9, &__pyx_t_10, &__pyx_t_11);
+        __Pyx_XGOTREF(__pyx_t_9);
+        __Pyx_XGOTREF(__pyx_t_10);
+        __Pyx_XGOTREF(__pyx_t_11);
+        /*try:*/ {
+
+          /* "imeinterpreter.py":44
+ *             print("Unable to load log via utf-8")
+ *             try:
+ *                 log_file = open(log_path, mode='r', encoding='ISO-8859-1')             # <<<<<<<<<<<<<<
+ *                 log_as_lines = log_file.readlines()
+ *                 log_file.close()
+ */
+          __pyx_t_8 = PyTuple_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 44, __pyx_L11_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __Pyx_INCREF(__pyx_v_log_path);
+          __Pyx_GIVEREF(__pyx_v_log_path);
+          if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_v_log_path)) __PYX_ERR(0, 44, __pyx_L11_error);
+          __pyx_t_12 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 44, __pyx_L11_error)
+          __Pyx_GOTREF(__pyx_t_12);
+          if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_mode, __pyx_n_s_r) < 0) __PYX_ERR(0, 44, __pyx_L11_error)
+          if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_encoding, __pyx_kp_s_ISO_8859_1) < 0) __PYX_ERR(0, 44, __pyx_L11_error)
+          __pyx_t_13 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_8, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 44, __pyx_L11_error)
+          __Pyx_GOTREF(__pyx_t_13);
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+          __Pyx_XDECREF_SET(__pyx_v_log_file, __pyx_t_13);
+          __pyx_t_13 = 0;
+
+          /* "imeinterpreter.py":45
+ *             try:
+ *                 log_file = open(log_path, mode='r', encoding='ISO-8859-1')
+ *                 log_as_lines = log_file.readlines()             # <<<<<<<<<<<<<<
+ *                 log_file.close()
+ *             except:
+ */
+          __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_v_log_file, __pyx_n_s_readlines); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 45, __pyx_L11_error)
+          __Pyx_GOTREF(__pyx_t_12);
+          __pyx_t_8 = NULL;
+          __pyx_t_7 = 0;
+          #if CYTHON_UNPACK_METHODS
+          if (likely(PyMethod_Check(__pyx_t_12))) {
+            __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_12);
+            if (likely(__pyx_t_8)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
+              __Pyx_INCREF(__pyx_t_8);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_12, function);
+              __pyx_t_7 = 1;
+            }
+          }
+          #endif
+          {
+            PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
+            __pyx_t_13 = __Pyx_PyObject_FastCall(__pyx_t_12, __pyx_callargs+1-__pyx_t_7, 0+__pyx_t_7);
+            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+            if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 45, __pyx_L11_error)
+            __Pyx_GOTREF(__pyx_t_13);
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+          }
+          __Pyx_XDECREF_SET(__pyx_v_log_as_lines, __pyx_t_13);
+          __pyx_t_13 = 0;
+
+          /* "imeinterpreter.py":46
+ *                 log_file = open(log_path, mode='r', encoding='ISO-8859-1')
+ *                 log_as_lines = log_file.readlines()
+ *                 log_file.close()             # <<<<<<<<<<<<<<
+ *             except:
+ *                 print("Unable to load log via ISO-8859-1")
+ */
+          __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_v_log_file, __pyx_n_s_close); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 46, __pyx_L11_error)
+          __Pyx_GOTREF(__pyx_t_12);
+          __pyx_t_8 = NULL;
+          __pyx_t_7 = 0;
+          #if CYTHON_UNPACK_METHODS
+          if (likely(PyMethod_Check(__pyx_t_12))) {
+            __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_12);
+            if (likely(__pyx_t_8)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
+              __Pyx_INCREF(__pyx_t_8);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_12, function);
+              __pyx_t_7 = 1;
+            }
+          }
+          #endif
+          {
+            PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
+            __pyx_t_13 = __Pyx_PyObject_FastCall(__pyx_t_12, __pyx_callargs+1-__pyx_t_7, 0+__pyx_t_7);
+            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+            if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 46, __pyx_L11_error)
+            __Pyx_GOTREF(__pyx_t_13);
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+          }
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+
+          /* "imeinterpreter.py":43
+ *         except:
+ *             print("Unable to load log via utf-8")
+ *             try:             # <<<<<<<<<<<<<<
+ *                 log_file = open(log_path, mode='r', encoding='ISO-8859-1')
+ *                 log_as_lines = log_file.readlines()
+ */
+        }
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+        goto __pyx_L18_try_end;
+        __pyx_L11_error:;
+        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
+        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+
+        /* "imeinterpreter.py":47
+ *                 log_as_lines = log_file.readlines()
+ *                 log_file.close()
+ *             except:             # <<<<<<<<<<<<<<
+ *                 print("Unable to load log via ISO-8859-1")
+ *                 log_as_lines = ""
+ */
+        /*except:*/ {
+          __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.open_log_file", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_13, &__pyx_t_12, &__pyx_t_8) < 0) __PYX_ERR(0, 47, __pyx_L13_except_error)
+          __Pyx_XGOTREF(__pyx_t_13);
+          __Pyx_XGOTREF(__pyx_t_12);
+          __Pyx_XGOTREF(__pyx_t_8);
+
+          /* "imeinterpreter.py":48
+ *                 log_file.close()
+ *             except:
+ *                 print("Unable to load log via ISO-8859-1")             # <<<<<<<<<<<<<<
+ *                 log_as_lines = ""
+ *         return log_as_lines
+ */
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 48, __pyx_L13_except_error)
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+
+          /* "imeinterpreter.py":49
+ *             except:
+ *                 print("Unable to load log via ISO-8859-1")
+ *                 log_as_lines = ""             # <<<<<<<<<<<<<<
+ *         return log_as_lines
+ * 
+ */
+          __Pyx_INCREF(__pyx_kp_s__3);
+          __Pyx_XDECREF_SET(__pyx_v_log_as_lines, __pyx_kp_s__3);
+          __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
+          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+          goto __pyx_L12_exception_handled;
+        }
+
+        /* "imeinterpreter.py":43
+ *         except:
+ *             print("Unable to load log via utf-8")
+ *             try:             # <<<<<<<<<<<<<<
+ *                 log_file = open(log_path, mode='r', encoding='ISO-8859-1')
+ *                 log_as_lines = log_file.readlines()
+ */
+        __pyx_L13_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_9);
+        __Pyx_XGIVEREF(__pyx_t_10);
+        __Pyx_XGIVEREF(__pyx_t_11);
+        __Pyx_ExceptionReset(__pyx_t_9, __pyx_t_10, __pyx_t_11);
+        goto __pyx_L5_except_error;
+        __pyx_L12_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_9);
+        __Pyx_XGIVEREF(__pyx_t_10);
+        __Pyx_XGIVEREF(__pyx_t_11);
+        __Pyx_ExceptionReset(__pyx_t_9, __pyx_t_10, __pyx_t_11);
+        __pyx_L18_try_end:;
+      }
+      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      goto __pyx_L4_exception_handled;
+    }
+
+    /* "imeinterpreter.py":37
+ * 
+ *     def open_log_file(self, log_path):
+ *         try:             # <<<<<<<<<<<<<<
+ *             log_file = open(log_path, mode='r', encoding='utf-8-sig')
+ *             log_as_lines = log_file.readlines()
+ */
+    __pyx_L5_except_error:;
+    __Pyx_XGIVEREF(__pyx_t_1);
+    __Pyx_XGIVEREF(__pyx_t_2);
+    __Pyx_XGIVEREF(__pyx_t_3);
+    __Pyx_ExceptionReset(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+    goto __pyx_L1_error;
+    __pyx_L4_exception_handled:;
+    __Pyx_XGIVEREF(__pyx_t_1);
+    __Pyx_XGIVEREF(__pyx_t_2);
+    __Pyx_XGIVEREF(__pyx_t_3);
+    __Pyx_ExceptionReset(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+    __pyx_L8_try_end:;
+  }
+
+  /* "imeinterpreter.py":50
+ *                 print("Unable to load log via ISO-8859-1")
+ *                 log_as_lines = ""
+ *         return log_as_lines             # <<<<<<<<<<<<<<
+ * 
+ *     def load_all_ime_logs(self):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_log_as_lines);
+  __pyx_r = __pyx_v_log_as_lines;
+  goto __pyx_L0;
+
+  /* "imeinterpreter.py":36
+ *         pass
+ * 
+ *     def open_log_file(self, log_path):             # <<<<<<<<<<<<<<
+ *         try:
+ *             log_file = open(log_path, mode='r', encoding='utf-8-sig')
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_12);
+  __Pyx_XDECREF(__pyx_t_13);
+  __Pyx_XDECREF(__pyx_t_14);
+  __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.open_log_file", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_log_file);
+  __Pyx_XDECREF(__pyx_v_log_as_lines);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "imeinterpreter.py":52
+ *         return log_as_lines
+ * 
+ *     def load_all_ime_logs(self):             # <<<<<<<<<<<<<<
+ *         # Listing older IME logs
+ *         dir_list = os.listdir(self.log_folder_path)
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_7load_all_ime_logs(PyObject *__pyx_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_7load_all_ime_logs = {"load_all_ime_logs", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_7load_all_ime_logs, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_7load_all_ime_logs(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -3590,12 +4332,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 36, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 52, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "load_all_ime_logs") < 0)) __PYX_ERR(0, 36, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "load_all_ime_logs") < 0)) __PYX_ERR(0, 52, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
@@ -3606,7 +4348,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("load_all_ime_logs", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 36, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("load_all_ime_logs", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 52, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3620,7 +4362,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(__pyx_self, __pyx_v_self);
+  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_6load_all_ime_logs(__pyx_self, __pyx_v_self);
 
   /* function exit code */
   {
@@ -3633,15 +4375,15 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
-  PyObject *__pyx_v_ime_log_file_path = NULL;
-  PyObject *__pyx_v_current_log_file = NULL;
-  PyObject *__pyx_v_current_ime_log_as_lines = NULL;
-  PyObject *__pyx_v_full_log = NULL;
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6load_all_ime_logs(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
   PyObject *__pyx_v_dir_list = NULL;
+  PyObject *__pyx_v_full_log = NULL;
   PyObject *__pyx_v_each_log = NULL;
   PyObject *__pyx_v_current_log_file_path = NULL;
-  PyObject *__pyx_v_current_log_as_lines = NULL;
+  PyObject *__pyx_v_current_ime_log_as_lines = NULL;
+  PyObject *__pyx_v_ime_log_file_path = NULL;
+  PyObject *__pyx_v_ime_log_file_lower_path = NULL;
+  PyObject *__pyx_v_most_recent_log_file_as_lines = NULL;
   PyObject *__pyx_v_post_part_start_index = NULL;
   PyObject *__pyx_v_made_up_line = NULL;
   PyObject *__pyx_7genexpr__pyx_v_i = NULL;
@@ -3650,584 +4392,62 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(C
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  int __pyx_t_4;
+  PyObject *__pyx_t_4 = NULL;
   int __pyx_t_5;
-  int __pyx_t_6;
-  PyObject *__pyx_t_7 = NULL;
-  PyObject *__pyx_t_8 = NULL;
+  Py_ssize_t __pyx_t_6;
+  PyObject *(*__pyx_t_7)(PyObject *);
+  int __pyx_t_8;
   PyObject *__pyx_t_9 = NULL;
   PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  PyObject *__pyx_t_12 = NULL;
-  PyObject *__pyx_t_13 = NULL;
-  PyObject *__pyx_t_14 = NULL;
-  PyObject *__pyx_t_15 = NULL;
-  PyObject *__pyx_t_16 = NULL;
-  Py_ssize_t __pyx_t_17;
-  PyObject *(*__pyx_t_18)(PyObject *);
-  int __pyx_t_19;
-  Py_ssize_t __pyx_t_20;
-  int __pyx_t_21;
+  int __pyx_t_11;
+  int __pyx_t_12;
+  int __pyx_t_13;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("load_all_ime_logs", 1);
 
-  /* "imeinterpreter.py":37
- * 
+  /* "imeinterpreter.py":54
  *     def load_all_ime_logs(self):
- *         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'             # <<<<<<<<<<<<<<
- *         if not (os.path.isfile(ime_log_file_path)):
- *             ime_log_file_path = self.log_folder_path + '\\intunemanagementextension.log'
- */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyNumber_Add(__pyx_t_1, __pyx_kp_s_IntuneManagementExtension_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 37, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v_ime_log_file_path = __pyx_t_2;
-  __pyx_t_2 = 0;
-
-  /* "imeinterpreter.py":38
- *     def load_all_ime_logs(self):
- *         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
- *         if not (os.path.isfile(ime_log_file_path)):             # <<<<<<<<<<<<<<
- *             ime_log_file_path = self.log_folder_path + '\\intunemanagementextension.log'
- *             if not (os.path.isfile(ime_log_file_path)):
- */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_os); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_isfile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = NULL;
-  __pyx_t_4 = 0;
-  #if CYTHON_UNPACK_METHODS
-  if (likely(PyMethod_Check(__pyx_t_1))) {
-    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_1);
-    if (likely(__pyx_t_3)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-      __Pyx_INCREF(__pyx_t_3);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_1, function);
-      __pyx_t_4 = 1;
-    }
-  }
-  #endif
-  {
-    PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_ime_log_file_path};
-    __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
-    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 38, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  }
-  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_6 = (!__pyx_t_5);
-  if (__pyx_t_6) {
-
-    /* "imeinterpreter.py":39
- *         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
- *         if not (os.path.isfile(ime_log_file_path)):
- *             ime_log_file_path = self.log_folder_path + '\\intunemanagementextension.log'             # <<<<<<<<<<<<<<
- *             if not (os.path.isfile(ime_log_file_path)):
- *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
- */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 39, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = PyNumber_Add(__pyx_t_2, __pyx_kp_s_intunemanagementextension_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF_SET(__pyx_v_ime_log_file_path, __pyx_t_1);
-    __pyx_t_1 = 0;
-
-    /* "imeinterpreter.py":40
- *         if not (os.path.isfile(ime_log_file_path)):
- *             ime_log_file_path = self.log_folder_path + '\\intunemanagementextension.log'
- *             if not (os.path.isfile(ime_log_file_path)):             # <<<<<<<<<<<<<<
- *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
- *                 return None
- */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 40, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 40, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_isfile); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 40, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = NULL;
-    __pyx_t_4 = 0;
-    #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
-      if (likely(__pyx_t_3)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-        __Pyx_INCREF(__pyx_t_3);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_2, function);
-        __pyx_t_4 = 1;
-      }
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_ime_log_file_path};
-      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
-      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    }
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 40, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_5 = (!__pyx_t_6);
-    if (__pyx_t_5) {
-
-      /* "imeinterpreter.py":41
- *             ime_log_file_path = self.log_folder_path + '\\intunemanagementextension.log'
- *             if not (os.path.isfile(ime_log_file_path)):
- *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")             # <<<<<<<<<<<<<<
- *                 return None
- *             #exit(1100)
- */
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-      /* "imeinterpreter.py":42
- *             if not (os.path.isfile(ime_log_file_path)):
- *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
- *                 return None             # <<<<<<<<<<<<<<
- *             #exit(1100)
- *         try:
- */
-      __Pyx_XDECREF(__pyx_r);
-      __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-      goto __pyx_L0;
-
-      /* "imeinterpreter.py":40
- *         if not (os.path.isfile(ime_log_file_path)):
- *             ime_log_file_path = self.log_folder_path + '\\intunemanagementextension.log'
- *             if not (os.path.isfile(ime_log_file_path)):             # <<<<<<<<<<<<<<
- *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
- *                 return None
- */
-    }
-
-    /* "imeinterpreter.py":38
- *     def load_all_ime_logs(self):
- *         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
- *         if not (os.path.isfile(ime_log_file_path)):             # <<<<<<<<<<<<<<
- *             ime_log_file_path = self.log_folder_path + '\\intunemanagementextension.log'
- *             if not (os.path.isfile(ime_log_file_path)):
- */
-  }
-
-  /* "imeinterpreter.py":44
- *                 return None
- *             #exit(1100)
- *         try:             # <<<<<<<<<<<<<<
- *             current_log_file = open(ime_log_file_path, mode='r', encoding='utf-8-sig')
- *             current_ime_log_as_lines = current_log_file.readlines()
- */
-  {
-    __Pyx_PyThreadState_declare
-    __Pyx_PyThreadState_assign
-    __Pyx_ExceptionSave(&__pyx_t_7, &__pyx_t_8, &__pyx_t_9);
-    __Pyx_XGOTREF(__pyx_t_7);
-    __Pyx_XGOTREF(__pyx_t_8);
-    __Pyx_XGOTREF(__pyx_t_9);
-    /*try:*/ {
-
-      /* "imeinterpreter.py":45
- *             #exit(1100)
- *         try:
- *             current_log_file = open(ime_log_file_path, mode='r', encoding='utf-8-sig')             # <<<<<<<<<<<<<<
- *             current_ime_log_as_lines = current_log_file.readlines()
- *             current_log_file.close()
- */
-      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 45, __pyx_L5_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_INCREF(__pyx_v_ime_log_file_path);
-      __Pyx_GIVEREF(__pyx_v_ime_log_file_path);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_ime_log_file_path)) __PYX_ERR(0, 45, __pyx_L5_error);
-      __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L5_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_mode, __pyx_n_s_r) < 0) __PYX_ERR(0, 45, __pyx_L5_error)
-      if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_encoding, __pyx_kp_s_utf_8_sig) < 0) __PYX_ERR(0, 45, __pyx_L5_error)
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L5_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_v_current_log_file = __pyx_t_3;
-      __pyx_t_3 = 0;
-
-      /* "imeinterpreter.py":46
- *         try:
- *             current_log_file = open(ime_log_file_path, mode='r', encoding='utf-8-sig')
- *             current_ime_log_as_lines = current_log_file.readlines()             # <<<<<<<<<<<<<<
- *             current_log_file.close()
- *         except:
- */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_current_log_file, __pyx_n_s_readlines); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L5_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = NULL;
-      __pyx_t_4 = 0;
-      #if CYTHON_UNPACK_METHODS
-      if (likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_1)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_1);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_2, function);
-          __pyx_t_4 = 1;
-        }
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_1, NULL};
-        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
-        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 46, __pyx_L5_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      }
-      __pyx_v_current_ime_log_as_lines = __pyx_t_3;
-      __pyx_t_3 = 0;
-
-      /* "imeinterpreter.py":47
- *             current_log_file = open(ime_log_file_path, mode='r', encoding='utf-8-sig')
- *             current_ime_log_as_lines = current_log_file.readlines()
- *             current_log_file.close()             # <<<<<<<<<<<<<<
- *         except:
- *             print("Unable to load log via utf-8")
- */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_current_log_file, __pyx_n_s_close); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 47, __pyx_L5_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = NULL;
-      __pyx_t_4 = 0;
-      #if CYTHON_UNPACK_METHODS
-      if (likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_1)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_1);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_2, function);
-          __pyx_t_4 = 1;
-        }
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_1, NULL};
-        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
-        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 47, __pyx_L5_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      }
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-      /* "imeinterpreter.py":44
- *                 return None
- *             #exit(1100)
- *         try:             # <<<<<<<<<<<<<<
- *             current_log_file = open(ime_log_file_path, mode='r', encoding='utf-8-sig')
- *             current_ime_log_as_lines = current_log_file.readlines()
- */
-    }
-    __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-    goto __pyx_L10_try_end;
-    __pyx_L5_error:;
-    __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-    /* "imeinterpreter.py":48
- *             current_ime_log_as_lines = current_log_file.readlines()
- *             current_log_file.close()
- *         except:             # <<<<<<<<<<<<<<
- *             print("Unable to load log via utf-8")
- *             try:
- */
-    /*except:*/ {
-      __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.load_all_ime_logs", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_2, &__pyx_t_1) < 0) __PYX_ERR(0, 48, __pyx_L7_except_error)
-      __Pyx_XGOTREF(__pyx_t_3);
-      __Pyx_XGOTREF(__pyx_t_2);
-      __Pyx_XGOTREF(__pyx_t_1);
-
-      /* "imeinterpreter.py":49
- *             current_log_file.close()
- *         except:
- *             print("Unable to load log via utf-8")             # <<<<<<<<<<<<<<
- *             try:
- *                 current_log_file = open(ime_log_file_path, mode='r', encoding='ISO-8859-1')
- */
-      __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 49, __pyx_L7_except_error)
-      __Pyx_GOTREF(__pyx_t_10);
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-
-      /* "imeinterpreter.py":50
- *         except:
- *             print("Unable to load log via utf-8")
- *             try:             # <<<<<<<<<<<<<<
- *                 current_log_file = open(ime_log_file_path, mode='r', encoding='ISO-8859-1')
- *                 current_ime_log_as_lines = current_log_file.readlines()
- */
-      {
-        __Pyx_PyThreadState_declare
-        __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_11, &__pyx_t_12, &__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_13);
-        /*try:*/ {
-
-          /* "imeinterpreter.py":51
- *             print("Unable to load log via utf-8")
- *             try:
- *                 current_log_file = open(ime_log_file_path, mode='r', encoding='ISO-8859-1')             # <<<<<<<<<<<<<<
- *                 current_ime_log_as_lines = current_log_file.readlines()
- *                 current_log_file.close()
- */
-          __pyx_t_10 = PyTuple_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 51, __pyx_L13_error)
-          __Pyx_GOTREF(__pyx_t_10);
-          __Pyx_INCREF(__pyx_v_ime_log_file_path);
-          __Pyx_GIVEREF(__pyx_v_ime_log_file_path);
-          if (__Pyx_PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_v_ime_log_file_path)) __PYX_ERR(0, 51, __pyx_L13_error);
-          __pyx_t_14 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 51, __pyx_L13_error)
-          __Pyx_GOTREF(__pyx_t_14);
-          if (PyDict_SetItem(__pyx_t_14, __pyx_n_s_mode, __pyx_n_s_r) < 0) __PYX_ERR(0, 51, __pyx_L13_error)
-          if (PyDict_SetItem(__pyx_t_14, __pyx_n_s_encoding, __pyx_kp_s_ISO_8859_1) < 0) __PYX_ERR(0, 51, __pyx_L13_error)
-          __pyx_t_15 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_10, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 51, __pyx_L13_error)
-          __Pyx_GOTREF(__pyx_t_15);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-          __Pyx_XDECREF_SET(__pyx_v_current_log_file, __pyx_t_15);
-          __pyx_t_15 = 0;
-
-          /* "imeinterpreter.py":52
- *             try:
- *                 current_log_file = open(ime_log_file_path, mode='r', encoding='ISO-8859-1')
- *                 current_ime_log_as_lines = current_log_file.readlines()             # <<<<<<<<<<<<<<
- *                 current_log_file.close()
- *             except:
- */
-          __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_v_current_log_file, __pyx_n_s_readlines); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 52, __pyx_L13_error)
-          __Pyx_GOTREF(__pyx_t_14);
-          __pyx_t_10 = NULL;
-          __pyx_t_4 = 0;
-          #if CYTHON_UNPACK_METHODS
-          if (likely(PyMethod_Check(__pyx_t_14))) {
-            __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_14);
-            if (likely(__pyx_t_10)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_14);
-              __Pyx_INCREF(__pyx_t_10);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_14, function);
-              __pyx_t_4 = 1;
-            }
-          }
-          #endif
-          {
-            PyObject *__pyx_callargs[2] = {__pyx_t_10, NULL};
-            __pyx_t_15 = __Pyx_PyObject_FastCall(__pyx_t_14, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
-            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-            if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 52, __pyx_L13_error)
-            __Pyx_GOTREF(__pyx_t_15);
-            __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-          }
-          __Pyx_XDECREF_SET(__pyx_v_current_ime_log_as_lines, __pyx_t_15);
-          __pyx_t_15 = 0;
-
-          /* "imeinterpreter.py":53
- *                 current_log_file = open(ime_log_file_path, mode='r', encoding='ISO-8859-1')
- *                 current_ime_log_as_lines = current_log_file.readlines()
- *                 current_log_file.close()             # <<<<<<<<<<<<<<
- *             except:
- *                 print("Unable to load log via ISO-8859-1")
- */
-          __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_v_current_log_file, __pyx_n_s_close); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 53, __pyx_L13_error)
-          __Pyx_GOTREF(__pyx_t_14);
-          __pyx_t_10 = NULL;
-          __pyx_t_4 = 0;
-          #if CYTHON_UNPACK_METHODS
-          if (likely(PyMethod_Check(__pyx_t_14))) {
-            __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_14);
-            if (likely(__pyx_t_10)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_14);
-              __Pyx_INCREF(__pyx_t_10);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_14, function);
-              __pyx_t_4 = 1;
-            }
-          }
-          #endif
-          {
-            PyObject *__pyx_callargs[2] = {__pyx_t_10, NULL};
-            __pyx_t_15 = __Pyx_PyObject_FastCall(__pyx_t_14, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
-            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-            if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 53, __pyx_L13_error)
-            __Pyx_GOTREF(__pyx_t_15);
-            __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-          }
-          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-
-          /* "imeinterpreter.py":50
- *         except:
- *             print("Unable to load log via utf-8")
- *             try:             # <<<<<<<<<<<<<<
- *                 current_log_file = open(ime_log_file_path, mode='r', encoding='ISO-8859-1')
- *                 current_ime_log_as_lines = current_log_file.readlines()
- */
-        }
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        goto __pyx_L20_try_end;
-        __pyx_L13_error:;
-        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-
-        /* "imeinterpreter.py":54
- *                 current_ime_log_as_lines = current_log_file.readlines()
- *                 current_log_file.close()
- *             except:             # <<<<<<<<<<<<<<
- *                 print("Unable to load log via ISO-8859-1")
- * 
- */
-        /*except:*/ {
-          __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.load_all_ime_logs", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_15, &__pyx_t_14, &__pyx_t_10) < 0) __PYX_ERR(0, 54, __pyx_L15_except_error)
-          __Pyx_XGOTREF(__pyx_t_15);
-          __Pyx_XGOTREF(__pyx_t_14);
-          __Pyx_XGOTREF(__pyx_t_10);
-
-          /* "imeinterpreter.py":55
- *                 current_log_file.close()
- *             except:
- *                 print("Unable to load log via ISO-8859-1")             # <<<<<<<<<<<<<<
- * 
- *         full_log = []
- */
-          __pyx_t_16 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 55, __pyx_L15_except_error)
-          __Pyx_GOTREF(__pyx_t_16);
-          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-          __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-          __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-          __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-          goto __pyx_L14_exception_handled;
-        }
-
-        /* "imeinterpreter.py":50
- *         except:
- *             print("Unable to load log via utf-8")
- *             try:             # <<<<<<<<<<<<<<
- *                 current_log_file = open(ime_log_file_path, mode='r', encoding='ISO-8859-1')
- *                 current_ime_log_as_lines = current_log_file.readlines()
- */
-        __pyx_L15_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-        goto __pyx_L7_except_error;
-        __pyx_L14_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-        __pyx_L20_try_end:;
-      }
-      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-      goto __pyx_L6_exception_handled;
-    }
-
-    /* "imeinterpreter.py":44
- *                 return None
- *             #exit(1100)
- *         try:             # <<<<<<<<<<<<<<
- *             current_log_file = open(ime_log_file_path, mode='r', encoding='utf-8-sig')
- *             current_ime_log_as_lines = current_log_file.readlines()
- */
-    __pyx_L7_except_error:;
-    __Pyx_XGIVEREF(__pyx_t_7);
-    __Pyx_XGIVEREF(__pyx_t_8);
-    __Pyx_XGIVEREF(__pyx_t_9);
-    __Pyx_ExceptionReset(__pyx_t_7, __pyx_t_8, __pyx_t_9);
-    goto __pyx_L1_error;
-    __pyx_L6_exception_handled:;
-    __Pyx_XGIVEREF(__pyx_t_7);
-    __Pyx_XGIVEREF(__pyx_t_8);
-    __Pyx_XGIVEREF(__pyx_t_9);
-    __Pyx_ExceptionReset(__pyx_t_7, __pyx_t_8, __pyx_t_9);
-    __pyx_L10_try_end:;
-  }
-
-  /* "imeinterpreter.py":57
- *                 print("Unable to load log via ISO-8859-1")
- * 
- *         full_log = []             # <<<<<<<<<<<<<<
- * 
- *         # Listing older IME logs
- */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_v_full_log = __pyx_t_1;
-  __pyx_t_1 = 0;
-
-  /* "imeinterpreter.py":60
- * 
  *         # Listing older IME logs
  *         dir_list = os.listdir(self.log_folder_path)             # <<<<<<<<<<<<<<
  *         # filtering IME logs only
  *         dir_list = [i for i in dir_list if i.lower().startswith('intunemanagementextension') and i.endswith('.log')]
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_listdir); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_listdir); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_10 = NULL;
-  __pyx_t_4 = 0;
+  __pyx_t_4 = NULL;
+  __pyx_t_5 = 0;
   #if CYTHON_UNPACK_METHODS
   if (unlikely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_10)) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_10);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_3, function);
-      __pyx_t_4 = 1;
+      __pyx_t_5 = 1;
     }
   }
   #endif
   {
-    PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_t_2};
-    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
-    __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+    PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_t_2};
+    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
   __pyx_v_dir_list = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "imeinterpreter.py":62
+  /* "imeinterpreter.py":56
  *         dir_list = os.listdir(self.log_folder_path)
  *         # filtering IME logs only
  *         dir_list = [i for i in dir_list if i.lower().startswith('intunemanagementextension') and i.endswith('.log')]             # <<<<<<<<<<<<<<
@@ -4235,55 +4455,55 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(C
  *         if 'intunemanagementextension.log' in dir_list:
  */
   { /* enter inner scope */
-    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L25_error)
+    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (likely(PyList_CheckExact(__pyx_v_dir_list)) || PyTuple_CheckExact(__pyx_v_dir_list)) {
       __pyx_t_3 = __pyx_v_dir_list; __Pyx_INCREF(__pyx_t_3);
-      __pyx_t_17 = 0;
-      __pyx_t_18 = NULL;
+      __pyx_t_6 = 0;
+      __pyx_t_7 = NULL;
     } else {
-      __pyx_t_17 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_v_dir_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 62, __pyx_L25_error)
+      __pyx_t_6 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_v_dir_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 56, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_18 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 62, __pyx_L25_error)
+      __pyx_t_7 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 56, __pyx_L5_error)
     }
     for (;;) {
-      if (likely(!__pyx_t_18)) {
+      if (likely(!__pyx_t_7)) {
         if (likely(PyList_CheckExact(__pyx_t_3))) {
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_3);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 62, __pyx_L25_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 56, __pyx_L5_error)
             #endif
-            if (__pyx_t_17 >= __pyx_temp) break;
+            if (__pyx_t_6 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_17); __Pyx_INCREF(__pyx_t_2); __pyx_t_17++; if (unlikely((0 < 0))) __PYX_ERR(0, 62, __pyx_L25_error)
+          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_6); __Pyx_INCREF(__pyx_t_2); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 56, __pyx_L5_error)
           #else
-          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_17); __pyx_t_17++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L25_error)
+          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         } else {
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_3);
             #if !CYTHON_ASSUME_SAFE_MACROS
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 62, __pyx_L25_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 56, __pyx_L5_error)
             #endif
-            if (__pyx_t_17 >= __pyx_temp) break;
+            if (__pyx_t_6 >= __pyx_temp) break;
           }
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_17); __Pyx_INCREF(__pyx_t_2); __pyx_t_17++; if (unlikely((0 < 0))) __PYX_ERR(0, 62, __pyx_L25_error)
+          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_6); __Pyx_INCREF(__pyx_t_2); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 56, __pyx_L5_error)
           #else
-          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_17); __pyx_t_17++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L25_error)
+          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         }
       } else {
-        __pyx_t_2 = __pyx_t_18(__pyx_t_3);
+        __pyx_t_2 = __pyx_t_7(__pyx_t_3);
         if (unlikely(!__pyx_t_2)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 62, __pyx_L25_error)
+            else __PYX_ERR(0, 56, __pyx_L5_error)
           }
           break;
         }
@@ -4291,126 +4511,126 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(C
       }
       __Pyx_XDECREF_SET(__pyx_7genexpr__pyx_v_i, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_7genexpr__pyx_v_i, __pyx_n_s_lower); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 62, __pyx_L25_error)
-      __Pyx_GOTREF(__pyx_t_14);
-      __pyx_t_15 = NULL;
-      __pyx_t_4 = 0;
-      #if CYTHON_UNPACK_METHODS
-      if (likely(PyMethod_Check(__pyx_t_14))) {
-        __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_14);
-        if (likely(__pyx_t_15)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_14);
-          __Pyx_INCREF(__pyx_t_15);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_14, function);
-          __pyx_t_4 = 1;
-        }
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_15, NULL};
-        __pyx_t_10 = __Pyx_PyObject_FastCall(__pyx_t_14, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
-        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-        if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 62, __pyx_L25_error)
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-      }
-      __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_startswith); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 62, __pyx_L25_error)
-      __Pyx_GOTREF(__pyx_t_14);
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_7genexpr__pyx_v_i, __pyx_n_s_lower); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 56, __pyx_L5_error)
+      __Pyx_GOTREF(__pyx_t_9);
       __pyx_t_10 = NULL;
-      __pyx_t_4 = 0;
+      __pyx_t_5 = 0;
       #if CYTHON_UNPACK_METHODS
-      if (likely(PyMethod_Check(__pyx_t_14))) {
-        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_14);
+      if (likely(PyMethod_Check(__pyx_t_9))) {
+        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_9);
         if (likely(__pyx_t_10)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_14);
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
           __Pyx_INCREF(__pyx_t_10);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_14, function);
-          __pyx_t_4 = 1;
+          __Pyx_DECREF_SET(__pyx_t_9, function);
+          __pyx_t_5 = 1;
         }
       }
       #endif
       {
-        PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_n_s_intunemanagementextension};
-        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_14, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+        PyObject *__pyx_callargs[2] = {__pyx_t_10, NULL};
+        __pyx_t_4 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
         __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L25_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 56, __pyx_L5_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       }
-      __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 62, __pyx_L25_error)
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_startswith); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 56, __pyx_L5_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_t_4 = NULL;
+      __pyx_t_5 = 0;
+      #if CYTHON_UNPACK_METHODS
+      if (likely(PyMethod_Check(__pyx_t_9))) {
+        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_9);
+        if (likely(__pyx_t_4)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+          __Pyx_INCREF(__pyx_t_4);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_9, function);
+          __pyx_t_5 = 1;
+        }
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_n_s_intunemanagementextension};
+        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L5_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      }
+      __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 56, __pyx_L5_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (__pyx_t_6) {
+      if (__pyx_t_11) {
       } else {
-        __pyx_t_5 = __pyx_t_6;
-        goto __pyx_L29_bool_binop_done;
+        __pyx_t_8 = __pyx_t_11;
+        goto __pyx_L9_bool_binop_done;
       }
-      __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_7genexpr__pyx_v_i, __pyx_n_s_endswith); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 62, __pyx_L25_error)
-      __Pyx_GOTREF(__pyx_t_14);
-      __pyx_t_10 = NULL;
-      __pyx_t_4 = 0;
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_7genexpr__pyx_v_i, __pyx_n_s_endswith); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 56, __pyx_L5_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __pyx_t_4 = NULL;
+      __pyx_t_5 = 0;
       #if CYTHON_UNPACK_METHODS
-      if (likely(PyMethod_Check(__pyx_t_14))) {
-        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_14);
-        if (likely(__pyx_t_10)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_14);
-          __Pyx_INCREF(__pyx_t_10);
+      if (likely(PyMethod_Check(__pyx_t_9))) {
+        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_9);
+        if (likely(__pyx_t_4)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+          __Pyx_INCREF(__pyx_t_4);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_14, function);
-          __pyx_t_4 = 1;
+          __Pyx_DECREF_SET(__pyx_t_9, function);
+          __pyx_t_5 = 1;
         }
       }
       #endif
       {
-        PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_kp_s_log};
-        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_14, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
-        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L25_error)
+        PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_kp_s_log};
+        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       }
-      __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 62, __pyx_L25_error)
+      __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 56, __pyx_L5_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_5 = __pyx_t_6;
-      __pyx_L29_bool_binop_done:;
-      if (__pyx_t_5) {
-        if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_7genexpr__pyx_v_i))) __PYX_ERR(0, 62, __pyx_L25_error)
+      __pyx_t_8 = __pyx_t_11;
+      __pyx_L9_bool_binop_done:;
+      if (__pyx_t_8) {
+        if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_7genexpr__pyx_v_i))) __PYX_ERR(0, 56, __pyx_L5_error)
       }
     }
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_XDECREF(__pyx_7genexpr__pyx_v_i); __pyx_7genexpr__pyx_v_i = 0;
-    goto __pyx_L32_exit_scope;
-    __pyx_L25_error:;
+    goto __pyx_L12_exit_scope;
+    __pyx_L5_error:;
     __Pyx_XDECREF(__pyx_7genexpr__pyx_v_i); __pyx_7genexpr__pyx_v_i = 0;
     goto __pyx_L1_error;
-    __pyx_L32_exit_scope:;
+    __pyx_L12_exit_scope:;
   } /* exit inner scope */
   __Pyx_DECREF_SET(__pyx_v_dir_list, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "imeinterpreter.py":64
+  /* "imeinterpreter.py":58
  *         dir_list = [i for i in dir_list if i.lower().startswith('intunemanagementextension') and i.endswith('.log')]
  *         # Remove Current IME log, which is most recent
  *         if 'intunemanagementextension.log' in dir_list:             # <<<<<<<<<<<<<<
  *             dir_list.remove('intunemanagementextension.log')
  *         elif 'IntuneManagementExtension.log' in dir_list:
  */
-  __pyx_t_5 = (__Pyx_PySequence_ContainsTF(__pyx_kp_s_intunemanagementextension_log_2, __pyx_v_dir_list, Py_EQ)); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 64, __pyx_L1_error)
-  if (__pyx_t_5) {
+  __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_kp_s_intunemanagementextension_log, __pyx_v_dir_list, Py_EQ)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 58, __pyx_L1_error)
+  if (__pyx_t_8) {
 
-    /* "imeinterpreter.py":65
+    /* "imeinterpreter.py":59
  *         # Remove Current IME log, which is most recent
  *         if 'intunemanagementextension.log' in dir_list:
  *             dir_list.remove('intunemanagementextension.log')             # <<<<<<<<<<<<<<
  *         elif 'IntuneManagementExtension.log' in dir_list:
  *             dir_list.remove('IntuneManagementExtension.log')
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_dir_list, __pyx_n_s_remove); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 65, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_dir_list, __pyx_n_s_remove); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 59, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_2 = NULL;
-    __pyx_t_4 = 0;
+    __pyx_t_5 = 0;
     #if CYTHON_UNPACK_METHODS
     if (likely(PyMethod_Check(__pyx_t_3))) {
       __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
@@ -4419,51 +4639,51 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(C
         __Pyx_INCREF(__pyx_t_2);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_3, function);
-        __pyx_t_4 = 1;
+        __pyx_t_5 = 1;
       }
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_kp_s_intunemanagementextension_log_2};
-      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_kp_s_intunemanagementextension_log};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "imeinterpreter.py":64
+    /* "imeinterpreter.py":58
  *         dir_list = [i for i in dir_list if i.lower().startswith('intunemanagementextension') and i.endswith('.log')]
  *         # Remove Current IME log, which is most recent
  *         if 'intunemanagementextension.log' in dir_list:             # <<<<<<<<<<<<<<
  *             dir_list.remove('intunemanagementextension.log')
  *         elif 'IntuneManagementExtension.log' in dir_list:
  */
-    goto __pyx_L33;
+    goto __pyx_L13;
   }
 
-  /* "imeinterpreter.py":66
+  /* "imeinterpreter.py":60
  *         if 'intunemanagementextension.log' in dir_list:
  *             dir_list.remove('intunemanagementextension.log')
  *         elif 'IntuneManagementExtension.log' in dir_list:             # <<<<<<<<<<<<<<
  *             dir_list.remove('IntuneManagementExtension.log')
  *         else:
  */
-  __pyx_t_5 = (__Pyx_PySequence_ContainsTF(__pyx_kp_s_IntuneManagementExtension_log_2, __pyx_v_dir_list, Py_EQ)); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 66, __pyx_L1_error)
-  if (__pyx_t_5) {
+  __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_kp_s_IntuneManagementExtension_log, __pyx_v_dir_list, Py_EQ)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 60, __pyx_L1_error)
+  if (__pyx_t_8) {
 
-    /* "imeinterpreter.py":67
+    /* "imeinterpreter.py":61
  *             dir_list.remove('intunemanagementextension.log')
  *         elif 'IntuneManagementExtension.log' in dir_list:
  *             dir_list.remove('IntuneManagementExtension.log')             # <<<<<<<<<<<<<<
  *         else:
  *             print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.1")
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_dir_list, __pyx_n_s_remove); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 67, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_dir_list, __pyx_n_s_remove); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 61, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_2 = NULL;
-    __pyx_t_4 = 0;
+    __pyx_t_5 = 0;
     #if CYTHON_UNPACK_METHODS
     if (likely(PyMethod_Check(__pyx_t_3))) {
       __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
@@ -4472,184 +4692,280 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(C
         __Pyx_INCREF(__pyx_t_2);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_3, function);
-        __pyx_t_4 = 1;
+        __pyx_t_5 = 1;
       }
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_kp_s_IntuneManagementExtension_log_2};
-      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_kp_s_IntuneManagementExtension_log};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "imeinterpreter.py":66
+    /* "imeinterpreter.py":60
  *         if 'intunemanagementextension.log' in dir_list:
  *             dir_list.remove('intunemanagementextension.log')
  *         elif 'IntuneManagementExtension.log' in dir_list:             # <<<<<<<<<<<<<<
  *             dir_list.remove('IntuneManagementExtension.log')
  *         else:
  */
-    goto __pyx_L33;
+    goto __pyx_L13;
   }
 
-  /* "imeinterpreter.py":69
+  /* "imeinterpreter.py":63
  *             dir_list.remove('IntuneManagementExtension.log')
  *         else:
  *             print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.1")             # <<<<<<<<<<<<<<
  *             return None
- *         #print(dir_list)
+ *         # print(dir_list)
  */
   /*else*/ {
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "imeinterpreter.py":70
+    /* "imeinterpreter.py":64
  *         else:
  *             print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.1")
  *             return None             # <<<<<<<<<<<<<<
- *         #print(dir_list)
+ *         # print(dir_list)
  *         # Sorting based on date in file name, first log should be the oldest log
  */
     __Pyx_XDECREF(__pyx_r);
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
   }
-  __pyx_L33:;
+  __pyx_L13:;
 
-  /* "imeinterpreter.py":73
- *         #print(dir_list)
+  /* "imeinterpreter.py":67
+ *         # print(dir_list)
  *         # Sorting based on date in file name, first log should be the oldest log
  *         sorted(dir_list)             # <<<<<<<<<<<<<<
- *         #print(dir_list)
- *         for each_log in dir_list:
+ *         # print(dir_list)
+ *         full_log = []
  */
-  __pyx_t_3 = PySequence_List(__pyx_v_dir_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 73, __pyx_L1_error)
+  __pyx_t_3 = PySequence_List(__pyx_v_dir_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_1 = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
-  __pyx_t_19 = PyList_Sort(__pyx_t_1); if (unlikely(__pyx_t_19 == ((int)-1))) __PYX_ERR(0, 73, __pyx_L1_error)
+  __pyx_t_12 = PyList_Sort(__pyx_t_1); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "imeinterpreter.py":75
+  /* "imeinterpreter.py":69
  *         sorted(dir_list)
- *         #print(dir_list)
+ *         # print(dir_list)
+ *         full_log = []             # <<<<<<<<<<<<<<
+ *         for each_log in dir_list:
+ *             current_log_file_path = self.log_folder_path + '\\' + each_log
+ */
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_full_log = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":70
+ *         # print(dir_list)
+ *         full_log = []
  *         for each_log in dir_list:             # <<<<<<<<<<<<<<
  *             current_log_file_path = self.log_folder_path + '\\' + each_log
- *             current_log_file = open(current_log_file_path, mode='r', encoding='utf-8-sig')
+ *             current_ime_log_as_lines = self.open_log_file(current_log_file_path)
  */
   __pyx_t_1 = __pyx_v_dir_list; __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_17 = 0;
+  __pyx_t_6 = 0;
   for (;;) {
     {
       Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
       #if !CYTHON_ASSUME_SAFE_MACROS
-      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 75, __pyx_L1_error)
+      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 70, __pyx_L1_error)
       #endif
-      if (__pyx_t_17 >= __pyx_temp) break;
+      if (__pyx_t_6 >= __pyx_temp) break;
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_17); __Pyx_INCREF(__pyx_t_3); __pyx_t_17++; if (unlikely((0 < 0))) __PYX_ERR(0, 75, __pyx_L1_error)
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 70, __pyx_L1_error)
     #else
-    __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_17); __pyx_t_17++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 70, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     __Pyx_XDECREF_SET(__pyx_v_each_log, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "imeinterpreter.py":76
- *         #print(dir_list)
+    /* "imeinterpreter.py":71
+ *         full_log = []
  *         for each_log in dir_list:
  *             current_log_file_path = self.log_folder_path + '\\' + each_log             # <<<<<<<<<<<<<<
- *             current_log_file = open(current_log_file_path, mode='r', encoding='utf-8-sig')
- *             current_log_as_lines = current_log_file.readlines()
+ *             current_ime_log_as_lines = self.open_log_file(current_log_file_path)
+ *             full_log = full_log + current_ime_log_as_lines
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = PyNumber_Add(__pyx_t_3, __pyx_kp_s__5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
+    __pyx_t_2 = PyNumber_Add(__pyx_t_3, __pyx_kp_s__5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyNumber_Add(__pyx_t_2, __pyx_v_each_log); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Add(__pyx_t_2, __pyx_v_each_log); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_XDECREF_SET(__pyx_v_current_log_file_path, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "imeinterpreter.py":77
+    /* "imeinterpreter.py":72
  *         for each_log in dir_list:
  *             current_log_file_path = self.log_folder_path + '\\' + each_log
- *             current_log_file = open(current_log_file_path, mode='r', encoding='utf-8-sig')             # <<<<<<<<<<<<<<
- *             current_log_as_lines = current_log_file.readlines()
+ *             current_ime_log_as_lines = self.open_log_file(current_log_file_path)             # <<<<<<<<<<<<<<
+ *             full_log = full_log + current_ime_log_as_lines
  *             '''
  */
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_INCREF(__pyx_v_current_log_file_path);
-    __Pyx_GIVEREF(__pyx_v_current_log_file_path);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_current_log_file_path)) __PYX_ERR(0, 77, __pyx_L1_error);
-    __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_log_file); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 72, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_mode, __pyx_n_s_r) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
-    if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_encoding, __pyx_kp_s_utf_8_sig) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
-    __pyx_t_14 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 77, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_14);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_XDECREF_SET(__pyx_v_current_log_file, __pyx_t_14);
-    __pyx_t_14 = 0;
-
-    /* "imeinterpreter.py":78
- *             current_log_file_path = self.log_folder_path + '\\' + each_log
- *             current_log_file = open(current_log_file_path, mode='r', encoding='utf-8-sig')
- *             current_log_as_lines = current_log_file.readlines()             # <<<<<<<<<<<<<<
- *             '''
- *             There is an issue that sometimes after concatenating 2 log files, the EMS Agent stop will be missing.
- */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_current_log_file, __pyx_n_s_readlines); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = NULL;
-    __pyx_t_4 = 0;
+    __pyx_t_9 = NULL;
+    __pyx_t_5 = 0;
     #if CYTHON_UNPACK_METHODS
     if (likely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
-      if (likely(__pyx_t_3)) {
+      __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_2);
+      if (likely(__pyx_t_9)) {
         PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-        __Pyx_INCREF(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_9);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_2, function);
-        __pyx_t_4 = 1;
+        __pyx_t_5 = 1;
       }
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_3, NULL};
-      __pyx_t_14 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
-      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 78, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_14);
+      PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_v_current_log_file_path};
+      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     }
-    __Pyx_XDECREF_SET(__pyx_v_current_log_as_lines, __pyx_t_14);
-    __pyx_t_14 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_current_ime_log_as_lines, __pyx_t_3);
+    __pyx_t_3 = 0;
 
-    /* "imeinterpreter.py":83
+    /* "imeinterpreter.py":73
+ *             current_log_file_path = self.log_folder_path + '\\' + each_log
+ *             current_ime_log_as_lines = self.open_log_file(current_log_file_path)
+ *             full_log = full_log + current_ime_log_as_lines             # <<<<<<<<<<<<<<
+ *             '''
+ *             There is an issue that sometimes after concatenating 2 log files, the EMS Agent stop will be missing.
+ */
+    __pyx_t_3 = PyNumber_Add(__pyx_v_full_log, __pyx_v_current_ime_log_as_lines); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF_SET(__pyx_v_full_log, __pyx_t_3);
+    __pyx_t_3 = 0;
+
+    /* "imeinterpreter.py":70
+ *         # print(dir_list)
+ *         full_log = []
+ *         for each_log in dir_list:             # <<<<<<<<<<<<<<
+ *             current_log_file_path = self.log_folder_path + '\\' + each_log
+ *             current_ime_log_as_lines = self.open_log_file(current_log_file_path)
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":78
  *             Force adding at the beginning.
  *             '''
- *             if current_log_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[-1].startswith('<![LOG[EMS Agent Stopped]'):             # <<<<<<<<<<<<<<
- *                 post_part_start_index = full_log[-1].find('LOG]!>')
- *                 made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
+ *         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'             # <<<<<<<<<<<<<<
+ *         ime_log_file_lower_path = self.log_folder_path + '\\intunemanagementextension.log'
+ * 
  */
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_current_log_as_lines, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = PyNumber_Add(__pyx_t_1, __pyx_kp_s_IntuneManagementExtension_log_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_ime_log_file_path = __pyx_t_3;
+  __pyx_t_3 = 0;
+
+  /* "imeinterpreter.py":79
+ *             '''
+ *         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
+ *         ime_log_file_lower_path = self.log_folder_path + '\\intunemanagementextension.log'             # <<<<<<<<<<<<<<
+ * 
+ *         if not (os.path.isfile(ime_log_file_path)):
+ */
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_1 = PyNumber_Add(__pyx_t_3, __pyx_kp_s_intunemanagementextension_log_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_v_ime_log_file_lower_path = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":81
+ *         ime_log_file_lower_path = self.log_folder_path + '\\intunemanagementextension.log'
+ * 
+ *         if not (os.path.isfile(ime_log_file_path)):             # <<<<<<<<<<<<<<
+ *             ime_log_file_path = ime_log_file_lower_path
+ *             if not (os.path.isfile(ime_log_file_lower_path)):
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_isfile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = NULL;
+  __pyx_t_5 = 0;
+  #if CYTHON_UNPACK_METHODS
+  if (likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+      __pyx_t_5 = 1;
+    }
+  }
+  #endif
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_ime_log_file_path};
+    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  }
+  __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 81, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_11 = (!__pyx_t_8);
+  if (__pyx_t_11) {
+
+    /* "imeinterpreter.py":82
+ * 
+ *         if not (os.path.isfile(ime_log_file_path)):
+ *             ime_log_file_path = ime_log_file_lower_path             # <<<<<<<<<<<<<<
+ *             if not (os.path.isfile(ime_log_file_lower_path)):
+ *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
+ */
+    __Pyx_INCREF(__pyx_v_ime_log_file_lower_path);
+    __Pyx_DECREF_SET(__pyx_v_ime_log_file_path, __pyx_v_ime_log_file_lower_path);
+
+    /* "imeinterpreter.py":83
+ *         if not (os.path.isfile(ime_log_file_path)):
+ *             ime_log_file_path = ime_log_file_lower_path
+ *             if not (os.path.isfile(ime_log_file_lower_path)):             # <<<<<<<<<<<<<<
+ *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
+ *                 return None
+ */
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_startswith); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_isfile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_2 = NULL;
-    __pyx_t_4 = 0;
+    __pyx_t_5 = 0;
     #if CYTHON_UNPACK_METHODS
     if (likely(PyMethod_Check(__pyx_t_3))) {
       __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
@@ -4658,39 +4974,209 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(C
         __Pyx_INCREF(__pyx_t_2);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_3, function);
-        __pyx_t_4 = 1;
+        __pyx_t_5 = 1;
       }
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_kp_s_LOG_EMS_Agent_Started};
-      __pyx_t_14 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_ime_log_file_lower_path};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 83, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_14);
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_14); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 83, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-    if (__pyx_t_6) {
-    } else {
-      __pyx_t_5 = __pyx_t_6;
-      goto __pyx_L37_bool_binop_done;
+    __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 83, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_8 = (!__pyx_t_11);
+    if (__pyx_t_8) {
+
+      /* "imeinterpreter.py":84
+ *             ime_log_file_path = ime_log_file_lower_path
+ *             if not (os.path.isfile(ime_log_file_lower_path)):
+ *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")             # <<<<<<<<<<<<<<
+ *                 return None
+ *             # exit(1100)
+ */
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+      /* "imeinterpreter.py":85
+ *             if not (os.path.isfile(ime_log_file_lower_path)):
+ *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
+ *                 return None             # <<<<<<<<<<<<<<
+ *             # exit(1100)
+ *         most_recent_log_file_as_lines = self.open_log_file(ime_log_file_path)
+ */
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+      goto __pyx_L0;
+
+      /* "imeinterpreter.py":83
+ *         if not (os.path.isfile(ime_log_file_path)):
+ *             ime_log_file_path = ime_log_file_lower_path
+ *             if not (os.path.isfile(ime_log_file_lower_path)):             # <<<<<<<<<<<<<<
+ *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")
+ *                 return None
+ */
     }
-    __pyx_t_20 = PyObject_Length(__pyx_v_full_log); if (unlikely(__pyx_t_20 == ((Py_ssize_t)-1))) __PYX_ERR(0, 83, __pyx_L1_error)
-    __pyx_t_6 = (__pyx_t_20 > 0);
-    if (__pyx_t_6) {
-    } else {
-      __pyx_t_5 = __pyx_t_6;
-      goto __pyx_L37_bool_binop_done;
+
+    /* "imeinterpreter.py":81
+ *         ime_log_file_lower_path = self.log_folder_path + '\\intunemanagementextension.log'
+ * 
+ *         if not (os.path.isfile(ime_log_file_path)):             # <<<<<<<<<<<<<<
+ *             ime_log_file_path = ime_log_file_lower_path
+ *             if not (os.path.isfile(ime_log_file_lower_path)):
+ */
+  }
+
+  /* "imeinterpreter.py":87
+ *                 return None
+ *             # exit(1100)
+ *         most_recent_log_file_as_lines = self.open_log_file(ime_log_file_path)             # <<<<<<<<<<<<<<
+ *         if most_recent_log_file_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[
+ *             -1].startswith('<![LOG[EMS Agent Stopped]'):
+ */
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_log_file); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = NULL;
+  __pyx_t_5 = 0;
+  #if CYTHON_UNPACK_METHODS
+  if (likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+      __pyx_t_5 = 1;
     }
-    __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_full_log, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+  }
+  #endif
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_ime_log_file_path};
+    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  }
+  __pyx_v_most_recent_log_file_as_lines = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":88
+ *             # exit(1100)
+ *         most_recent_log_file_as_lines = self.open_log_file(ime_log_file_path)
+ *         if most_recent_log_file_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[             # <<<<<<<<<<<<<<
+ *             -1].startswith('<![LOG[EMS Agent Stopped]'):
+ *             post_part_start_index = full_log[-1].find('LOG]!>')
+ */
+  __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_most_recent_log_file_as_lines, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_startswith); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = NULL;
+  __pyx_t_5 = 0;
+  #if CYTHON_UNPACK_METHODS
+  if (likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+      __pyx_t_5 = 1;
+    }
+  }
+  #endif
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_kp_s_LOG_EMS_Agent_Started};
+    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 88, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  }
+  __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 88, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (__pyx_t_11) {
+  } else {
+    __pyx_t_8 = __pyx_t_11;
+    goto __pyx_L20_bool_binop_done;
+  }
+  __pyx_t_6 = PyObject_Length(__pyx_v_full_log); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_t_11 = (__pyx_t_6 > 0);
+  if (__pyx_t_11) {
+  } else {
+    __pyx_t_8 = __pyx_t_11;
+    goto __pyx_L20_bool_binop_done;
+  }
+
+  /* "imeinterpreter.py":89
+ *         most_recent_log_file_as_lines = self.open_log_file(ime_log_file_path)
+ *         if most_recent_log_file_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[
+ *             -1].startswith('<![LOG[EMS Agent Stopped]'):             # <<<<<<<<<<<<<<
+ *             post_part_start_index = full_log[-1].find('LOG]!>')
+ *             made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
+ */
+  __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_full_log, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_startswith); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = NULL;
+  __pyx_t_5 = 0;
+  #if CYTHON_UNPACK_METHODS
+  if (likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+      __pyx_t_5 = 1;
+    }
+  }
+  #endif
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_kp_s_LOG_EMS_Agent_Stopped};
+    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  }
+  __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 89, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":88
+ *             # exit(1100)
+ *         most_recent_log_file_as_lines = self.open_log_file(ime_log_file_path)
+ *         if most_recent_log_file_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[             # <<<<<<<<<<<<<<
+ *             -1].startswith('<![LOG[EMS Agent Stopped]'):
+ *             post_part_start_index = full_log[-1].find('LOG]!>')
+ */
+  __pyx_t_13 = (!__pyx_t_11);
+  __pyx_t_8 = __pyx_t_13;
+  __pyx_L20_bool_binop_done:;
+  if (__pyx_t_8) {
+
+    /* "imeinterpreter.py":90
+ *         if most_recent_log_file_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[
+ *             -1].startswith('<![LOG[EMS Agent Stopped]'):
+ *             post_part_start_index = full_log[-1].find('LOG]!>')             # <<<<<<<<<<<<<<
+ *             made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
+ *             most_recent_log_file_as_lines.insert(0, made_up_line)
+ */
+    __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_full_log, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_startswith); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_find); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 90, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_3 = NULL;
-    __pyx_t_4 = 0;
+    __pyx_t_5 = 0;
     #if CYTHON_UNPACK_METHODS
     if (likely(PyMethod_Check(__pyx_t_2))) {
       __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
@@ -4699,211 +5185,114 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(C
         __Pyx_INCREF(__pyx_t_3);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_2, function);
-        __pyx_t_4 = 1;
+        __pyx_t_5 = 1;
       }
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_kp_s_LOG_EMS_Agent_Stopped};
-      __pyx_t_14 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_kp_s_LOG};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 83, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_14);
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     }
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_14); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 83, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-    __pyx_t_21 = (!__pyx_t_6);
-    __pyx_t_5 = __pyx_t_21;
-    __pyx_L37_bool_binop_done:;
-    if (__pyx_t_5) {
+    __pyx_v_post_part_start_index = __pyx_t_1;
+    __pyx_t_1 = 0;
 
-      /* "imeinterpreter.py":84
- *             '''
- *             if current_log_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[-1].startswith('<![LOG[EMS Agent Stopped]'):
- *                 post_part_start_index = full_log[-1].find('LOG]!>')             # <<<<<<<<<<<<<<
- *                 made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
- *                 current_log_as_lines.insert(0, made_up_line)
+    /* "imeinterpreter.py":91
+ *             -1].startswith('<![LOG[EMS Agent Stopped]'):
+ *             post_part_start_index = full_log[-1].find('LOG]!>')
+ *             made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]             # <<<<<<<<<<<<<<
+ *             most_recent_log_file_as_lines.insert(0, made_up_line)
+ *         full_log = full_log + most_recent_log_file_as_lines
  */
-      __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_full_log, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_find); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 84, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_2 = NULL;
-      __pyx_t_4 = 0;
-      #if CYTHON_UNPACK_METHODS
-      if (likely(PyMethod_Check(__pyx_t_3))) {
-        __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
-        if (likely(__pyx_t_2)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-          __Pyx_INCREF(__pyx_t_2);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_3, function);
-          __pyx_t_4 = 1;
-        }
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_kp_s_LOG};
-        __pyx_t_14 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
-        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-        if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 84, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_14);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      }
-      __Pyx_XDECREF_SET(__pyx_v_post_part_start_index, __pyx_t_14);
-      __pyx_t_14 = 0;
-
-      /* "imeinterpreter.py":85
- *             if current_log_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[-1].startswith('<![LOG[EMS Agent Stopped]'):
- *                 post_part_start_index = full_log[-1].find('LOG]!>')
- *                 made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]             # <<<<<<<<<<<<<<
- *                 current_log_as_lines.insert(0, made_up_line)
- *             full_log = full_log + current_log_as_lines
- */
-      __pyx_t_14 = __Pyx_GetItemInt(__pyx_v_full_log, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 85, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_14);
-      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_post_part_start_index, __pyx_int_6, 6, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 85, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_2 = __Pyx_PyObject_GetSlice(__pyx_t_14, 0, 0, &__pyx_t_3, NULL, NULL, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 85, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = PyNumber_Add(__pyx_kp_s_LOG_EMS_Agent_Stopped_LOG, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 85, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_made_up_line, __pyx_t_3);
-      __pyx_t_3 = 0;
-
-      /* "imeinterpreter.py":86
- *                 post_part_start_index = full_log[-1].find('LOG]!>')
- *                 made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
- *                 current_log_as_lines.insert(0, made_up_line)             # <<<<<<<<<<<<<<
- *             full_log = full_log + current_log_as_lines
- *             current_log_file.close()
- */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_current_log_as_lines, __pyx_n_s_insert); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_14 = NULL;
-      __pyx_t_4 = 0;
-      #if CYTHON_UNPACK_METHODS
-      if (likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_14 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_14)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_14);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_2, function);
-          __pyx_t_4 = 1;
-        }
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[3] = {__pyx_t_14, __pyx_int_0, __pyx_v_made_up_line};
-        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 2+__pyx_t_4);
-        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      }
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-      /* "imeinterpreter.py":83
- *             Force adding at the beginning.
- *             '''
- *             if current_log_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[-1].startswith('<![LOG[EMS Agent Stopped]'):             # <<<<<<<<<<<<<<
- *                 post_part_start_index = full_log[-1].find('LOG]!>')
- *                 made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
- */
-    }
-
-    /* "imeinterpreter.py":87
- *                 made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
- *                 current_log_as_lines.insert(0, made_up_line)
- *             full_log = full_log + current_log_as_lines             # <<<<<<<<<<<<<<
- *             current_log_file.close()
- * 
- */
-    __pyx_t_3 = PyNumber_Add(__pyx_v_full_log, __pyx_v_current_log_as_lines); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_full_log, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_v_post_part_start_index, __pyx_int_6, 6, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = __Pyx_PyObject_GetSlice(__pyx_t_1, 0, 0, &__pyx_t_2, NULL, NULL, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF_SET(__pyx_v_full_log, __pyx_t_3);
-    __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_2 = PyNumber_Add(__pyx_kp_s_LOG_EMS_Agent_Stopped_LOG, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_v_made_up_line = __pyx_t_2;
+    __pyx_t_2 = 0;
+
+    /* "imeinterpreter.py":92
+ *             post_part_start_index = full_log[-1].find('LOG]!>')
+ *             made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
+ *             most_recent_log_file_as_lines.insert(0, made_up_line)             # <<<<<<<<<<<<<<
+ *         full_log = full_log + most_recent_log_file_as_lines
+ *         return full_log
+ */
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_most_recent_log_file_as_lines, __pyx_n_s_insert); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_1 = NULL;
+    __pyx_t_5 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_1)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_1);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __pyx_t_5 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[3] = {__pyx_t_1, __pyx_int_0, __pyx_v_made_up_line};
+      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 2+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
     /* "imeinterpreter.py":88
- *                 current_log_as_lines.insert(0, made_up_line)
- *             full_log = full_log + current_log_as_lines
- *             current_log_file.close()             # <<<<<<<<<<<<<<
- * 
- *         full_log = full_log + current_ime_log_as_lines
- */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_current_log_file, __pyx_n_s_close); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_14 = NULL;
-    __pyx_t_4 = 0;
-    #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_14 = PyMethod_GET_SELF(__pyx_t_2);
-      if (likely(__pyx_t_14)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-        __Pyx_INCREF(__pyx_t_14);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_2, function);
-        __pyx_t_4 = 1;
-      }
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_14, NULL};
-      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
-      __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    }
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-    /* "imeinterpreter.py":75
- *         sorted(dir_list)
- *         #print(dir_list)
- *         for each_log in dir_list:             # <<<<<<<<<<<<<<
- *             current_log_file_path = self.log_folder_path + '\\' + each_log
- *             current_log_file = open(current_log_file_path, mode='r', encoding='utf-8-sig')
+ *             # exit(1100)
+ *         most_recent_log_file_as_lines = self.open_log_file(ime_log_file_path)
+ *         if most_recent_log_file_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[             # <<<<<<<<<<<<<<
+ *             -1].startswith('<![LOG[EMS Agent Stopped]'):
+ *             post_part_start_index = full_log[-1].find('LOG]!>')
  */
   }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "imeinterpreter.py":90
- *             current_log_file.close()
- * 
- *         full_log = full_log + current_ime_log_as_lines             # <<<<<<<<<<<<<<
+  /* "imeinterpreter.py":93
+ *             made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
+ *             most_recent_log_file_as_lines.insert(0, made_up_line)
+ *         full_log = full_log + most_recent_log_file_as_lines             # <<<<<<<<<<<<<<
  *         return full_log
  * 
  */
-  if (unlikely(!__pyx_v_current_ime_log_as_lines)) { __Pyx_RaiseUnboundLocalError("current_ime_log_as_lines"); __PYX_ERR(0, 90, __pyx_L1_error) }
-  __pyx_t_1 = PyNumber_Add(__pyx_v_full_log, __pyx_v_current_ime_log_as_lines); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF_SET(__pyx_v_full_log, __pyx_t_1);
-  __pyx_t_1 = 0;
+  __pyx_t_2 = PyNumber_Add(__pyx_v_full_log, __pyx_v_most_recent_log_file_as_lines); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF_SET(__pyx_v_full_log, __pyx_t_2);
+  __pyx_t_2 = 0;
 
-  /* "imeinterpreter.py":91
- * 
- *         full_log = full_log + current_ime_log_as_lines
+  /* "imeinterpreter.py":94
+ *             most_recent_log_file_as_lines.insert(0, made_up_line)
+ *         full_log = full_log + most_recent_log_file_as_lines
  *         return full_log             # <<<<<<<<<<<<<<
  * 
- *     def separate_log_into_service_lifecycle(self):
+ *     def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_full_log);
   __pyx_r = __pyx_v_full_log;
   goto __pyx_L0;
 
-  /* "imeinterpreter.py":36
- *         pass
+  /* "imeinterpreter.py":52
+ *         return log_as_lines
  * 
  *     def load_all_ime_logs(self):             # <<<<<<<<<<<<<<
- *         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
- *         if not (os.path.isfile(ime_log_file_path)):
+ *         # Listing older IME logs
+ *         dir_list = os.listdir(self.log_folder_path)
  */
 
   /* function exit code */
@@ -4911,21 +5300,20 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(C
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_14);
-  __Pyx_XDECREF(__pyx_t_15);
-  __Pyx_XDECREF(__pyx_t_16);
   __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.load_all_ime_logs", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_ime_log_file_path);
-  __Pyx_XDECREF(__pyx_v_current_log_file);
-  __Pyx_XDECREF(__pyx_v_current_ime_log_as_lines);
-  __Pyx_XDECREF(__pyx_v_full_log);
   __Pyx_XDECREF(__pyx_v_dir_list);
+  __Pyx_XDECREF(__pyx_v_full_log);
   __Pyx_XDECREF(__pyx_v_each_log);
   __Pyx_XDECREF(__pyx_v_current_log_file_path);
-  __Pyx_XDECREF(__pyx_v_current_log_as_lines);
+  __Pyx_XDECREF(__pyx_v_current_ime_log_as_lines);
+  __Pyx_XDECREF(__pyx_v_ime_log_file_path);
+  __Pyx_XDECREF(__pyx_v_ime_log_file_lower_path);
+  __Pyx_XDECREF(__pyx_v_most_recent_log_file_as_lines);
   __Pyx_XDECREF(__pyx_v_post_part_start_index);
   __Pyx_XDECREF(__pyx_v_made_up_line);
   __Pyx_XDECREF(__pyx_7genexpr__pyx_v_i);
@@ -4934,8 +5322,1816 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(C
   return __pyx_r;
 }
 
-/* "imeinterpreter.py":93
+/* "imeinterpreter.py":96
  *         return full_log
+ * 
+ *     def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):             # <<<<<<<<<<<<<<
+ *         full_log = []
+ *         left, right = 0, 0
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_9merge_ime_and_app_workload_logs(PyObject *__pyx_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_9merge_ime_and_app_workload_logs = {"merge_ime_and_app_workload_logs", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_9merge_ime_and_app_workload_logs, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_9merge_ime_and_app_workload_logs(PyObject *__pyx_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  CYTHON_UNUSED PyObject *__pyx_v_self = 0;
+  PyObject *__pyx_v_ime_logs = 0;
+  PyObject *__pyx_v_app_workload_logs = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[3] = {0,0,0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("merge_ime_and_app_workload_logs (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_MACROS
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject **__pyx_pyargnames[] = {&__pyx_n_s_self,&__pyx_n_s_ime_logs,&__pyx_n_s_app_workload_logs,0};
+    if (__pyx_kwds) {
+      Py_ssize_t kw_args;
+      switch (__pyx_nargs) {
+        case  3: values[2] = __Pyx_Arg_FASTCALL(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = __Pyx_Arg_FASTCALL(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = __Pyx_NumKwargs_FASTCALL(__pyx_kwds);
+      switch (__pyx_nargs) {
+        case  0:
+        if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_self)) != 0)) {
+          (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
+          kw_args--;
+        }
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 96, __pyx_L3_error)
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_ime_logs)) != 0)) {
+          (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
+          kw_args--;
+        }
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 96, __pyx_L3_error)
+        else {
+          __Pyx_RaiseArgtupleInvalid("merge_ime_and_app_workload_logs", 1, 3, 3, 1); __PYX_ERR(0, 96, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_app_workload_logs)) != 0)) {
+          (void)__Pyx_Arg_NewRef_FASTCALL(values[2]);
+          kw_args--;
+        }
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 96, __pyx_L3_error)
+        else {
+          __Pyx_RaiseArgtupleInvalid("merge_ime_and_app_workload_logs", 1, 3, 3, 2); __PYX_ERR(0, 96, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        const Py_ssize_t kwd_pos_args = __pyx_nargs;
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "merge_ime_and_app_workload_logs") < 0)) __PYX_ERR(0, 96, __pyx_L3_error)
+      }
+    } else if (unlikely(__pyx_nargs != 3)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
+      values[1] = __Pyx_Arg_FASTCALL(__pyx_args, 1);
+      values[2] = __Pyx_Arg_FASTCALL(__pyx_args, 2);
+    }
+    __pyx_v_self = values[0];
+    __pyx_v_ime_logs = values[1];
+    __pyx_v_app_workload_logs = values[2];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("merge_ime_and_app_workload_logs", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 96, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  {
+    Py_ssize_t __pyx_temp;
+    for (__pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+      __Pyx_Arg_XDECREF_FASTCALL(values[__pyx_temp]);
+    }
+  }
+  __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.merge_ime_and_app_workload_logs", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_8merge_ime_and_app_workload_logs(__pyx_self, __pyx_v_self, __pyx_v_ime_logs, __pyx_v_app_workload_logs);
+
+  /* function exit code */
+  {
+    Py_ssize_t __pyx_temp;
+    for (__pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+      __Pyx_Arg_XDECREF_FASTCALL(values[__pyx_temp]);
+    }
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8merge_ime_and_app_workload_logs(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_self, PyObject *__pyx_v_ime_logs, PyObject *__pyx_v_app_workload_logs) {
+  PyObject *__pyx_v_full_log = NULL;
+  PyObject *__pyx_v_left = NULL;
+  PyObject *__pyx_v_right = NULL;
+  Py_ssize_t __pyx_v_ime_log_len;
+  Py_ssize_t __pyx_v_app_workload_log_len;
+  PyObject *__pyx_v_left_line = NULL;
+  PyObject *__pyx_v_right_line = NULL;
+  PyObject *__pyx_v_left_time = NULL;
+  PyObject *__pyx_v_right_time = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  Py_ssize_t __pyx_t_3;
+  int __pyx_t_4;
+  int __pyx_t_5;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
+  int __pyx_t_8;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("merge_ime_and_app_workload_logs", 1);
+
+  /* "imeinterpreter.py":97
+ * 
+ *     def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):
+ *         full_log = []             # <<<<<<<<<<<<<<
+ *         left, right = 0, 0
+ *         ime_log_len = len(ime_logs)
+ */
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_full_log = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":98
+ *     def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):
+ *         full_log = []
+ *         left, right = 0, 0             # <<<<<<<<<<<<<<
+ *         ime_log_len = len(ime_logs)
+ *         app_workload_log_len = len(app_workload_logs)
+ */
+  __pyx_t_1 = __pyx_int_0;
+  __Pyx_INCREF(__pyx_t_1);
+  __pyx_t_2 = __pyx_int_0;
+  __Pyx_INCREF(__pyx_t_2);
+  __pyx_v_left = __pyx_t_1;
+  __pyx_t_1 = 0;
+  __pyx_v_right = __pyx_t_2;
+  __pyx_t_2 = 0;
+
+  /* "imeinterpreter.py":99
+ *         full_log = []
+ *         left, right = 0, 0
+ *         ime_log_len = len(ime_logs)             # <<<<<<<<<<<<<<
+ *         app_workload_log_len = len(app_workload_logs)
+ *         while left < ime_log_len and right < app_workload_log_len:
+ */
+  __pyx_t_3 = PyObject_Length(__pyx_v_ime_logs); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_v_ime_log_len = __pyx_t_3;
+
+  /* "imeinterpreter.py":100
+ *         left, right = 0, 0
+ *         ime_log_len = len(ime_logs)
+ *         app_workload_log_len = len(app_workload_logs)             # <<<<<<<<<<<<<<
+ *         while left < ime_log_len and right < app_workload_log_len:
+ *             left_line = ime_logs[left]
+ */
+  __pyx_t_3 = PyObject_Length(__pyx_v_app_workload_logs); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 100, __pyx_L1_error)
+  __pyx_v_app_workload_log_len = __pyx_t_3;
+
+  /* "imeinterpreter.py":101
+ *         ime_log_len = len(ime_logs)
+ *         app_workload_log_len = len(app_workload_logs)
+ *         while left < ime_log_len and right < app_workload_log_len:             # <<<<<<<<<<<<<<
+ *             left_line = ime_logs[left]
+ *             right_line = app_workload_logs[right]
+ */
+  while (1) {
+    __pyx_t_2 = PyInt_FromSsize_t(__pyx_v_ime_log_len); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 101, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_1 = PyObject_RichCompare(__pyx_v_left, __pyx_t_2, Py_LT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 101, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    if (__pyx_t_5) {
+    } else {
+      __pyx_t_4 = __pyx_t_5;
+      goto __pyx_L5_bool_binop_done;
+    }
+    __pyx_t_1 = PyInt_FromSsize_t(__pyx_v_app_workload_log_len); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PyObject_RichCompare(__pyx_v_right, __pyx_t_1, Py_LT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 101, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 101, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_4 = __pyx_t_5;
+    __pyx_L5_bool_binop_done:;
+    if (!__pyx_t_4) break;
+
+    /* "imeinterpreter.py":102
+ *         app_workload_log_len = len(app_workload_logs)
+ *         while left < ime_log_len and right < app_workload_log_len:
+ *             left_line = ime_logs[left]             # <<<<<<<<<<<<<<
+ *             right_line = app_workload_logs[right]
+ *             left_time = logprocessinglibrary.get_timestamp_by_line(left_line)
+ */
+    __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_ime_logs, __pyx_v_left); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 102, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_XDECREF_SET(__pyx_v_left_line, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "imeinterpreter.py":103
+ *         while left < ime_log_len and right < app_workload_log_len:
+ *             left_line = ime_logs[left]
+ *             right_line = app_workload_logs[right]             # <<<<<<<<<<<<<<
+ *             left_time = logprocessinglibrary.get_timestamp_by_line(left_line)
+ *             right_time = logprocessinglibrary.get_timestamp_by_line(right_line)
+ */
+    __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_app_workload_logs, __pyx_v_right); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_XDECREF_SET(__pyx_v_right_line, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "imeinterpreter.py":104
+ *             left_line = ime_logs[left]
+ *             right_line = app_workload_logs[right]
+ *             left_time = logprocessinglibrary.get_timestamp_by_line(left_line)             # <<<<<<<<<<<<<<
+ *             right_time = logprocessinglibrary.get_timestamp_by_line(right_line)
+ *             if left_time > right_time:
+ */
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = NULL;
+    __pyx_t_7 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (unlikely(PyMethod_Check(__pyx_t_6))) {
+      __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_6);
+      if (likely(__pyx_t_1)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+        __Pyx_INCREF(__pyx_t_1);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_6, function);
+        __pyx_t_7 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_v_left_line};
+      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
+      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    }
+    __Pyx_XDECREF_SET(__pyx_v_left_time, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "imeinterpreter.py":105
+ *             right_line = app_workload_logs[right]
+ *             left_time = logprocessinglibrary.get_timestamp_by_line(left_line)
+ *             right_time = logprocessinglibrary.get_timestamp_by_line(right_line)             # <<<<<<<<<<<<<<
+ *             if left_time > right_time:
+ *                 full_log.append(right_line)
+ */
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_t_6 = NULL;
+    __pyx_t_7 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (unlikely(PyMethod_Check(__pyx_t_1))) {
+      __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_1);
+      if (likely(__pyx_t_6)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+        __Pyx_INCREF(__pyx_t_6);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_1, function);
+        __pyx_t_7 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_v_right_line};
+      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
+      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    }
+    __Pyx_XDECREF_SET(__pyx_v_right_time, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "imeinterpreter.py":106
+ *             left_time = logprocessinglibrary.get_timestamp_by_line(left_line)
+ *             right_time = logprocessinglibrary.get_timestamp_by_line(right_line)
+ *             if left_time > right_time:             # <<<<<<<<<<<<<<
+ *                 full_log.append(right_line)
+ *                 right = right + 1
+ */
+    __pyx_t_2 = PyObject_RichCompare(__pyx_v_left_time, __pyx_v_right_time, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 106, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (__pyx_t_4) {
+
+      /* "imeinterpreter.py":107
+ *             right_time = logprocessinglibrary.get_timestamp_by_line(right_line)
+ *             if left_time > right_time:
+ *                 full_log.append(right_line)             # <<<<<<<<<<<<<<
+ *                 right = right + 1
+ *             else:
+ */
+      __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_full_log, __pyx_v_right_line); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 107, __pyx_L1_error)
+
+      /* "imeinterpreter.py":108
+ *             if left_time > right_time:
+ *                 full_log.append(right_line)
+ *                 right = right + 1             # <<<<<<<<<<<<<<
+ *             else:
+ *                 full_log.append(left_line)
+ */
+      __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_v_right, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 108, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF_SET(__pyx_v_right, __pyx_t_2);
+      __pyx_t_2 = 0;
+
+      /* "imeinterpreter.py":106
+ *             left_time = logprocessinglibrary.get_timestamp_by_line(left_line)
+ *             right_time = logprocessinglibrary.get_timestamp_by_line(right_line)
+ *             if left_time > right_time:             # <<<<<<<<<<<<<<
+ *                 full_log.append(right_line)
+ *                 right = right + 1
+ */
+      goto __pyx_L7;
+    }
+
+    /* "imeinterpreter.py":110
+ *                 right = right + 1
+ *             else:
+ *                 full_log.append(left_line)             # <<<<<<<<<<<<<<
+ *                 left = left + 1
+ * 
+ */
+    /*else*/ {
+      __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_full_log, __pyx_v_left_line); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 110, __pyx_L1_error)
+
+      /* "imeinterpreter.py":111
+ *             else:
+ *                 full_log.append(left_line)
+ *                 left = left + 1             # <<<<<<<<<<<<<<
+ * 
+ *         while left < ime_log_len:
+ */
+      __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_v_left, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 111, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF_SET(__pyx_v_left, __pyx_t_2);
+      __pyx_t_2 = 0;
+    }
+    __pyx_L7:;
+  }
+
+  /* "imeinterpreter.py":113
+ *                 left = left + 1
+ * 
+ *         while left < ime_log_len:             # <<<<<<<<<<<<<<
+ *             full_log.append(ime_logs[left])
+ *             left = left + 1
+ */
+  while (1) {
+    __pyx_t_2 = PyInt_FromSsize_t(__pyx_v_ime_log_len); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 113, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_1 = PyObject_RichCompare(__pyx_v_left, __pyx_t_2, Py_LT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 113, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    if (!__pyx_t_4) break;
+
+    /* "imeinterpreter.py":114
+ * 
+ *         while left < ime_log_len:
+ *             full_log.append(ime_logs[left])             # <<<<<<<<<<<<<<
+ *             left = left + 1
+ *         while right < app_workload_log_len:
+ */
+    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_ime_logs, __pyx_v_left); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_full_log, __pyx_t_1); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 114, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+    /* "imeinterpreter.py":115
+ *         while left < ime_log_len:
+ *             full_log.append(ime_logs[left])
+ *             left = left + 1             # <<<<<<<<<<<<<<
+ *         while right < app_workload_log_len:
+ *             full_log.append(app_workload_logs[right])
+ */
+    __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_v_left, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF_SET(__pyx_v_left, __pyx_t_1);
+    __pyx_t_1 = 0;
+  }
+
+  /* "imeinterpreter.py":116
+ *             full_log.append(ime_logs[left])
+ *             left = left + 1
+ *         while right < app_workload_log_len:             # <<<<<<<<<<<<<<
+ *             full_log.append(app_workload_logs[right])
+ *             right = right + 1
+ */
+  while (1) {
+    __pyx_t_1 = PyInt_FromSsize_t(__pyx_v_app_workload_log_len); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PyObject_RichCompare(__pyx_v_right, __pyx_t_1, Py_LT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 116, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 116, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (!__pyx_t_4) break;
+
+    /* "imeinterpreter.py":117
+ *             left = left + 1
+ *         while right < app_workload_log_len:
+ *             full_log.append(app_workload_logs[right])             # <<<<<<<<<<<<<<
+ *             right = right + 1
+ *         # with open('C:\\temp\\temp\\imeout.log', 'a') as outfile:
+ */
+    __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_app_workload_logs, __pyx_v_right); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_full_log, __pyx_t_2); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 117, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+    /* "imeinterpreter.py":118
+ *         while right < app_workload_log_len:
+ *             full_log.append(app_workload_logs[right])
+ *             right = right + 1             # <<<<<<<<<<<<<<
+ *         # with open('C:\\temp\\temp\\imeout.log', 'a') as outfile:
+ *         #     for i in range(len(full_log)):
+ */
+    __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_v_right, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF_SET(__pyx_v_right, __pyx_t_2);
+    __pyx_t_2 = 0;
+  }
+
+  /* "imeinterpreter.py":122
+ *         #     for i in range(len(full_log)):
+ *         #         outfile.writelines(full_log[i])
+ *         return full_log             # <<<<<<<<<<<<<<
+ * 
+ *     def load_all_app_workload_logs(self):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_full_log);
+  __pyx_r = __pyx_v_full_log;
+  goto __pyx_L0;
+
+  /* "imeinterpreter.py":96
+ *         return full_log
+ * 
+ *     def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):             # <<<<<<<<<<<<<<
+ *         full_log = []
+ *         left, right = 0, 0
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.merge_ime_and_app_workload_logs", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_full_log);
+  __Pyx_XDECREF(__pyx_v_left);
+  __Pyx_XDECREF(__pyx_v_right);
+  __Pyx_XDECREF(__pyx_v_left_line);
+  __Pyx_XDECREF(__pyx_v_right_line);
+  __Pyx_XDECREF(__pyx_v_left_time);
+  __Pyx_XDECREF(__pyx_v_right_time);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "imeinterpreter.py":124
+ *         return full_log
+ * 
+ *     def load_all_app_workload_logs(self):             # <<<<<<<<<<<<<<
+ *         """
+ *         Fix the change in log structure in 2407 that Win32 log entries are separated into AppWorkload.log
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_11load_all_app_workload_logs(PyObject *__pyx_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+PyDoc_STRVAR(__pyx_doc_14imeinterpreter_14ImeInterpreter_10load_all_app_workload_logs, "\n        Fix the change in log structure in 2407 that Win32 log entries are separated into AppWorkload.log\n        Adding the ability to merge the separated logs if exists.\n        ");
+static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_11load_all_app_workload_logs = {"load_all_app_workload_logs", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_11load_all_app_workload_logs, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_14imeinterpreter_14ImeInterpreter_10load_all_app_workload_logs};
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_11load_all_app_workload_logs(PyObject *__pyx_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  PyObject *__pyx_v_self = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[1] = {0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("load_all_app_workload_logs (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_MACROS
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject **__pyx_pyargnames[] = {&__pyx_n_s_self,0};
+    if (__pyx_kwds) {
+      Py_ssize_t kw_args;
+      switch (__pyx_nargs) {
+        case  1: values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = __Pyx_NumKwargs_FASTCALL(__pyx_kwds);
+      switch (__pyx_nargs) {
+        case  0:
+        if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_self)) != 0)) {
+          (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
+          kw_args--;
+        }
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 124, __pyx_L3_error)
+        else goto __pyx_L5_argtuple_error;
+      }
+      if (unlikely(kw_args > 0)) {
+        const Py_ssize_t kwd_pos_args = __pyx_nargs;
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "load_all_app_workload_logs") < 0)) __PYX_ERR(0, 124, __pyx_L3_error)
+      }
+    } else if (unlikely(__pyx_nargs != 1)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
+    }
+    __pyx_v_self = values[0];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("load_all_app_workload_logs", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 124, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  {
+    Py_ssize_t __pyx_temp;
+    for (__pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+      __Pyx_Arg_XDECREF_FASTCALL(values[__pyx_temp]);
+    }
+  }
+  __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.load_all_app_workload_logs", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_10load_all_app_workload_logs(__pyx_self, __pyx_v_self);
+
+  /* function exit code */
+  {
+    Py_ssize_t __pyx_temp;
+    for (__pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+      __Pyx_Arg_XDECREF_FASTCALL(values[__pyx_temp]);
+    }
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10load_all_app_workload_logs(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
+  PyObject *__pyx_v_app_workload_log_file_path = NULL;
+  PyObject *__pyx_v_app_workload_log_lower_file_path = NULL;
+  PyObject *__pyx_v_dir_list = NULL;
+  PyObject *__pyx_v_full_log = NULL;
+  PyObject *__pyx_v_each_log = NULL;
+  PyObject *__pyx_v_current_log_file_path = NULL;
+  PyObject *__pyx_v_current_app_workload_log_as_lines = NULL;
+  PyObject *__pyx_v_most_recent_log_file_as_lines = NULL;
+  PyObject *__pyx_8genexpr1__pyx_v_i = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  int __pyx_t_5;
+  Py_ssize_t __pyx_t_6;
+  PyObject *(*__pyx_t_7)(PyObject *);
+  int __pyx_t_8;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  int __pyx_t_11;
+  int __pyx_t_12;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("load_all_app_workload_logs", 1);
+
+  /* "imeinterpreter.py":129
+ *         Adding the ability to merge the separated logs if exists.
+ *         """
+ *         app_workload_log_file_path = self.log_folder_path + '\\AppWorkload.log'             # <<<<<<<<<<<<<<
+ *         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
+ * 
+ */
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = PyNumber_Add(__pyx_t_1, __pyx_kp_s_AppWorkload_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 129, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_app_workload_log_file_path = __pyx_t_2;
+  __pyx_t_2 = 0;
+
+  /* "imeinterpreter.py":130
+ *         """
+ *         app_workload_log_file_path = self.log_folder_path + '\\AppWorkload.log'
+ *         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'             # <<<<<<<<<<<<<<
+ * 
+ *         dir_list = os.listdir(self.log_folder_path)
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = PyNumber_Add(__pyx_t_2, __pyx_kp_s_appworkload_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_v_app_workload_log_lower_file_path = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":132
+ *         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
+ * 
+ *         dir_list = os.listdir(self.log_folder_path)             # <<<<<<<<<<<<<<
+ *         # filtering AppWorkload logs only
+ *         dir_list = [i for i in dir_list if i.lower().startswith('AppWorkload') and i.endswith('.log')]
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_listdir); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  __pyx_t_5 = 0;
+  #if CYTHON_UNPACK_METHODS
+  if (unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+      __pyx_t_5 = 1;
+    }
+  }
+  #endif
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_t_2};
+    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  }
+  __pyx_v_dir_list = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":134
+ *         dir_list = os.listdir(self.log_folder_path)
+ *         # filtering AppWorkload logs only
+ *         dir_list = [i for i in dir_list if i.lower().startswith('AppWorkload') and i.endswith('.log')]             # <<<<<<<<<<<<<<
+ *         # Remove Current IME log, which is most recent
+ *         if 'appworkload.log' in dir_list:
+ */
+  { /* enter inner scope */
+    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L5_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    if (likely(PyList_CheckExact(__pyx_v_dir_list)) || PyTuple_CheckExact(__pyx_v_dir_list)) {
+      __pyx_t_3 = __pyx_v_dir_list; __Pyx_INCREF(__pyx_t_3);
+      __pyx_t_6 = 0;
+      __pyx_t_7 = NULL;
+    } else {
+      __pyx_t_6 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_v_dir_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L5_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_7 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 134, __pyx_L5_error)
+    }
+    for (;;) {
+      if (likely(!__pyx_t_7)) {
+        if (likely(PyList_CheckExact(__pyx_t_3))) {
+          {
+            Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_3);
+            #if !CYTHON_ASSUME_SAFE_MACROS
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 134, __pyx_L5_error)
+            #endif
+            if (__pyx_t_6 >= __pyx_temp) break;
+          }
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_6); __Pyx_INCREF(__pyx_t_2); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 134, __pyx_L5_error)
+          #else
+          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L5_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          #endif
+        } else {
+          {
+            Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_3);
+            #if !CYTHON_ASSUME_SAFE_MACROS
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 134, __pyx_L5_error)
+            #endif
+            if (__pyx_t_6 >= __pyx_temp) break;
+          }
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_6); __Pyx_INCREF(__pyx_t_2); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 134, __pyx_L5_error)
+          #else
+          __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L5_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          #endif
+        }
+      } else {
+        __pyx_t_2 = __pyx_t_7(__pyx_t_3);
+        if (unlikely(!__pyx_t_2)) {
+          PyObject* exc_type = PyErr_Occurred();
+          if (exc_type) {
+            if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+            else __PYX_ERR(0, 134, __pyx_L5_error)
+          }
+          break;
+        }
+        __Pyx_GOTREF(__pyx_t_2);
+      }
+      __Pyx_XDECREF_SET(__pyx_8genexpr1__pyx_v_i, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_8genexpr1__pyx_v_i, __pyx_n_s_lower); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 134, __pyx_L5_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __pyx_t_10 = NULL;
+      __pyx_t_5 = 0;
+      #if CYTHON_UNPACK_METHODS
+      if (likely(PyMethod_Check(__pyx_t_9))) {
+        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_9);
+        if (likely(__pyx_t_10)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+          __Pyx_INCREF(__pyx_t_10);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_9, function);
+          __pyx_t_5 = 1;
+        }
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_10, NULL};
+        __pyx_t_4 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 134, __pyx_L5_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      }
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_startswith); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 134, __pyx_L5_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_t_4 = NULL;
+      __pyx_t_5 = 0;
+      #if CYTHON_UNPACK_METHODS
+      if (likely(PyMethod_Check(__pyx_t_9))) {
+        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_9);
+        if (likely(__pyx_t_4)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+          __Pyx_INCREF(__pyx_t_4);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_9, function);
+          __pyx_t_5 = 1;
+        }
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_n_s_AppWorkload};
+        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L5_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      }
+      __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 134, __pyx_L5_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (__pyx_t_11) {
+      } else {
+        __pyx_t_8 = __pyx_t_11;
+        goto __pyx_L9_bool_binop_done;
+      }
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_8genexpr1__pyx_v_i, __pyx_n_s_endswith); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 134, __pyx_L5_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __pyx_t_4 = NULL;
+      __pyx_t_5 = 0;
+      #if CYTHON_UNPACK_METHODS
+      if (likely(PyMethod_Check(__pyx_t_9))) {
+        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_9);
+        if (likely(__pyx_t_4)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+          __Pyx_INCREF(__pyx_t_4);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_9, function);
+          __pyx_t_5 = 1;
+        }
+      }
+      #endif
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_kp_s_log};
+        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L5_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      }
+      __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 134, __pyx_L5_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_8 = __pyx_t_11;
+      __pyx_L9_bool_binop_done:;
+      if (__pyx_t_8) {
+        if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_8genexpr1__pyx_v_i))) __PYX_ERR(0, 134, __pyx_L5_error)
+      }
+    }
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_XDECREF(__pyx_8genexpr1__pyx_v_i); __pyx_8genexpr1__pyx_v_i = 0;
+    goto __pyx_L12_exit_scope;
+    __pyx_L5_error:;
+    __Pyx_XDECREF(__pyx_8genexpr1__pyx_v_i); __pyx_8genexpr1__pyx_v_i = 0;
+    goto __pyx_L1_error;
+    __pyx_L12_exit_scope:;
+  } /* exit inner scope */
+  __Pyx_DECREF_SET(__pyx_v_dir_list, __pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":136
+ *         dir_list = [i for i in dir_list if i.lower().startswith('AppWorkload') and i.endswith('.log')]
+ *         # Remove Current IME log, which is most recent
+ *         if 'appworkload.log' in dir_list:             # <<<<<<<<<<<<<<
+ *             dir_list.remove('appworkload.log')
+ *         elif 'AppWorkload.log' in dir_list:
+ */
+  __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_kp_s_appworkload_log_2, __pyx_v_dir_list, Py_EQ)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 136, __pyx_L1_error)
+  if (__pyx_t_8) {
+
+    /* "imeinterpreter.py":137
+ *         # Remove Current IME log, which is most recent
+ *         if 'appworkload.log' in dir_list:
+ *             dir_list.remove('appworkload.log')             # <<<<<<<<<<<<<<
+ *         elif 'AppWorkload.log' in dir_list:
+ *             dir_list.remove('AppWorkload.log')
+ */
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_dir_list, __pyx_n_s_remove); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_2 = NULL;
+    __pyx_t_5 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_2)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_2);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __pyx_t_5 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_kp_s_appworkload_log_2};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+    /* "imeinterpreter.py":136
+ *         dir_list = [i for i in dir_list if i.lower().startswith('AppWorkload') and i.endswith('.log')]
+ *         # Remove Current IME log, which is most recent
+ *         if 'appworkload.log' in dir_list:             # <<<<<<<<<<<<<<
+ *             dir_list.remove('appworkload.log')
+ *         elif 'AppWorkload.log' in dir_list:
+ */
+    goto __pyx_L13;
+  }
+
+  /* "imeinterpreter.py":138
+ *         if 'appworkload.log' in dir_list:
+ *             dir_list.remove('appworkload.log')
+ *         elif 'AppWorkload.log' in dir_list:             # <<<<<<<<<<<<<<
+ *             dir_list.remove('AppWorkload.log')
+ *         else:
+ */
+  __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_kp_s_AppWorkload_log_2, __pyx_v_dir_list, Py_EQ)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 138, __pyx_L1_error)
+  if (__pyx_t_8) {
+
+    /* "imeinterpreter.py":139
+ *             dir_list.remove('appworkload.log')
+ *         elif 'AppWorkload.log' in dir_list:
+ *             dir_list.remove('AppWorkload.log')             # <<<<<<<<<<<<<<
+ *         else:
+ *             # print("Error! Path does not contain AppWorkload.log! Exit 1.2")
+ */
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_dir_list, __pyx_n_s_remove); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 139, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_2 = NULL;
+    __pyx_t_5 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_2)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_2);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __pyx_t_5 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_kp_s_AppWorkload_log_2};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+    /* "imeinterpreter.py":138
+ *         if 'appworkload.log' in dir_list:
+ *             dir_list.remove('appworkload.log')
+ *         elif 'AppWorkload.log' in dir_list:             # <<<<<<<<<<<<<<
+ *             dir_list.remove('AppWorkload.log')
+ *         else:
+ */
+    goto __pyx_L13;
+  }
+
+  /* "imeinterpreter.py":142
+ *         else:
+ *             # print("Error! Path does not contain AppWorkload.log! Exit 1.2")
+ *             pass             # <<<<<<<<<<<<<<
+ *         # print(dir_list)
+ *         # Sorting based on date in file name, first log should be the oldest log
+ */
+  /*else*/ {
+  }
+  __pyx_L13:;
+
+  /* "imeinterpreter.py":145
+ *         # print(dir_list)
+ *         # Sorting based on date in file name, first log should be the oldest log
+ *         sorted(dir_list)             # <<<<<<<<<<<<<<
+ *         # print(dir_list)
+ *         full_log = []
+ */
+  __pyx_t_3 = PySequence_List(__pyx_v_dir_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_1 = ((PyObject*)__pyx_t_3);
+  __pyx_t_3 = 0;
+  __pyx_t_12 = PyList_Sort(__pyx_t_1); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 145, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":147
+ *         sorted(dir_list)
+ *         # print(dir_list)
+ *         full_log = []             # <<<<<<<<<<<<<<
+ *         for each_log in dir_list:
+ *             current_log_file_path = self.log_folder_path + '\\' + each_log
+ */
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 147, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_full_log = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":148
+ *         # print(dir_list)
+ *         full_log = []
+ *         for each_log in dir_list:             # <<<<<<<<<<<<<<
+ *             current_log_file_path = self.log_folder_path + '\\' + each_log
+ *             current_app_workload_log_as_lines = self.open_log_file(current_log_file_path)
+ */
+  __pyx_t_1 = __pyx_v_dir_list; __Pyx_INCREF(__pyx_t_1);
+  __pyx_t_6 = 0;
+  for (;;) {
+    {
+      Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
+      #if !CYTHON_ASSUME_SAFE_MACROS
+      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 148, __pyx_L1_error)
+      #endif
+      if (__pyx_t_6 >= __pyx_temp) break;
+    }
+    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 148, __pyx_L1_error)
+    #else
+    __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 148, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    #endif
+    __Pyx_XDECREF_SET(__pyx_v_each_log, __pyx_t_3);
+    __pyx_t_3 = 0;
+
+    /* "imeinterpreter.py":149
+ *         full_log = []
+ *         for each_log in dir_list:
+ *             current_log_file_path = self.log_folder_path + '\\' + each_log             # <<<<<<<<<<<<<<
+ *             current_app_workload_log_as_lines = self.open_log_file(current_log_file_path)
+ *             full_log = full_log + current_app_workload_log_as_lines
+ */
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 149, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_2 = PyNumber_Add(__pyx_t_3, __pyx_kp_s__5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 149, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = PyNumber_Add(__pyx_t_2, __pyx_v_each_log); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 149, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_current_log_file_path, __pyx_t_3);
+    __pyx_t_3 = 0;
+
+    /* "imeinterpreter.py":150
+ *         for each_log in dir_list:
+ *             current_log_file_path = self.log_folder_path + '\\' + each_log
+ *             current_app_workload_log_as_lines = self.open_log_file(current_log_file_path)             # <<<<<<<<<<<<<<
+ *             full_log = full_log + current_app_workload_log_as_lines
+ *             '''
+ */
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_log_file); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_9 = NULL;
+    __pyx_t_5 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_2))) {
+      __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_2);
+      if (likely(__pyx_t_9)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        __Pyx_INCREF(__pyx_t_9);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_2, function);
+        __pyx_t_5 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_v_current_log_file_path};
+      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    }
+    __Pyx_XDECREF_SET(__pyx_v_current_app_workload_log_as_lines, __pyx_t_3);
+    __pyx_t_3 = 0;
+
+    /* "imeinterpreter.py":151
+ *             current_log_file_path = self.log_folder_path + '\\' + each_log
+ *             current_app_workload_log_as_lines = self.open_log_file(current_log_file_path)
+ *             full_log = full_log + current_app_workload_log_as_lines             # <<<<<<<<<<<<<<
+ *             '''
+ *             There is an issue that sometimes after concatenating 2 log files, the EMS Agent stop will be missing.
+ */
+    __pyx_t_3 = PyNumber_Add(__pyx_v_full_log, __pyx_v_current_app_workload_log_as_lines); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF_SET(__pyx_v_full_log, __pyx_t_3);
+    __pyx_t_3 = 0;
+
+    /* "imeinterpreter.py":148
+ *         # print(dir_list)
+ *         full_log = []
+ *         for each_log in dir_list:             # <<<<<<<<<<<<<<
+ *             current_log_file_path = self.log_folder_path + '\\' + each_log
+ *             current_app_workload_log_as_lines = self.open_log_file(current_log_file_path)
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":157
+ *             '''
+ * 
+ *         if not (os.path.isfile(app_workload_log_file_path)):             # <<<<<<<<<<<<<<
+ *             app_workload_log_file_path = app_workload_log_lower_file_path
+ *             if not (os.path.isfile(app_workload_log_lower_file_path)):
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 157, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_isfile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 157, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = NULL;
+  __pyx_t_5 = 0;
+  #if CYTHON_UNPACK_METHODS
+  if (likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+      __pyx_t_5 = 1;
+    }
+  }
+  #endif
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_app_workload_log_file_path};
+    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  }
+  __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 157, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_11 = (!__pyx_t_8);
+  if (__pyx_t_11) {
+
+    /* "imeinterpreter.py":158
+ * 
+ *         if not (os.path.isfile(app_workload_log_file_path)):
+ *             app_workload_log_file_path = app_workload_log_lower_file_path             # <<<<<<<<<<<<<<
+ *             if not (os.path.isfile(app_workload_log_lower_file_path)):
+ *                 print("Error! Path does not contain AppWorkload.log! Exit 1.3")
+ */
+    __Pyx_INCREF(__pyx_v_app_workload_log_lower_file_path);
+    __Pyx_DECREF_SET(__pyx_v_app_workload_log_file_path, __pyx_v_app_workload_log_lower_file_path);
+
+    /* "imeinterpreter.py":159
+ *         if not (os.path.isfile(app_workload_log_file_path)):
+ *             app_workload_log_file_path = app_workload_log_lower_file_path
+ *             if not (os.path.isfile(app_workload_log_lower_file_path)):             # <<<<<<<<<<<<<<
+ *                 print("Error! Path does not contain AppWorkload.log! Exit 1.3")
+ *                 return full_log
+ */
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 159, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 159, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_isfile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 159, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_2 = NULL;
+    __pyx_t_5 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_2)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_2);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __pyx_t_5 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_app_workload_log_lower_file_path};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 159, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_8 = (!__pyx_t_11);
+    if (__pyx_t_8) {
+
+      /* "imeinterpreter.py":160
+ *             app_workload_log_file_path = app_workload_log_lower_file_path
+ *             if not (os.path.isfile(app_workload_log_lower_file_path)):
+ *                 print("Error! Path does not contain AppWorkload.log! Exit 1.3")             # <<<<<<<<<<<<<<
+ *                 return full_log
+ *             # exit(1100)
+ */
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+      /* "imeinterpreter.py":161
+ *             if not (os.path.isfile(app_workload_log_lower_file_path)):
+ *                 print("Error! Path does not contain AppWorkload.log! Exit 1.3")
+ *                 return full_log             # <<<<<<<<<<<<<<
+ *             # exit(1100)
+ *         most_recent_log_file_as_lines = self.open_log_file(app_workload_log_file_path)
+ */
+      __Pyx_XDECREF(__pyx_r);
+      __Pyx_INCREF(__pyx_v_full_log);
+      __pyx_r = __pyx_v_full_log;
+      goto __pyx_L0;
+
+      /* "imeinterpreter.py":159
+ *         if not (os.path.isfile(app_workload_log_file_path)):
+ *             app_workload_log_file_path = app_workload_log_lower_file_path
+ *             if not (os.path.isfile(app_workload_log_lower_file_path)):             # <<<<<<<<<<<<<<
+ *                 print("Error! Path does not contain AppWorkload.log! Exit 1.3")
+ *                 return full_log
+ */
+    }
+
+    /* "imeinterpreter.py":157
+ *             '''
+ * 
+ *         if not (os.path.isfile(app_workload_log_file_path)):             # <<<<<<<<<<<<<<
+ *             app_workload_log_file_path = app_workload_log_lower_file_path
+ *             if not (os.path.isfile(app_workload_log_lower_file_path)):
+ */
+  }
+
+  /* "imeinterpreter.py":163
+ *                 return full_log
+ *             # exit(1100)
+ *         most_recent_log_file_as_lines = self.open_log_file(app_workload_log_file_path)             # <<<<<<<<<<<<<<
+ * 
+ *         full_log = full_log + most_recent_log_file_as_lines
+ */
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_log_file); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 163, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = NULL;
+  __pyx_t_5 = 0;
+  #if CYTHON_UNPACK_METHODS
+  if (likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+      __pyx_t_5 = 1;
+    }
+  }
+  #endif
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_app_workload_log_file_path};
+    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 163, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  }
+  __pyx_v_most_recent_log_file_as_lines = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":165
+ *         most_recent_log_file_as_lines = self.open_log_file(app_workload_log_file_path)
+ * 
+ *         full_log = full_log + most_recent_log_file_as_lines             # <<<<<<<<<<<<<<
+ *         return full_log
+ * 
+ */
+  __pyx_t_1 = PyNumber_Add(__pyx_v_full_log, __pyx_v_most_recent_log_file_as_lines); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF_SET(__pyx_v_full_log, __pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":166
+ * 
+ *         full_log = full_log + most_recent_log_file_as_lines
+ *         return full_log             # <<<<<<<<<<<<<<
+ * 
+ *     def load_full_logs(self):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_full_log);
+  __pyx_r = __pyx_v_full_log;
+  goto __pyx_L0;
+
+  /* "imeinterpreter.py":124
+ *         return full_log
+ * 
+ *     def load_all_app_workload_logs(self):             # <<<<<<<<<<<<<<
+ *         """
+ *         Fix the change in log structure in 2407 that Win32 log entries are separated into AppWorkload.log
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.load_all_app_workload_logs", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_app_workload_log_file_path);
+  __Pyx_XDECREF(__pyx_v_app_workload_log_lower_file_path);
+  __Pyx_XDECREF(__pyx_v_dir_list);
+  __Pyx_XDECREF(__pyx_v_full_log);
+  __Pyx_XDECREF(__pyx_v_each_log);
+  __Pyx_XDECREF(__pyx_v_current_log_file_path);
+  __Pyx_XDECREF(__pyx_v_current_app_workload_log_as_lines);
+  __Pyx_XDECREF(__pyx_v_most_recent_log_file_as_lines);
+  __Pyx_XDECREF(__pyx_8genexpr1__pyx_v_i);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "imeinterpreter.py":168
+ *         return full_log
+ * 
+ *     def load_full_logs(self):             # <<<<<<<<<<<<<<
+ *         app_workload_log_file_path = self.log_folder_path + '\\AppWorkload.log'
+ *         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_13load_full_logs(PyObject *__pyx_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_13load_full_logs = {"load_full_logs", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_13load_full_logs, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_13load_full_logs(PyObject *__pyx_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  PyObject *__pyx_v_self = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[1] = {0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("load_full_logs (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_MACROS
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject **__pyx_pyargnames[] = {&__pyx_n_s_self,0};
+    if (__pyx_kwds) {
+      Py_ssize_t kw_args;
+      switch (__pyx_nargs) {
+        case  1: values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = __Pyx_NumKwargs_FASTCALL(__pyx_kwds);
+      switch (__pyx_nargs) {
+        case  0:
+        if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_self)) != 0)) {
+          (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
+          kw_args--;
+        }
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 168, __pyx_L3_error)
+        else goto __pyx_L5_argtuple_error;
+      }
+      if (unlikely(kw_args > 0)) {
+        const Py_ssize_t kwd_pos_args = __pyx_nargs;
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "load_full_logs") < 0)) __PYX_ERR(0, 168, __pyx_L3_error)
+      }
+    } else if (unlikely(__pyx_nargs != 1)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
+    }
+    __pyx_v_self = values[0];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("load_full_logs", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 168, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  {
+    Py_ssize_t __pyx_temp;
+    for (__pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+      __Pyx_Arg_XDECREF_FASTCALL(values[__pyx_temp]);
+    }
+  }
+  __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.load_full_logs", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_12load_full_logs(__pyx_self, __pyx_v_self);
+
+  /* function exit code */
+  {
+    Py_ssize_t __pyx_temp;
+    for (__pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+      __Pyx_Arg_XDECREF_FASTCALL(values[__pyx_temp]);
+    }
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_12load_full_logs(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
+  PyObject *__pyx_v_app_workload_log_file_path = NULL;
+  PyObject *__pyx_v_app_workload_log_lower_file_path = NULL;
+  PyObject *__pyx_v_app_workload_log_exists = NULL;
+  PyObject *__pyx_v_full_log = NULL;
+  PyObject *__pyx_v_ime_log = NULL;
+  PyObject *__pyx_v_app_workload_log = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  int __pyx_t_5;
+  int __pyx_t_6;
+  int __pyx_t_7;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("load_full_logs", 1);
+
+  /* "imeinterpreter.py":169
+ * 
+ *     def load_full_logs(self):
+ *         app_workload_log_file_path = self.log_folder_path + '\\AppWorkload.log'             # <<<<<<<<<<<<<<
+ *         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
+ * 
+ */
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = PyNumber_Add(__pyx_t_1, __pyx_kp_s_AppWorkload_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_app_workload_log_file_path = __pyx_t_2;
+  __pyx_t_2 = 0;
+
+  /* "imeinterpreter.py":170
+ *     def load_full_logs(self):
+ *         app_workload_log_file_path = self.log_folder_path + '\\AppWorkload.log'
+ *         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'             # <<<<<<<<<<<<<<
+ * 
+ *         app_workload_log_exists = (os.path.isfile(app_workload_log_file_path)) or (os.path.isfile(app_workload_log_lower_file_path))
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = PyNumber_Add(__pyx_t_2, __pyx_kp_s_appworkload_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_v_app_workload_log_lower_file_path = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":172
+ *         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
+ * 
+ *         app_workload_log_exists = (os.path.isfile(app_workload_log_file_path)) or (os.path.isfile(app_workload_log_lower_file_path))             # <<<<<<<<<<<<<<
+ * 
+ *         if not app_workload_log_exists:
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_isfile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_4 = NULL;
+  __pyx_t_5 = 0;
+  #if CYTHON_UNPACK_METHODS
+  if (likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+      __pyx_t_5 = 1;
+    }
+  }
+  #endif
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_app_workload_log_file_path};
+    __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  }
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 172, __pyx_L1_error)
+  if (!__pyx_t_6) {
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  } else {
+    __Pyx_INCREF(__pyx_t_2);
+    __pyx_t_1 = __pyx_t_2;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    goto __pyx_L3_bool_binop_done;
+  }
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_isfile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_4 = NULL;
+  __pyx_t_5 = 0;
+  #if CYTHON_UNPACK_METHODS
+  if (likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+      __pyx_t_5 = 1;
+    }
+  }
+  #endif
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_app_workload_log_lower_file_path};
+    __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  }
+  __Pyx_INCREF(__pyx_t_2);
+  __pyx_t_1 = __pyx_t_2;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_L3_bool_binop_done:;
+  __pyx_v_app_workload_log_exists = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "imeinterpreter.py":174
+ *         app_workload_log_exists = (os.path.isfile(app_workload_log_file_path)) or (os.path.isfile(app_workload_log_lower_file_path))
+ * 
+ *         if not app_workload_log_exists:             # <<<<<<<<<<<<<<
+ *             full_log = self.load_all_ime_logs()
+ *             return full_log
+ */
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_app_workload_log_exists); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 174, __pyx_L1_error)
+  __pyx_t_7 = (!__pyx_t_6);
+  if (__pyx_t_7) {
+
+    /* "imeinterpreter.py":175
+ * 
+ *         if not app_workload_log_exists:
+ *             full_log = self.load_all_ime_logs()             # <<<<<<<<<<<<<<
+ *             return full_log
+ *         else:
+ */
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_load_all_ime_logs); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 175, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = NULL;
+    __pyx_t_5 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_2))) {
+      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+      if (likely(__pyx_t_3)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        __Pyx_INCREF(__pyx_t_3);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_2, function);
+        __pyx_t_5 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_3, NULL};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 175, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    }
+    __pyx_v_full_log = __pyx_t_1;
+    __pyx_t_1 = 0;
+
+    /* "imeinterpreter.py":176
+ *         if not app_workload_log_exists:
+ *             full_log = self.load_all_ime_logs()
+ *             return full_log             # <<<<<<<<<<<<<<
+ *         else:
+ *             ime_log = self.load_all_ime_logs()
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __Pyx_INCREF(__pyx_v_full_log);
+    __pyx_r = __pyx_v_full_log;
+    goto __pyx_L0;
+
+    /* "imeinterpreter.py":174
+ *         app_workload_log_exists = (os.path.isfile(app_workload_log_file_path)) or (os.path.isfile(app_workload_log_lower_file_path))
+ * 
+ *         if not app_workload_log_exists:             # <<<<<<<<<<<<<<
+ *             full_log = self.load_all_ime_logs()
+ *             return full_log
+ */
+  }
+
+  /* "imeinterpreter.py":178
+ *             return full_log
+ *         else:
+ *             ime_log = self.load_all_ime_logs()             # <<<<<<<<<<<<<<
+ *             app_workload_log = self.load_all_app_workload_logs()
+ *             full_log = self.merge_ime_and_app_workload_logs(ime_log, app_workload_log)
+ */
+  /*else*/ {
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_load_all_ime_logs); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 178, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = NULL;
+    __pyx_t_5 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_2))) {
+      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+      if (likely(__pyx_t_3)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        __Pyx_INCREF(__pyx_t_3);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_2, function);
+        __pyx_t_5 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_3, NULL};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 178, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    }
+    __pyx_v_ime_log = __pyx_t_1;
+    __pyx_t_1 = 0;
+
+    /* "imeinterpreter.py":179
+ *         else:
+ *             ime_log = self.load_all_ime_logs()
+ *             app_workload_log = self.load_all_app_workload_logs()             # <<<<<<<<<<<<<<
+ *             full_log = self.merge_ime_and_app_workload_logs(ime_log, app_workload_log)
+ *             return full_log
+ */
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_load_all_app_workload_logs); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 179, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = NULL;
+    __pyx_t_5 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_2))) {
+      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+      if (likely(__pyx_t_3)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        __Pyx_INCREF(__pyx_t_3);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_2, function);
+        __pyx_t_5 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_3, NULL};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    }
+    __pyx_v_app_workload_log = __pyx_t_1;
+    __pyx_t_1 = 0;
+
+    /* "imeinterpreter.py":180
+ *             ime_log = self.load_all_ime_logs()
+ *             app_workload_log = self.load_all_app_workload_logs()
+ *             full_log = self.merge_ime_and_app_workload_logs(ime_log, app_workload_log)             # <<<<<<<<<<<<<<
+ *             return full_log
+ * 
+ */
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_merge_ime_and_app_workload_logs); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 180, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = NULL;
+    __pyx_t_5 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_2))) {
+      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+      if (likely(__pyx_t_3)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        __Pyx_INCREF(__pyx_t_3);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_2, function);
+        __pyx_t_5 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[3] = {__pyx_t_3, __pyx_v_ime_log, __pyx_v_app_workload_log};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 2+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 180, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    }
+    __pyx_v_full_log = __pyx_t_1;
+    __pyx_t_1 = 0;
+
+    /* "imeinterpreter.py":181
+ *             app_workload_log = self.load_all_app_workload_logs()
+ *             full_log = self.merge_ime_and_app_workload_logs(ime_log, app_workload_log)
+ *             return full_log             # <<<<<<<<<<<<<<
+ * 
+ *     def separate_log_into_service_lifecycle(self):
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __Pyx_INCREF(__pyx_v_full_log);
+    __pyx_r = __pyx_v_full_log;
+    goto __pyx_L0;
+  }
+
+  /* "imeinterpreter.py":168
+ *         return full_log
+ * 
+ *     def load_full_logs(self):             # <<<<<<<<<<<<<<
+ *         app_workload_log_file_path = self.log_folder_path + '\\AppWorkload.log'
+ *         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_AddTraceback("imeinterpreter.ImeInterpreter.load_full_logs", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_app_workload_log_file_path);
+  __Pyx_XDECREF(__pyx_v_app_workload_log_lower_file_path);
+  __Pyx_XDECREF(__pyx_v_app_workload_log_exists);
+  __Pyx_XDECREF(__pyx_v_full_log);
+  __Pyx_XDECREF(__pyx_v_ime_log);
+  __Pyx_XDECREF(__pyx_v_app_workload_log);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "imeinterpreter.py":183
+ *             return full_log
  * 
  *     def separate_log_into_service_lifecycle(self):             # <<<<<<<<<<<<<<
  *         ems_agent_start_lines = []
@@ -4943,15 +7139,15 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_4load_all_ime_logs(C
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_7separate_log_into_service_lifecycle(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_15separate_log_into_service_lifecycle(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_7separate_log_into_service_lifecycle = {"separate_log_into_service_lifecycle", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_7separate_log_into_service_lifecycle, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_7separate_log_into_service_lifecycle(PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_15separate_log_into_service_lifecycle = {"separate_log_into_service_lifecycle", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_15separate_log_into_service_lifecycle, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_15separate_log_into_service_lifecycle(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -4995,12 +7191,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 93, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 183, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "separate_log_into_service_lifecycle") < 0)) __PYX_ERR(0, 93, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "separate_log_into_service_lifecycle") < 0)) __PYX_ERR(0, 183, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
@@ -5011,7 +7207,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("separate_log_into_service_lifecycle", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 93, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("separate_log_into_service_lifecycle", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 183, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5025,7 +7221,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_service_lifecycle(__pyx_self, __pyx_v_self);
+  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_14separate_log_into_service_lifecycle(__pyx_self, __pyx_v_self);
 
   /* function exit code */
   {
@@ -5038,7 +7234,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_service_lifecycle(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_14separate_log_into_service_lifecycle(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
   PyObject *__pyx_v_ems_agent_start_lines = NULL;
   PyObject *__pyx_v_ems_agent_stop_lines = NULL;
   PyObject *__pyx_v_ems_agent_start_string = NULL;
@@ -5083,31 +7279,31 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("separate_log_into_service_lifecycle", 1);
 
-  /* "imeinterpreter.py":94
+  /* "imeinterpreter.py":184
  * 
  *     def separate_log_into_service_lifecycle(self):
  *         ems_agent_start_lines = []             # <<<<<<<<<<<<<<
  *         ems_agent_stop_lines = []
  *         ems_agent_start_string = '<![LOG[EMS Agent Started]'
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 184, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ems_agent_start_lines = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "imeinterpreter.py":95
+  /* "imeinterpreter.py":185
  *     def separate_log_into_service_lifecycle(self):
  *         ems_agent_start_lines = []
  *         ems_agent_stop_lines = []             # <<<<<<<<<<<<<<
  *         ems_agent_start_string = '<![LOG[EMS Agent Started]'
  *         ems_agent_stop_string = '<![LOG[EMS Agent Stopped]'
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 185, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ems_agent_stop_lines = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "imeinterpreter.py":96
+  /* "imeinterpreter.py":186
  *         ems_agent_start_lines = []
  *         ems_agent_stop_lines = []
  *         ems_agent_start_string = '<![LOG[EMS Agent Started]'             # <<<<<<<<<<<<<<
@@ -5117,7 +7313,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   __Pyx_INCREF(__pyx_kp_s_LOG_EMS_Agent_Started);
   __pyx_v_ems_agent_start_string = __pyx_kp_s_LOG_EMS_Agent_Started;
 
-  /* "imeinterpreter.py":97
+  /* "imeinterpreter.py":187
  *         ems_agent_stop_lines = []
  *         ems_agent_start_string = '<![LOG[EMS Agent Started]'
  *         ems_agent_stop_string = '<![LOG[EMS Agent Stopped]'             # <<<<<<<<<<<<<<
@@ -5127,39 +7323,39 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   __Pyx_INCREF(__pyx_kp_s_LOG_EMS_Agent_Stopped);
   __pyx_v_ems_agent_stop_string = __pyx_kp_s_LOG_EMS_Agent_Stopped;
 
-  /* "imeinterpreter.py":98
+  /* "imeinterpreter.py":188
  *         ems_agent_start_string = '<![LOG[EMS Agent Started]'
  *         ems_agent_stop_string = '<![LOG[EMS Agent Stopped]'
  *         full_log_len = len(self.full_log)             # <<<<<<<<<<<<<<
  *         for index in range(full_log_len):
  *             cur_line = self.full_log[index]
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 188, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_full_log_len = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "imeinterpreter.py":99
+  /* "imeinterpreter.py":189
  *         ems_agent_stop_string = '<![LOG[EMS Agent Stopped]'
  *         full_log_len = len(self.full_log)
  *         for index in range(full_log_len):             # <<<<<<<<<<<<<<
  *             cur_line = self.full_log[index]
  *             if cur_line.startswith(ems_agent_start_string):
  */
-  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_v_full_log_len); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_v_full_log_len); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
     __pyx_t_3 = __pyx_t_1; __Pyx_INCREF(__pyx_t_3);
     __pyx_t_2 = 0;
     __pyx_t_4 = NULL;
   } else {
-    __pyx_t_2 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 99, __pyx_L1_error)
+    __pyx_t_2 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 99, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 189, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   for (;;) {
@@ -5168,28 +7364,28 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_3);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 99, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 189, __pyx_L1_error)
           #endif
           if (__pyx_t_2 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(0, 99, __pyx_L1_error)
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(0, 189, __pyx_L1_error)
         #else
-        __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       } else {
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_3);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 99, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 189, __pyx_L1_error)
           #endif
           if (__pyx_t_2 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(0, 99, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(0, 189, __pyx_L1_error)
         #else
-        __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       }
@@ -5199,7 +7395,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 99, __pyx_L1_error)
+          else __PYX_ERR(0, 189, __pyx_L1_error)
         }
         break;
       }
@@ -5208,29 +7404,29 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
     __Pyx_XDECREF_SET(__pyx_v_index, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "imeinterpreter.py":100
+    /* "imeinterpreter.py":190
  *         full_log_len = len(self.full_log)
  *         for index in range(full_log_len):
  *             cur_line = self.full_log[index]             # <<<<<<<<<<<<<<
  *             if cur_line.startswith(ems_agent_start_string):
  *                 ems_agent_start_lines.append(index)
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_v_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 100, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_v_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_XDECREF_SET(__pyx_v_cur_line, __pyx_t_5);
     __pyx_t_5 = 0;
 
-    /* "imeinterpreter.py":101
+    /* "imeinterpreter.py":191
  *         for index in range(full_log_len):
  *             cur_line = self.full_log[index]
  *             if cur_line.startswith(ems_agent_start_string):             # <<<<<<<<<<<<<<
  *                 ems_agent_start_lines.append(index)
  *             elif cur_line.startswith(ems_agent_stop_string):
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_cur_line, __pyx_n_s_startswith); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_cur_line, __pyx_n_s_startswith); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_6 = NULL;
     __pyx_t_7 = 0;
@@ -5250,24 +7446,24 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
       PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_v_ems_agent_start_string};
       __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 101, __pyx_L1_error)
+      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 191, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     }
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 101, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     if (__pyx_t_8) {
 
-      /* "imeinterpreter.py":102
+      /* "imeinterpreter.py":192
  *             cur_line = self.full_log[index]
  *             if cur_line.startswith(ems_agent_start_string):
  *                 ems_agent_start_lines.append(index)             # <<<<<<<<<<<<<<
  *             elif cur_line.startswith(ems_agent_stop_string):
  *                 ems_agent_stop_lines.append(index)
  */
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_start_lines, __pyx_v_index); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 102, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_start_lines, __pyx_v_index); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 192, __pyx_L1_error)
 
-      /* "imeinterpreter.py":101
+      /* "imeinterpreter.py":191
  *         for index in range(full_log_len):
  *             cur_line = self.full_log[index]
  *             if cur_line.startswith(ems_agent_start_string):             # <<<<<<<<<<<<<<
@@ -5277,14 +7473,14 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
       goto __pyx_L5;
     }
 
-    /* "imeinterpreter.py":103
+    /* "imeinterpreter.py":193
  *             if cur_line.startswith(ems_agent_start_string):
  *                 ems_agent_start_lines.append(index)
  *             elif cur_line.startswith(ems_agent_stop_string):             # <<<<<<<<<<<<<<
  *                 ems_agent_stop_lines.append(index)
  *         start_lines_len = len(ems_agent_start_lines)
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_cur_line, __pyx_n_s_startswith); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_cur_line, __pyx_n_s_startswith); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 193, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_6 = NULL;
     __pyx_t_7 = 0;
@@ -5304,24 +7500,24 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
       PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_v_ems_agent_stop_string};
       __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 103, __pyx_L1_error)
+      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 193, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     }
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 193, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     if (__pyx_t_8) {
 
-      /* "imeinterpreter.py":104
+      /* "imeinterpreter.py":194
  *                 ems_agent_start_lines.append(index)
  *             elif cur_line.startswith(ems_agent_stop_string):
  *                 ems_agent_stop_lines.append(index)             # <<<<<<<<<<<<<<
  *         start_lines_len = len(ems_agent_start_lines)
  *         stop_lines_len = len(ems_agent_stop_lines)
  */
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_stop_lines, __pyx_v_index); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 104, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_stop_lines, __pyx_v_index); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 194, __pyx_L1_error)
 
-      /* "imeinterpreter.py":103
+      /* "imeinterpreter.py":193
  *             if cur_line.startswith(ems_agent_start_string):
  *                 ems_agent_start_lines.append(index)
  *             elif cur_line.startswith(ems_agent_stop_string):             # <<<<<<<<<<<<<<
@@ -5331,7 +7527,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
     }
     __pyx_L5:;
 
-    /* "imeinterpreter.py":99
+    /* "imeinterpreter.py":189
  *         ems_agent_stop_string = '<![LOG[EMS Agent Stopped]'
  *         full_log_len = len(self.full_log)
  *         for index in range(full_log_len):             # <<<<<<<<<<<<<<
@@ -5341,41 +7537,41 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "imeinterpreter.py":105
+  /* "imeinterpreter.py":195
  *             elif cur_line.startswith(ems_agent_stop_string):
  *                 ems_agent_stop_lines.append(index)
  *         start_lines_len = len(ems_agent_start_lines)             # <<<<<<<<<<<<<<
  *         stop_lines_len = len(ems_agent_stop_lines)
  *         last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[0])
  */
-  __pyx_t_2 = __Pyx_PyList_GET_SIZE(__pyx_v_ems_agent_start_lines); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 105, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyList_GET_SIZE(__pyx_v_ems_agent_start_lines); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 195, __pyx_L1_error)
   __pyx_v_start_lines_len = __pyx_t_2;
 
-  /* "imeinterpreter.py":106
+  /* "imeinterpreter.py":196
  *                 ems_agent_stop_lines.append(index)
  *         start_lines_len = len(ems_agent_start_lines)
  *         stop_lines_len = len(ems_agent_stop_lines)             # <<<<<<<<<<<<<<
  *         last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[0])
  *         last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[-1])
  */
-  __pyx_t_2 = __Pyx_PyList_GET_SIZE(__pyx_v_ems_agent_stop_lines); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyList_GET_SIZE(__pyx_v_ems_agent_stop_lines); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 196, __pyx_L1_error)
   __pyx_v_stop_lines_len = __pyx_t_2;
 
-  /* "imeinterpreter.py":107
+  /* "imeinterpreter.py":197
  *         start_lines_len = len(ems_agent_start_lines)
  *         stop_lines_len = len(ems_agent_stop_lines)
  *         last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[0])             # <<<<<<<<<<<<<<
  *         last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[-1])
  *         if start_lines_len > 0:
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 107, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 197, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 107, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 197, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 107, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 197, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = __Pyx_GetItemInt(__pyx_t_5, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 107, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_GetItemInt(__pyx_t_5, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 197, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_t_5 = NULL;
@@ -5397,28 +7593,28 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
     __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 197, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   __pyx_v_last_start_time = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "imeinterpreter.py":108
+  /* "imeinterpreter.py":198
  *         stop_lines_len = len(ems_agent_stop_lines)
  *         last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[0])
  *         last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[-1])             # <<<<<<<<<<<<<<
  *         if start_lines_len > 0:
  *             last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_start_lines[-1]])
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 198, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 198, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 198, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_1, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_1, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 198, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = NULL;
@@ -5440,14 +7636,14 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
     __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 108, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 198, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
   __pyx_v_last_stop_time = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "imeinterpreter.py":109
+  /* "imeinterpreter.py":199
  *         last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[0])
  *         last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[-1])
  *         if start_lines_len > 0:             # <<<<<<<<<<<<<<
@@ -5457,23 +7653,23 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   __pyx_t_8 = (__pyx_v_start_lines_len > 0);
   if (__pyx_t_8) {
 
-    /* "imeinterpreter.py":110
+    /* "imeinterpreter.py":200
  *         last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[-1])
  *         if start_lines_len > 0:
  *             last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_start_lines[-1]])             # <<<<<<<<<<<<<<
  *         if stop_lines_len > 0:
  *             last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_stop_lines[-1]])
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 110, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 200, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 110, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 200, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 110, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 200, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_ems_agent_start_lines, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 110, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_ems_agent_start_lines, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_t_6, __pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 110, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_t_6, __pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 200, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -5496,14 +7692,14 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
       __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 110, __pyx_L1_error)
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 200, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_last_start_time, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "imeinterpreter.py":109
+    /* "imeinterpreter.py":199
  *         last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[0])
  *         last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[-1])
  *         if start_lines_len > 0:             # <<<<<<<<<<<<<<
@@ -5512,7 +7708,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  */
   }
 
-  /* "imeinterpreter.py":111
+  /* "imeinterpreter.py":201
  *         if start_lines_len > 0:
  *             last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_start_lines[-1]])
  *         if stop_lines_len > 0:             # <<<<<<<<<<<<<<
@@ -5522,23 +7718,23 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   __pyx_t_8 = (__pyx_v_stop_lines_len > 0);
   if (__pyx_t_8) {
 
-    /* "imeinterpreter.py":112
+    /* "imeinterpreter.py":202
  *             last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_start_lines[-1]])
  *         if stop_lines_len > 0:
  *             last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_stop_lines[-1]])             # <<<<<<<<<<<<<<
  * 
  *         ems_agent_sorted_start_lines = []
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 112, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 202, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 112, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 202, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 112, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 202, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_ems_agent_stop_lines, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_ems_agent_stop_lines, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 112, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 202, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -5561,14 +7757,14 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
       __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 112, __pyx_L1_error)
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 202, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_last_stop_time, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "imeinterpreter.py":111
+    /* "imeinterpreter.py":201
  *         if start_lines_len > 0:
  *             last_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_start_lines[-1]])
  *         if stop_lines_len > 0:             # <<<<<<<<<<<<<<
@@ -5577,31 +7773,31 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  */
   }
 
-  /* "imeinterpreter.py":114
+  /* "imeinterpreter.py":204
  *             last_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_stop_lines[-1]])
  * 
  *         ems_agent_sorted_start_lines = []             # <<<<<<<<<<<<<<
  *         ems_agent_sorted_stop_lines = []
  * 
  */
-  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 114, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 204, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_v_ems_agent_sorted_start_lines = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "imeinterpreter.py":115
+  /* "imeinterpreter.py":205
  * 
  *         ems_agent_sorted_start_lines = []
  *         ems_agent_sorted_stop_lines = []             # <<<<<<<<<<<<<<
  * 
  *         start_line_index = 0
  */
-  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 115, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 205, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_v_ems_agent_sorted_stop_lines = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "imeinterpreter.py":117
+  /* "imeinterpreter.py":207
  *         ems_agent_sorted_stop_lines = []
  * 
  *         start_line_index = 0             # <<<<<<<<<<<<<<
@@ -5611,7 +7807,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   __Pyx_INCREF(__pyx_int_0);
   __pyx_v_start_line_index = __pyx_int_0;
 
-  /* "imeinterpreter.py":118
+  /* "imeinterpreter.py":208
  * 
  *         start_line_index = 0
  *         stop_line_index = 0             # <<<<<<<<<<<<<<
@@ -5621,7 +7817,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   __Pyx_INCREF(__pyx_int_0);
   __pyx_v_stop_line_index = __pyx_int_0;
 
-  /* "imeinterpreter.py":130
+  /* "imeinterpreter.py":220
  *         EMS AGENT starts
  *         """
  *         while start_line_index < start_lines_len and stop_line_index < stop_lines_len:             # <<<<<<<<<<<<<<
@@ -5629,133 +7825,133 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  *             cur_stop_line_top_index = ems_agent_stop_lines[stop_line_index]
  */
   while (1) {
-    __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L1_error)
+    __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_10 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_10); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 130, __pyx_L1_error)
+    __pyx_t_10 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_10); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 220, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 130, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 220, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     if (__pyx_t_11) {
     } else {
       __pyx_t_8 = __pyx_t_11;
       goto __pyx_L11_bool_binop_done;
     }
-    __pyx_t_10 = PyInt_FromSsize_t(__pyx_v_stop_lines_len); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 130, __pyx_L1_error)
+    __pyx_t_10 = PyInt_FromSsize_t(__pyx_v_stop_lines_len); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 220, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_3 = PyObject_RichCompare(__pyx_v_stop_line_index, __pyx_t_10, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L1_error)
+    __pyx_t_3 = PyObject_RichCompare(__pyx_v_stop_line_index, __pyx_t_10, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 130, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 220, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_8 = __pyx_t_11;
     __pyx_L11_bool_binop_done:;
     if (!__pyx_t_8) break;
 
-    /* "imeinterpreter.py":131
+    /* "imeinterpreter.py":221
  *         """
  *         while start_line_index < start_lines_len and stop_line_index < stop_lines_len:
  *             cur_start_line_top_index = ems_agent_start_lines[start_line_index]             # <<<<<<<<<<<<<<
  *             cur_stop_line_top_index = ems_agent_stop_lines[stop_line_index]
  *             if cur_start_line_top_index < cur_stop_line_top_index:
  */
-    __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_start_lines, __pyx_v_start_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 131, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_start_lines, __pyx_v_start_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 221, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_XDECREF_SET(__pyx_v_cur_start_line_top_index, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "imeinterpreter.py":132
+    /* "imeinterpreter.py":222
  *         while start_line_index < start_lines_len and stop_line_index < stop_lines_len:
  *             cur_start_line_top_index = ems_agent_start_lines[start_line_index]
  *             cur_stop_line_top_index = ems_agent_stop_lines[stop_line_index]             # <<<<<<<<<<<<<<
  *             if cur_start_line_top_index < cur_stop_line_top_index:
  *                 ems_agent_sorted_start_lines.append(cur_start_line_top_index)
  */
-    __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_stop_lines, __pyx_v_stop_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_stop_lines, __pyx_v_stop_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 222, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_XDECREF_SET(__pyx_v_cur_stop_line_top_index, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "imeinterpreter.py":133
+    /* "imeinterpreter.py":223
  *             cur_start_line_top_index = ems_agent_start_lines[start_line_index]
  *             cur_stop_line_top_index = ems_agent_stop_lines[stop_line_index]
  *             if cur_start_line_top_index < cur_stop_line_top_index:             # <<<<<<<<<<<<<<
  *                 ems_agent_sorted_start_lines.append(cur_start_line_top_index)
  *                 start_line_index += 1
  */
-    __pyx_t_3 = PyObject_RichCompare(__pyx_v_cur_start_line_top_index, __pyx_v_cur_stop_line_top_index, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 133, __pyx_L1_error)
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 133, __pyx_L1_error)
+    __pyx_t_3 = PyObject_RichCompare(__pyx_v_cur_start_line_top_index, __pyx_v_cur_stop_line_top_index, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 223, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 223, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     if (__pyx_t_8) {
 
-      /* "imeinterpreter.py":134
+      /* "imeinterpreter.py":224
  *             cur_stop_line_top_index = ems_agent_stop_lines[stop_line_index]
  *             if cur_start_line_top_index < cur_stop_line_top_index:
  *                 ems_agent_sorted_start_lines.append(cur_start_line_top_index)             # <<<<<<<<<<<<<<
  *                 start_line_index += 1
  *                 if start_line_index < start_lines_len:
  */
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_start_lines, __pyx_v_cur_start_line_top_index); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 134, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_start_lines, __pyx_v_cur_start_line_top_index); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 224, __pyx_L1_error)
 
-      /* "imeinterpreter.py":135
+      /* "imeinterpreter.py":225
  *             if cur_start_line_top_index < cur_stop_line_top_index:
  *                 ems_agent_sorted_start_lines.append(cur_start_line_top_index)
  *                 start_line_index += 1             # <<<<<<<<<<<<<<
  *                 if start_line_index < start_lines_len:
  *                     if ems_agent_start_lines[start_line_index] < ems_agent_stop_lines[stop_line_index]:
  */
-      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_start_line_index, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 135, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_start_line_index, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 225, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF_SET(__pyx_v_start_line_index, __pyx_t_3);
       __pyx_t_3 = 0;
 
-      /* "imeinterpreter.py":136
+      /* "imeinterpreter.py":226
  *                 ems_agent_sorted_start_lines.append(cur_start_line_top_index)
  *                 start_line_index += 1
  *                 if start_line_index < start_lines_len:             # <<<<<<<<<<<<<<
  *                     if ems_agent_start_lines[start_line_index] < ems_agent_stop_lines[stop_line_index]:
  *                         """
  */
-      __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 226, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_10 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_10); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_10 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_10); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 226, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 226, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       if (__pyx_t_8) {
 
-        /* "imeinterpreter.py":137
+        /* "imeinterpreter.py":227
  *                 start_line_index += 1
  *                 if start_line_index < start_lines_len:
  *                     if ems_agent_start_lines[start_line_index] < ems_agent_stop_lines[stop_line_index]:             # <<<<<<<<<<<<<<
  *                         """
  *                         start
  */
-        __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_start_lines, __pyx_v_start_line_index); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 137, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_start_lines, __pyx_v_start_line_index); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 227, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_stop_lines, __pyx_v_stop_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_stop_lines, __pyx_v_stop_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 227, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_6 = PyObject_RichCompare(__pyx_t_10, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 137, __pyx_L1_error)
+        __pyx_t_6 = PyObject_RichCompare(__pyx_t_10, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 227, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 227, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         if (__pyx_t_8) {
 
-          /* "imeinterpreter.py":143
+          /* "imeinterpreter.py":233
  *                         stop
  *                         """
  *                         ems_agent_sorted_stop_lines.append(ems_agent_start_lines[start_line_index] - 1)             # <<<<<<<<<<<<<<
  *                     else:
  *                         """
  */
-          __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_start_lines, __pyx_v_start_line_index); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 143, __pyx_L1_error)
+          __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_start_lines, __pyx_v_start_line_index); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 233, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
-          __pyx_t_3 = __Pyx_PyInt_SubtractObjC(__pyx_t_6, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 143, __pyx_L1_error)
+          __pyx_t_3 = __Pyx_PyInt_SubtractObjC(__pyx_t_6, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 233, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 143, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 233, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "imeinterpreter.py":137
+          /* "imeinterpreter.py":227
  *                 start_line_index += 1
  *                 if start_line_index < start_lines_len:
  *                     if ems_agent_start_lines[start_line_index] < ems_agent_stop_lines[stop_line_index]:             # <<<<<<<<<<<<<<
@@ -5765,7 +7961,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
           goto __pyx_L15;
         }
 
-        /* "imeinterpreter.py":145
+        /* "imeinterpreter.py":235
  *                         ems_agent_sorted_stop_lines.append(ems_agent_start_lines[start_line_index] - 1)
  *                     else:
  *                         """             # <<<<<<<<<<<<<<
@@ -5774,33 +7970,33 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  */
         /*else*/ {
 
-          /* "imeinterpreter.py":150
+          /* "imeinterpreter.py":240
  *                         start
  *                         """
  *                         ems_agent_sorted_stop_lines.append(ems_agent_stop_lines[stop_line_index])             # <<<<<<<<<<<<<<
  *                         stop_line_index += 1
  *                 else:
  */
-          __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_stop_lines, __pyx_v_stop_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
+          __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_stop_lines, __pyx_v_stop_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 240, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 150, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 240, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "imeinterpreter.py":151
+          /* "imeinterpreter.py":241
  *                         """
  *                         ems_agent_sorted_stop_lines.append(ems_agent_stop_lines[stop_line_index])
  *                         stop_line_index += 1             # <<<<<<<<<<<<<<
  *                 else:
  *                     ems_agent_sorted_stop_lines.append(ems_agent_stop_lines[stop_line_index])
  */
-          __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_stop_line_index, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 151, __pyx_L1_error)
+          __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_stop_line_index, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 241, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
           __Pyx_DECREF_SET(__pyx_v_stop_line_index, __pyx_t_3);
           __pyx_t_3 = 0;
         }
         __pyx_L15:;
 
-        /* "imeinterpreter.py":136
+        /* "imeinterpreter.py":226
  *                 ems_agent_sorted_start_lines.append(cur_start_line_top_index)
  *                 start_line_index += 1
  *                 if start_line_index < start_lines_len:             # <<<<<<<<<<<<<<
@@ -5810,7 +8006,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         goto __pyx_L14;
       }
 
-      /* "imeinterpreter.py":153
+      /* "imeinterpreter.py":243
  *                         stop_line_index += 1
  *                 else:
  *                     ems_agent_sorted_stop_lines.append(ems_agent_stop_lines[stop_line_index])             # <<<<<<<<<<<<<<
@@ -5818,14 +8014,14 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  *                 ems_agent_sorted_start_lines.append(0)
  */
       /*else*/ {
-        __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_stop_lines, __pyx_v_stop_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 153, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_stop_lines, __pyx_v_stop_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 243, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 153, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 243, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       }
       __pyx_L14:;
 
-      /* "imeinterpreter.py":133
+      /* "imeinterpreter.py":223
  *             cur_start_line_top_index = ems_agent_start_lines[start_line_index]
  *             cur_stop_line_top_index = ems_agent_stop_lines[stop_line_index]
  *             if cur_start_line_top_index < cur_stop_line_top_index:             # <<<<<<<<<<<<<<
@@ -5835,7 +8031,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
       goto __pyx_L13;
     }
 
-    /* "imeinterpreter.py":155
+    /* "imeinterpreter.py":245
  *                     ems_agent_sorted_stop_lines.append(ems_agent_stop_lines[stop_line_index])
  *             else:
  *                 ems_agent_sorted_start_lines.append(0)             # <<<<<<<<<<<<<<
@@ -5843,25 +8039,25 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  *                 stop_line_index += 1
  */
     /*else*/ {
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_start_lines, __pyx_int_0); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 155, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_start_lines, __pyx_int_0); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 245, __pyx_L1_error)
 
-      /* "imeinterpreter.py":156
+      /* "imeinterpreter.py":246
  *             else:
  *                 ems_agent_sorted_start_lines.append(0)
  *                 ems_agent_sorted_stop_lines.append(cur_stop_line_top_index)             # <<<<<<<<<<<<<<
  *                 stop_line_index += 1
  * 
  */
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_v_cur_stop_line_top_index); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 156, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_v_cur_stop_line_top_index); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 246, __pyx_L1_error)
 
-      /* "imeinterpreter.py":157
+      /* "imeinterpreter.py":247
  *                 ems_agent_sorted_start_lines.append(0)
  *                 ems_agent_sorted_stop_lines.append(cur_stop_line_top_index)
  *                 stop_line_index += 1             # <<<<<<<<<<<<<<
  * 
  *         if start_line_index < start_lines_len:
  */
-      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_stop_line_index, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 157, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_stop_line_index, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 247, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF_SET(__pyx_v_stop_line_index, __pyx_t_3);
       __pyx_t_3 = 0;
@@ -5869,22 +8065,22 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
     __pyx_L13:;
   }
 
-  /* "imeinterpreter.py":159
+  /* "imeinterpreter.py":249
  *                 stop_line_index += 1
  * 
  *         if start_line_index < start_lines_len:             # <<<<<<<<<<<<<<
  *             """
  *             Start
  */
-  __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 249, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_6 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_6 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 249, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 249, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   if (__pyx_t_8) {
 
-    /* "imeinterpreter.py":164
+    /* "imeinterpreter.py":254
  *             ...
  *             """
  *             while start_line_index < start_lines_len:             # <<<<<<<<<<<<<<
@@ -5892,69 +8088,69 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  *                 start_line_index += 1
  */
     while (1) {
-      __pyx_t_6 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 164, __pyx_L1_error)
+      __pyx_t_6 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 254, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_3 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_6, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 164, __pyx_L1_error)
+      __pyx_t_3 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_6, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 254, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 164, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 254, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       if (!__pyx_t_8) break;
 
-      /* "imeinterpreter.py":165
+      /* "imeinterpreter.py":255
  *             """
  *             while start_line_index < start_lines_len:
  *                 ems_agent_sorted_start_lines.append(ems_agent_start_lines[start_line_index])             # <<<<<<<<<<<<<<
  *                 start_line_index += 1
  *                 if start_line_index < start_lines_len:
  */
-      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_start_lines, __pyx_v_start_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 165, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_start_lines, __pyx_v_start_line_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 255, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_start_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 165, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_start_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 255, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "imeinterpreter.py":166
+      /* "imeinterpreter.py":256
  *             while start_line_index < start_lines_len:
  *                 ems_agent_sorted_start_lines.append(ems_agent_start_lines[start_line_index])
  *                 start_line_index += 1             # <<<<<<<<<<<<<<
  *                 if start_line_index < start_lines_len:
  *                     ems_agent_sorted_stop_lines.append(ems_agent_start_lines[start_line_index] - 1)
  */
-      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_start_line_index, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 166, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_start_line_index, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 256, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF_SET(__pyx_v_start_line_index, __pyx_t_3);
       __pyx_t_3 = 0;
 
-      /* "imeinterpreter.py":167
+      /* "imeinterpreter.py":257
  *                 ems_agent_sorted_start_lines.append(ems_agent_start_lines[start_line_index])
  *                 start_line_index += 1
  *                 if start_line_index < start_lines_len:             # <<<<<<<<<<<<<<
  *                     ems_agent_sorted_stop_lines.append(ems_agent_start_lines[start_line_index] - 1)
  *                 else:
  */
-      __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 257, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_6 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_6 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 257, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 257, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       if (__pyx_t_8) {
 
-        /* "imeinterpreter.py":168
+        /* "imeinterpreter.py":258
  *                 start_line_index += 1
  *                 if start_line_index < start_lines_len:
  *                     ems_agent_sorted_stop_lines.append(ems_agent_start_lines[start_line_index] - 1)             # <<<<<<<<<<<<<<
  *                 else:
  *                     ems_agent_sorted_stop_lines.append(full_log_len-1)
  */
-        __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_start_lines, __pyx_v_start_line_index); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 168, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_start_lines, __pyx_v_start_line_index); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 258, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
-        __pyx_t_3 = __Pyx_PyInt_SubtractObjC(__pyx_t_6, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 168, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyInt_SubtractObjC(__pyx_t_6, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 258, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 168, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 258, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-        /* "imeinterpreter.py":167
+        /* "imeinterpreter.py":257
  *                 ems_agent_sorted_start_lines.append(ems_agent_start_lines[start_line_index])
  *                 start_line_index += 1
  *                 if start_line_index < start_lines_len:             # <<<<<<<<<<<<<<
@@ -5964,7 +8160,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         goto __pyx_L19;
       }
 
-      /* "imeinterpreter.py":170
+      /* "imeinterpreter.py":260
  *                     ems_agent_sorted_stop_lines.append(ems_agent_start_lines[start_line_index] - 1)
  *                 else:
  *                     ems_agent_sorted_stop_lines.append(full_log_len-1)             # <<<<<<<<<<<<<<
@@ -5972,15 +8168,15 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  *             pass
  */
       /*else*/ {
-        __pyx_t_3 = __Pyx_PyInt_SubtractObjC(__pyx_v_full_log_len, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 170, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyInt_SubtractObjC(__pyx_v_full_log_len, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 260, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 170, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 260, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       }
       __pyx_L19:;
     }
 
-    /* "imeinterpreter.py":159
+    /* "imeinterpreter.py":249
  *                 stop_line_index += 1
  * 
  *         if start_line_index < start_lines_len:             # <<<<<<<<<<<<<<
@@ -5990,73 +8186,73 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
     goto __pyx_L16;
   }
 
-  /* "imeinterpreter.py":171
+  /* "imeinterpreter.py":261
  *                 else:
  *                     ems_agent_sorted_stop_lines.append(full_log_len-1)
  *         elif stop_line_index < stop_lines_len:             # <<<<<<<<<<<<<<
  *             pass
  *         elif start_line_index == start_lines_len and stop_line_index == stop_lines_len:
  */
-  __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_stop_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 171, __pyx_L1_error)
+  __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_stop_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 261, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_6 = PyObject_RichCompare(__pyx_v_stop_line_index, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 171, __pyx_L1_error)
+  __pyx_t_6 = PyObject_RichCompare(__pyx_v_stop_line_index, __pyx_t_3, Py_LT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 261, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 171, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 261, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   if (__pyx_t_8) {
     goto __pyx_L16;
   }
 
-  /* "imeinterpreter.py":173
+  /* "imeinterpreter.py":263
  *         elif stop_line_index < stop_lines_len:
  *             pass
  *         elif start_line_index == start_lines_len and stop_line_index == stop_lines_len:             # <<<<<<<<<<<<<<
  *             ems_agent_sorted_start_lines.append(0)
  *             ems_agent_sorted_stop_lines.append(full_log_len - 1)
  */
-  __pyx_t_6 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_6 = PyInt_FromSsize_t(__pyx_v_start_lines_len); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_3 = PyObject_RichCompare(__pyx_v_start_line_index, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_11) {
   } else {
     __pyx_t_8 = __pyx_t_11;
     goto __pyx_L20_bool_binop_done;
   }
-  __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_stop_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_3 = PyInt_FromSsize_t(__pyx_v_stop_lines_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_6 = PyObject_RichCompare(__pyx_v_stop_line_index, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_6 = PyObject_RichCompare(__pyx_v_stop_line_index, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_t_8 = __pyx_t_11;
   __pyx_L20_bool_binop_done:;
   if (__pyx_t_8) {
 
-    /* "imeinterpreter.py":174
+    /* "imeinterpreter.py":264
  *             pass
  *         elif start_line_index == start_lines_len and stop_line_index == stop_lines_len:
  *             ems_agent_sorted_start_lines.append(0)             # <<<<<<<<<<<<<<
  *             ems_agent_sorted_stop_lines.append(full_log_len - 1)
  * 
  */
-    __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_start_lines, __pyx_int_0); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 174, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_start_lines, __pyx_int_0); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 264, __pyx_L1_error)
 
-    /* "imeinterpreter.py":175
+    /* "imeinterpreter.py":265
  *         elif start_line_index == start_lines_len and stop_line_index == stop_lines_len:
  *             ems_agent_sorted_start_lines.append(0)
  *             ems_agent_sorted_stop_lines.append(full_log_len - 1)             # <<<<<<<<<<<<<<
  * 
  *         ems_agent_lifecycle_log_list = []
  */
-    __pyx_t_6 = __Pyx_PyInt_SubtractObjC(__pyx_v_full_log_len, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 175, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyInt_SubtractObjC(__pyx_v_full_log_len, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 265, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_6); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 175, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_sorted_stop_lines, __pyx_t_6); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 265, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "imeinterpreter.py":173
+    /* "imeinterpreter.py":263
  *         elif stop_line_index < stop_lines_len:
  *             pass
  *         elif start_line_index == start_lines_len and stop_line_index == stop_lines_len:             # <<<<<<<<<<<<<<
@@ -6066,44 +8262,44 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   }
   __pyx_L16:;
 
-  /* "imeinterpreter.py":177
+  /* "imeinterpreter.py":267
  *             ems_agent_sorted_stop_lines.append(full_log_len - 1)
  * 
  *         ems_agent_lifecycle_log_list = []             # <<<<<<<<<<<<<<
  *         # Indicating whether the service is being restarted manually or restart by reboot
  *         agent_life_ending_reason = ["IME Service Starts"]  # first one is always IME service Starts
  */
-  __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 177, __pyx_L1_error)
+  __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 267, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __pyx_v_ems_agent_lifecycle_log_list = ((PyObject*)__pyx_t_6);
   __pyx_t_6 = 0;
 
-  /* "imeinterpreter.py":179
+  /* "imeinterpreter.py":269
  *         ems_agent_lifecycle_log_list = []
  *         # Indicating whether the service is being restarted manually or restart by reboot
  *         agent_life_ending_reason = ["IME Service Starts"]  # first one is always IME service Starts             # <<<<<<<<<<<<<<
  * 
  *         for agent_lifecycle_log_index in range(len(ems_agent_sorted_start_lines)):
  */
-  __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 269, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_INCREF(__pyx_kp_s_IME_Service_Starts);
   __Pyx_GIVEREF(__pyx_kp_s_IME_Service_Starts);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_6, 0, __pyx_kp_s_IME_Service_Starts)) __PYX_ERR(0, 179, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_6, 0, __pyx_kp_s_IME_Service_Starts)) __PYX_ERR(0, 269, __pyx_L1_error);
   __pyx_v_agent_life_ending_reason = ((PyObject*)__pyx_t_6);
   __pyx_t_6 = 0;
 
-  /* "imeinterpreter.py":181
+  /* "imeinterpreter.py":271
  *         agent_life_ending_reason = ["IME Service Starts"]  # first one is always IME service Starts
  * 
  *         for agent_lifecycle_log_index in range(len(ems_agent_sorted_start_lines)):             # <<<<<<<<<<<<<<
  *             ems_agent_lifecycle_log_list.append(
  *                 self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]:
  */
-  __pyx_t_2 = __Pyx_PyList_GET_SIZE(__pyx_v_ems_agent_sorted_start_lines); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 181, __pyx_L1_error)
-  __pyx_t_6 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 181, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyList_GET_SIZE(__pyx_v_ems_agent_sorted_start_lines); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 271, __pyx_L1_error)
+  __pyx_t_6 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 181, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
@@ -6111,9 +8307,9 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
     __pyx_t_2 = 0;
     __pyx_t_4 = NULL;
   } else {
-    __pyx_t_2 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 181, __pyx_L1_error)
+    __pyx_t_2 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 271, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_4 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 181, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 271, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   for (;;) {
@@ -6122,28 +8318,28 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_6);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 181, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 271, __pyx_L1_error)
           #endif
           if (__pyx_t_2 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(0, 181, __pyx_L1_error)
+        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(0, 271, __pyx_L1_error)
         #else
-        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_6, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 181, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_6, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         #endif
       } else {
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_6);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 181, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 271, __pyx_L1_error)
           #endif
           if (__pyx_t_2 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(0, 181, __pyx_L1_error)
+        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(0, 271, __pyx_L1_error)
         #else
-        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_6, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 181, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_6, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         #endif
       }
@@ -6153,7 +8349,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 181, __pyx_L1_error)
+          else __PYX_ERR(0, 271, __pyx_L1_error)
         }
         break;
       }
@@ -6162,84 +8358,84 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
     __Pyx_XDECREF_SET(__pyx_v_agent_lifecycle_log_index, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "imeinterpreter.py":183
+    /* "imeinterpreter.py":273
  *         for agent_lifecycle_log_index in range(len(ems_agent_sorted_start_lines)):
  *             ems_agent_lifecycle_log_list.append(
  *                 self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]:             # <<<<<<<<<<<<<<
  *                               ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  *             if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 183, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 273, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_sorted_start_lines, __pyx_v_agent_lifecycle_log_index); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 183, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_sorted_start_lines, __pyx_v_agent_lifecycle_log_index); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 273, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
 
-    /* "imeinterpreter.py":184
+    /* "imeinterpreter.py":274
  *             ems_agent_lifecycle_log_list.append(
  *                 self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]:
  *                               ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])             # <<<<<<<<<<<<<<
  *             if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:
  *                 agent_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  */
-    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_sorted_stop_lines, __pyx_v_agent_lifecycle_log_index); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 184, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_sorted_stop_lines, __pyx_v_agent_lifecycle_log_index); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 274, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
 
-    /* "imeinterpreter.py":183
+    /* "imeinterpreter.py":273
  *         for agent_lifecycle_log_index in range(len(ems_agent_sorted_start_lines)):
  *             ems_agent_lifecycle_log_list.append(
  *                 self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]:             # <<<<<<<<<<<<<<
  *                               ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  *             if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:
  */
-    __pyx_t_5 = __Pyx_PyObject_GetSlice(__pyx_t_3, 0, 0, &__pyx_t_10, &__pyx_t_1, NULL, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 183, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetSlice(__pyx_t_3, 0, 0, &__pyx_t_10, &__pyx_t_1, NULL, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 273, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "imeinterpreter.py":182
+    /* "imeinterpreter.py":272
  * 
  *         for agent_lifecycle_log_index in range(len(ems_agent_sorted_start_lines)):
  *             ems_agent_lifecycle_log_list.append(             # <<<<<<<<<<<<<<
  *                 self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]:
  *                               ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  */
-    __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_lifecycle_log_list, __pyx_t_5); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 182, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_ems_agent_lifecycle_log_list, __pyx_t_5); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 272, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "imeinterpreter.py":185
+    /* "imeinterpreter.py":275
  *                 self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]:
  *                               ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  *             if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:             # <<<<<<<<<<<<<<
  *                 agent_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  *                 agent_stop_time_datetime = datetime.datetime.strptime(agent_stop_time[:-4], '%m-%d-%Y %H:%M:%S')
  */
-    __pyx_t_12 = __Pyx_PyList_GET_SIZE(__pyx_v_ems_agent_sorted_start_lines); if (unlikely(__pyx_t_12 == ((Py_ssize_t)-1))) __PYX_ERR(0, 185, __pyx_L1_error)
-    __pyx_t_5 = PyInt_FromSsize_t((__pyx_t_12 - 1)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 185, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyList_GET_SIZE(__pyx_v_ems_agent_sorted_start_lines); if (unlikely(__pyx_t_12 == ((Py_ssize_t)-1))) __PYX_ERR(0, 275, __pyx_L1_error)
+    __pyx_t_5 = PyInt_FromSsize_t((__pyx_t_12 - 1)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 275, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_1 = PyObject_RichCompare(__pyx_v_agent_lifecycle_log_index, __pyx_t_5, Py_LT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 185, __pyx_L1_error)
+    __pyx_t_1 = PyObject_RichCompare(__pyx_v_agent_lifecycle_log_index, __pyx_t_5, Py_LT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 275, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 185, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 275, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (__pyx_t_8) {
 
-      /* "imeinterpreter.py":186
+      /* "imeinterpreter.py":276
  *                               ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  *             if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:
  *                 agent_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])             # <<<<<<<<<<<<<<
  *                 agent_stop_time_datetime = datetime.datetime.strptime(agent_stop_time[:-4], '%m-%d-%Y %H:%M:%S')
  *                 agent_next_start_time = logprocessinglibrary.get_timestamp_by_line(
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 186, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 276, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 186, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 276, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 186, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 276, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_sorted_stop_lines, __pyx_v_agent_lifecycle_log_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 186, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_sorted_stop_lines, __pyx_v_agent_lifecycle_log_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 276, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_13 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_t_3); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 186, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_t_3); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 276, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -6262,29 +8458,29 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 276, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       }
       __Pyx_XDECREF_SET(__pyx_v_agent_stop_time, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "imeinterpreter.py":187
+      /* "imeinterpreter.py":277
  *             if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:
  *                 agent_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  *                 agent_stop_time_datetime = datetime.datetime.strptime(agent_stop_time[:-4], '%m-%d-%Y %H:%M:%S')             # <<<<<<<<<<<<<<
  *                 agent_next_start_time = logprocessinglibrary.get_timestamp_by_line(
  *                     self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index + 1]])
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_n_s_datetime); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 187, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_n_s_datetime); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 277, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_datetime); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 187, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_datetime); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 277, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_13, __pyx_n_s_strptime); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 187, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_13, __pyx_n_s_strptime); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 277, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-      __pyx_t_13 = __Pyx_PyObject_GetSlice(__pyx_v_agent_stop_time, 0, -4L, NULL, NULL, &__pyx_slice__6, 0, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 187, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_GetSlice(__pyx_v_agent_stop_time, 0, -4L, NULL, NULL, &__pyx_slice__8, 0, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 277, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __pyx_t_3 = NULL;
       __pyx_t_7 = 0;
@@ -6305,41 +8501,41 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+1-__pyx_t_7, 2+__pyx_t_7);
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L1_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       }
       __Pyx_XDECREF_SET(__pyx_v_agent_stop_time_datetime, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "imeinterpreter.py":188
+      /* "imeinterpreter.py":278
  *                 agent_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  *                 agent_stop_time_datetime = datetime.datetime.strptime(agent_stop_time[:-4], '%m-%d-%Y %H:%M:%S')
  *                 agent_next_start_time = logprocessinglibrary.get_timestamp_by_line(             # <<<<<<<<<<<<<<
  *                     self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index + 1]])
  *                 agent_next_start_time_datetime = logprocessinglibrary.convert_date_string_to_date_time(agent_next_start_time[:-4])
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 188, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 278, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 188, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_get_timestamp_by_line); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 278, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-      /* "imeinterpreter.py":189
+      /* "imeinterpreter.py":279
  *                 agent_stop_time_datetime = datetime.datetime.strptime(agent_stop_time[:-4], '%m-%d-%Y %H:%M:%S')
  *                 agent_next_start_time = logprocessinglibrary.get_timestamp_by_line(
  *                     self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index + 1]])             # <<<<<<<<<<<<<<
  *                 agent_next_start_time_datetime = logprocessinglibrary.convert_date_string_to_date_time(agent_next_start_time[:-4])
  * 
  */
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 189, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 279, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_agent_lifecycle_log_index, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 189, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_agent_lifecycle_log_index, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 279, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_sorted_start_lines, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 189, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_ems_agent_sorted_start_lines, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 279, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_10, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 189, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_10, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 279, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -6362,26 +8558,26 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_13, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
       }
       __Pyx_XDECREF_SET(__pyx_v_agent_next_start_time, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "imeinterpreter.py":190
+      /* "imeinterpreter.py":280
  *                 agent_next_start_time = logprocessinglibrary.get_timestamp_by_line(
  *                     self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index + 1]])
  *                 agent_next_start_time_datetime = logprocessinglibrary.convert_date_string_to_date_time(agent_next_start_time[:-4])             # <<<<<<<<<<<<<<
  * 
  *                 if agent_next_start_time_datetime - agent_stop_time_datetime < datetime.timedelta(seconds=10):
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_13, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 190, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_13, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 280, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_13, __pyx_n_s_convert_date_string_to_date_time); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 190, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_13, __pyx_n_s_convert_date_string_to_date_time); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 280, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-      __pyx_t_13 = __Pyx_PyObject_GetSlice(__pyx_v_agent_next_start_time, 0, -4L, NULL, NULL, &__pyx_slice__6, 0, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 190, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_GetSlice(__pyx_v_agent_next_start_time, 0, -4L, NULL, NULL, &__pyx_slice__8, 0, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 280, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __pyx_t_5 = NULL;
       __pyx_t_7 = 0;
@@ -6402,51 +8598,51 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 280, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       }
       __Pyx_XDECREF_SET(__pyx_v_agent_next_start_time_datetime, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "imeinterpreter.py":192
+      /* "imeinterpreter.py":282
  *                 agent_next_start_time_datetime = logprocessinglibrary.convert_date_string_to_date_time(agent_next_start_time[:-4])
  * 
  *                 if agent_next_start_time_datetime - agent_stop_time_datetime < datetime.timedelta(seconds=10):             # <<<<<<<<<<<<<<
  *                     agent_life_ending_reason.append("Service Manual Restart")
  *                 else:
  */
-      __pyx_t_1 = PyNumber_Subtract(__pyx_v_agent_next_start_time_datetime, __pyx_v_agent_stop_time_datetime); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __pyx_t_1 = PyNumber_Subtract(__pyx_v_agent_next_start_time_datetime, __pyx_v_agent_stop_time_datetime); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 282, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_datetime); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_datetime); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 282, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_timedelta); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_timedelta); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 282, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 282, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_seconds, __pyx_int_10) < 0) __PYX_ERR(0, 192, __pyx_L1_error)
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 192, __pyx_L1_error)
+      if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_seconds, __pyx_int_10) < 0) __PYX_ERR(0, 282, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 282, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = PyObject_RichCompare(__pyx_t_1, __pyx_t_5, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __pyx_t_3 = PyObject_RichCompare(__pyx_t_1, __pyx_t_5, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 282, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 192, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 282, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       if (__pyx_t_8) {
 
-        /* "imeinterpreter.py":193
+        /* "imeinterpreter.py":283
  * 
  *                 if agent_next_start_time_datetime - agent_stop_time_datetime < datetime.timedelta(seconds=10):
  *                     agent_life_ending_reason.append("Service Manual Restart")             # <<<<<<<<<<<<<<
  *                 else:
  *                     agent_life_ending_reason.append("Device Reboot")
  */
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_agent_life_ending_reason, __pyx_kp_s_Service_Manual_Restart); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 193, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_agent_life_ending_reason, __pyx_kp_s_Service_Manual_Restart); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 283, __pyx_L1_error)
 
-        /* "imeinterpreter.py":192
+        /* "imeinterpreter.py":282
  *                 agent_next_start_time_datetime = logprocessinglibrary.convert_date_string_to_date_time(agent_next_start_time[:-4])
  * 
  *                 if agent_next_start_time_datetime - agent_stop_time_datetime < datetime.timedelta(seconds=10):             # <<<<<<<<<<<<<<
@@ -6456,7 +8652,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
         goto __pyx_L25;
       }
 
-      /* "imeinterpreter.py":195
+      /* "imeinterpreter.py":285
  *                     agent_life_ending_reason.append("Service Manual Restart")
  *                 else:
  *                     agent_life_ending_reason.append("Device Reboot")             # <<<<<<<<<<<<<<
@@ -6464,11 +8660,11 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  *         return ems_agent_lifecycle_log_list, agent_life_ending_reason
  */
       /*else*/ {
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_agent_life_ending_reason, __pyx_kp_s_Device_Reboot); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 195, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_agent_life_ending_reason, __pyx_kp_s_Device_Reboot); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 285, __pyx_L1_error)
       }
       __pyx_L25:;
 
-      /* "imeinterpreter.py":185
+      /* "imeinterpreter.py":275
  *                 self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]:
  *                               ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  *             if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:             # <<<<<<<<<<<<<<
@@ -6477,7 +8673,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  */
     }
 
-    /* "imeinterpreter.py":181
+    /* "imeinterpreter.py":271
  *         agent_life_ending_reason = ["IME Service Starts"]  # first one is always IME service Starts
  * 
  *         for agent_lifecycle_log_index in range(len(ems_agent_sorted_start_lines)):             # <<<<<<<<<<<<<<
@@ -6487,7 +8683,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   }
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "imeinterpreter.py":197
+  /* "imeinterpreter.py":287
  *                     agent_life_ending_reason.append("Device Reboot")
  * 
  *         return ems_agent_lifecycle_log_list, agent_life_ending_reason             # <<<<<<<<<<<<<<
@@ -6495,20 +8691,20 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  *     def initialize_life_cycle_list(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_INCREF(__pyx_v_ems_agent_lifecycle_log_list);
   __Pyx_GIVEREF(__pyx_v_ems_agent_lifecycle_log_list);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_v_ems_agent_lifecycle_log_list)) __PYX_ERR(0, 197, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_v_ems_agent_lifecycle_log_list)) __PYX_ERR(0, 287, __pyx_L1_error);
   __Pyx_INCREF(__pyx_v_agent_life_ending_reason);
   __Pyx_GIVEREF(__pyx_v_agent_life_ending_reason);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_v_agent_life_ending_reason)) __PYX_ERR(0, 197, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_v_agent_life_ending_reason)) __PYX_ERR(0, 287, __pyx_L1_error);
   __pyx_r = __pyx_t_6;
   __pyx_t_6 = 0;
   goto __pyx_L0;
 
-  /* "imeinterpreter.py":93
- *         return full_log
+  /* "imeinterpreter.py":183
+ *             return full_log
  * 
  *     def separate_log_into_service_lifecycle(self):             # <<<<<<<<<<<<<<
  *         ems_agent_start_lines = []
@@ -6553,7 +8749,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
   return __pyx_r;
 }
 
-/* "imeinterpreter.py":199
+/* "imeinterpreter.py":289
  *         return ems_agent_lifecycle_log_list, agent_life_ending_reason
  * 
  *     def initialize_life_cycle_list(self):             # <<<<<<<<<<<<<<
@@ -6562,15 +8758,15 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_6separate_log_into_s
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_9initialize_life_cycle_list(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_17initialize_life_cycle_list(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_9initialize_life_cycle_list = {"initialize_life_cycle_list", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_9initialize_life_cycle_list, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_9initialize_life_cycle_list(PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_17initialize_life_cycle_list = {"initialize_life_cycle_list", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_17initialize_life_cycle_list, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_17initialize_life_cycle_list(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -6614,12 +8810,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 199, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 289, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "initialize_life_cycle_list") < 0)) __PYX_ERR(0, 199, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "initialize_life_cycle_list") < 0)) __PYX_ERR(0, 289, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
@@ -6630,7 +8826,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("initialize_life_cycle_list", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 199, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("initialize_life_cycle_list", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 289, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -6644,7 +8840,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cycle_list(__pyx_self, __pyx_v_self);
+  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_16initialize_life_cycle_list(__pyx_self, __pyx_v_self);
 
   /* function exit code */
   {
@@ -6657,7 +8853,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cycle_list(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_16initialize_life_cycle_list(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self) {
   PyObject *__pyx_v_ems_agent_lifecycle_log_list = NULL;
   PyObject *__pyx_v_ems_agent_restart_reasons = NULL;
   Py_ssize_t __pyx_v_index_lifecycle_log;
@@ -6681,20 +8877,20 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("initialize_life_cycle_list", 1);
 
-  /* "imeinterpreter.py":200
+  /* "imeinterpreter.py":290
  * 
  *     def initialize_life_cycle_list(self):
  *         if self.full_log is None:             # <<<<<<<<<<<<<<
  *             return None
  *         ems_agent_lifecycle_log_list, ems_agent_restart_reasons = \
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = (__pyx_t_1 == Py_None);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_2) {
 
-    /* "imeinterpreter.py":201
+    /* "imeinterpreter.py":291
  *     def initialize_life_cycle_list(self):
  *         if self.full_log is None:
  *             return None             # <<<<<<<<<<<<<<
@@ -6705,7 +8901,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "imeinterpreter.py":200
+    /* "imeinterpreter.py":290
  * 
  *     def initialize_life_cycle_list(self):
  *         if self.full_log is None:             # <<<<<<<<<<<<<<
@@ -6714,14 +8910,14 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
  */
   }
 
-  /* "imeinterpreter.py":203
+  /* "imeinterpreter.py":293
  *             return None
  *         ems_agent_lifecycle_log_list, ems_agent_restart_reasons = \
  *             self.separate_log_into_service_lifecycle()             # <<<<<<<<<<<<<<
  *         if len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons):
  *             print("Error len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons)")
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_separate_log_into_service_lifecy); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_separate_log_into_service_lifecy); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 293, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -6741,7 +8937,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
     PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 203, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 293, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
@@ -6751,7 +8947,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 202, __pyx_L1_error)
+      __PYX_ERR(0, 292, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -6764,15 +8960,15 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_4);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 202, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 292, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 202, __pyx_L1_error)
+    __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 292, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_6 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 202, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 292, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_7 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_6);
@@ -6780,7 +8976,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_4 = __pyx_t_7(__pyx_t_6); if (unlikely(!__pyx_t_4)) goto __pyx_L4_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_4);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_7(__pyx_t_6), 2) < 0) __PYX_ERR(0, 202, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_7(__pyx_t_6), 2) < 0) __PYX_ERR(0, 292, __pyx_L1_error)
     __pyx_t_7 = NULL;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     goto __pyx_L5_unpacking_done;
@@ -6788,11 +8984,11 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __pyx_t_7 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 202, __pyx_L1_error)
+    __PYX_ERR(0, 292, __pyx_L1_error)
     __pyx_L5_unpacking_done:;
   }
 
-  /* "imeinterpreter.py":202
+  /* "imeinterpreter.py":292
  *         if self.full_log is None:
  *             return None
  *         ems_agent_lifecycle_log_list, ems_agent_restart_reasons = \             # <<<<<<<<<<<<<<
@@ -6804,30 +9000,30 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
   __pyx_v_ems_agent_restart_reasons = __pyx_t_4;
   __pyx_t_4 = 0;
 
-  /* "imeinterpreter.py":204
+  /* "imeinterpreter.py":294
  *         ems_agent_lifecycle_log_list, ems_agent_restart_reasons = \
  *             self.separate_log_into_service_lifecycle()
  *         if len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons):             # <<<<<<<<<<<<<<
  *             print("Error len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons)")
  *             return None
  */
-  __pyx_t_8 = PyObject_Length(__pyx_v_ems_agent_lifecycle_log_list); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 204, __pyx_L1_error)
-  __pyx_t_9 = PyObject_Length(__pyx_v_ems_agent_restart_reasons); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(0, 204, __pyx_L1_error)
+  __pyx_t_8 = PyObject_Length(__pyx_v_ems_agent_lifecycle_log_list); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 294, __pyx_L1_error)
+  __pyx_t_9 = PyObject_Length(__pyx_v_ems_agent_restart_reasons); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(0, 294, __pyx_L1_error)
   __pyx_t_2 = (__pyx_t_8 != __pyx_t_9);
   if (__pyx_t_2) {
 
-    /* "imeinterpreter.py":205
+    /* "imeinterpreter.py":295
  *             self.separate_log_into_service_lifecycle()
  *         if len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons):
  *             print("Error len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons)")             # <<<<<<<<<<<<<<
  *             return None
  *             # exit(1000)
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 205, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 295, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "imeinterpreter.py":206
+    /* "imeinterpreter.py":296
  *         if len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons):
  *             print("Error len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons)")
  *             return None             # <<<<<<<<<<<<<<
@@ -6838,7 +9034,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "imeinterpreter.py":204
+    /* "imeinterpreter.py":294
  *         ems_agent_lifecycle_log_list, ems_agent_restart_reasons = \
  *             self.separate_log_into_service_lifecycle()
  *         if len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons):             # <<<<<<<<<<<<<<
@@ -6847,43 +9043,43 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
  */
   }
 
-  /* "imeinterpreter.py":208
+  /* "imeinterpreter.py":298
  *             return None
  *             # exit(1000)
  *         for index_lifecycle_log in range(len(ems_agent_lifecycle_log_list)):             # <<<<<<<<<<<<<<
  *             self.life_cycle_list.append(emslifecycle.EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],
  *                                         ems_agent_restart_reasons[index_lifecycle_log]))
  */
-  __pyx_t_9 = PyObject_Length(__pyx_v_ems_agent_lifecycle_log_list); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(0, 208, __pyx_L1_error)
+  __pyx_t_9 = PyObject_Length(__pyx_v_ems_agent_lifecycle_log_list); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(0, 298, __pyx_L1_error)
   __pyx_t_8 = __pyx_t_9;
   for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_8; __pyx_t_10+=1) {
     __pyx_v_index_lifecycle_log = __pyx_t_10;
 
-    /* "imeinterpreter.py":209
+    /* "imeinterpreter.py":299
  *             # exit(1000)
  *         for index_lifecycle_log in range(len(ems_agent_lifecycle_log_list)):
  *             self.life_cycle_list.append(emslifecycle.EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],             # <<<<<<<<<<<<<<
  *                                         ems_agent_restart_reasons[index_lifecycle_log]))
  * 
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_life_cycle_list); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 209, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_life_cycle_list); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 299, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_emslifecycle); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 209, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_emslifecycle); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 299, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_EMSLifeCycle); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 209, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_EMSLifeCycle); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 299, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_ems_agent_lifecycle_log_list, __pyx_v_index_lifecycle_log, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 209, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_ems_agent_lifecycle_log_list, __pyx_v_index_lifecycle_log, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 299, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
 
-    /* "imeinterpreter.py":210
+    /* "imeinterpreter.py":300
  *         for index_lifecycle_log in range(len(ems_agent_lifecycle_log_list)):
  *             self.life_cycle_list.append(emslifecycle.EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],
  *                                         ems_agent_restart_reasons[index_lifecycle_log]))             # <<<<<<<<<<<<<<
  * 
  *     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):
  */
-    __pyx_t_11 = __Pyx_GetItemInt(__pyx_v_ems_agent_restart_reasons, __pyx_v_index_lifecycle_log, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 210, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_GetItemInt(__pyx_v_ems_agent_restart_reasons, __pyx_v_index_lifecycle_log, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 300, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __pyx_t_12 = NULL;
     __pyx_t_5 = 0;
@@ -6905,24 +9101,24 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
       __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 209, __pyx_L1_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 299, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
 
-    /* "imeinterpreter.py":209
+    /* "imeinterpreter.py":299
  *             # exit(1000)
  *         for index_lifecycle_log in range(len(ems_agent_lifecycle_log_list)):
  *             self.life_cycle_list.append(emslifecycle.EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],             # <<<<<<<<<<<<<<
  *                                         ems_agent_restart_reasons[index_lifecycle_log]))
  * 
  */
-    __pyx_t_13 = __Pyx_PyObject_Append(__pyx_t_1, __pyx_t_4); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 209, __pyx_L1_error)
+    __pyx_t_13 = __Pyx_PyObject_Append(__pyx_t_1, __pyx_t_4); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 299, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
 
-  /* "imeinterpreter.py":199
+  /* "imeinterpreter.py":289
  *         return ems_agent_lifecycle_log_list, agent_life_ending_reason
  * 
  *     def initialize_life_cycle_list(self):             # <<<<<<<<<<<<<<
@@ -6950,7 +9146,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
   return __pyx_r;
 }
 
-/* "imeinterpreter.py":212
+/* "imeinterpreter.py":302
  *                                         ems_agent_restart_reasons[index_lifecycle_log]))
  * 
  *     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):             # <<<<<<<<<<<<<<
@@ -6959,15 +9155,15 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_8initialize_life_cyc
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_11generate_ime_interpreter_log_output(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_19generate_ime_interpreter_log_output(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_11generate_ime_interpreter_log_output = {"generate_ime_interpreter_log_output", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_11generate_ime_interpreter_log_output, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_11generate_ime_interpreter_log_output(PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_14imeinterpreter_14ImeInterpreter_19generate_ime_interpreter_log_output = {"generate_ime_interpreter_log_output", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_14imeinterpreter_14ImeInterpreter_19generate_ime_interpreter_log_output, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_14imeinterpreter_14ImeInterpreter_19generate_ime_interpreter_log_output(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -7015,19 +9211,19 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 212, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 302, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
         if (kw_args > 0) {
           PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_show_not_expired_subgraph);
           if (value) { values[1] = __Pyx_Arg_NewRef_FASTCALL(value); kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 212, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 302, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_ime_interpreter_log_output") < 0)) __PYX_ERR(0, 212, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_ime_interpreter_log_output") < 0)) __PYX_ERR(0, 302, __pyx_L3_error)
       }
     } else {
       switch (__pyx_nargs) {
@@ -7043,7 +9239,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("generate_ime_interpreter_log_output", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 212, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("generate_ime_interpreter_log_output", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 302, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -7057,7 +9253,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_interpreter_log_output(__pyx_self, __pyx_v_self, __pyx_v_show_not_expired_subgraph);
+  __pyx_r = __pyx_pf_14imeinterpreter_14ImeInterpreter_18generate_ime_interpreter_log_output(__pyx_self, __pyx_v_self, __pyx_v_show_not_expired_subgraph);
 
   /* function exit code */
   {
@@ -7070,7 +9266,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_interpreter_log_output(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_show_not_expired_subgraph) {
+static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_18generate_ime_interpreter_log_output(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_show_not_expired_subgraph) {
   PyObject *__pyx_v_interpreted_log_output = NULL;
   PyObject *__pyx_v_cur_lifecycle_log_index = NULL;
   PyObject *__pyx_v_cur_lifecycle_log = NULL;
@@ -7090,42 +9286,42 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("generate_ime_interpreter_log_output", 1);
 
-  /* "imeinterpreter.py":213
+  /* "imeinterpreter.py":303
  * 
  *     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):
  *         interpreted_log_output = ""             # <<<<<<<<<<<<<<
  *         if self.full_log is None:
  *             interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
  */
-  __Pyx_INCREF(__pyx_kp_s__8);
-  __pyx_v_interpreted_log_output = __pyx_kp_s__8;
+  __Pyx_INCREF(__pyx_kp_s__3);
+  __pyx_v_interpreted_log_output = __pyx_kp_s__3;
 
-  /* "imeinterpreter.py":214
+  /* "imeinterpreter.py":304
  *     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):
  *         interpreted_log_output = ""
  *         if self.full_log is None:             # <<<<<<<<<<<<<<
  *             interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
  *             return interpreted_log_output
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 214, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = (__pyx_t_1 == Py_None);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_2) {
 
-    /* "imeinterpreter.py":215
+    /* "imeinterpreter.py":305
  *         interpreted_log_output = ""
  *         if self.full_log is None:
  *             interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"             # <<<<<<<<<<<<<<
  *             return interpreted_log_output
  *         for cur_lifecycle_log_index in range(self.life_cycle_num):
  */
-    __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_kp_s_Error_Path_does_not_contain_Intu_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 215, __pyx_L1_error)
+    __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_kp_s_Error_Path_does_not_contain_Intu_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF_SET(__pyx_v_interpreted_log_output, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "imeinterpreter.py":216
+    /* "imeinterpreter.py":306
  *         if self.full_log is None:
  *             interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
  *             return interpreted_log_output             # <<<<<<<<<<<<<<
@@ -7137,7 +9333,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
     __pyx_r = __pyx_v_interpreted_log_output;
     goto __pyx_L0;
 
-    /* "imeinterpreter.py":214
+    /* "imeinterpreter.py":304
  *     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):
  *         interpreted_log_output = ""
  *         if self.full_log is None:             # <<<<<<<<<<<<<<
@@ -7146,16 +9342,16 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
  */
   }
 
-  /* "imeinterpreter.py":217
+  /* "imeinterpreter.py":307
  *             interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
  *             return interpreted_log_output
  *         for cur_lifecycle_log_index in range(self.life_cycle_num):             # <<<<<<<<<<<<<<
  *             cur_lifecycle_log = self.life_cycle_list[cur_lifecycle_log_index]
  *             """
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_life_cycle_num); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 217, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_life_cycle_num); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 217, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 307, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
@@ -7163,9 +9359,9 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
     __pyx_t_4 = 0;
     __pyx_t_5 = NULL;
   } else {
-    __pyx_t_4 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 217, __pyx_L1_error)
+    __pyx_t_4 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 217, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 307, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   for (;;) {
@@ -7174,28 +9370,28 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 217, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 307, __pyx_L1_error)
           #endif
           if (__pyx_t_4 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 217, __pyx_L1_error)
+        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 307, __pyx_L1_error)
         #else
-        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 217, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 307, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         #endif
       } else {
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 217, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 307, __pyx_L1_error)
           #endif
           if (__pyx_t_4 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 217, __pyx_L1_error)
+        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 307, __pyx_L1_error)
         #else
-        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 217, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 307, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         #endif
       }
@@ -7205,7 +9401,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 217, __pyx_L1_error)
+          else __PYX_ERR(0, 307, __pyx_L1_error)
         }
         break;
       }
@@ -7214,34 +9410,34 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
     __Pyx_XDECREF_SET(__pyx_v_cur_lifecycle_log_index, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "imeinterpreter.py":218
+    /* "imeinterpreter.py":308
  *             return interpreted_log_output
  *         for cur_lifecycle_log_index in range(self.life_cycle_num):
  *             cur_lifecycle_log = self.life_cycle_list[cur_lifecycle_log_index]             # <<<<<<<<<<<<<<
  *             """
  *             +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_life_cycle_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 218, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_life_cycle_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 308, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_t_3, __pyx_v_cur_lifecycle_log_index); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 218, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_t_3, __pyx_v_cur_lifecycle_log_index); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 308, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_XDECREF_SET(__pyx_v_cur_lifecycle_log, __pyx_t_6);
     __pyx_t_6 = 0;
 
-    /* "imeinterpreter.py":224
+    /* "imeinterpreter.py":314
  *             +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *             """
  *             interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log.boot_reason)             # <<<<<<<<<<<<<<
  *             interpreted_log_output += '\n'
  *             interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_constructinterpretedlog); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 224, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_constructinterpretedlog); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_write_ime_service_start_by_reaso); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 224, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_write_ime_service_start_by_reaso); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_cur_lifecycle_log, __pyx_n_s_boot_reason); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 224, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_cur_lifecycle_log, __pyx_n_s_boot_reason); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_8 = NULL;
     __pyx_t_9 = 0;
@@ -7262,36 +9458,36 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
       __pyx_t_6 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+1-__pyx_t_9, 1+__pyx_t_9);
       __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 224, __pyx_L1_error)
+      if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 314, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
-    __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 224, __pyx_L1_error)
+    __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF_SET(__pyx_v_interpreted_log_output, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "imeinterpreter.py":225
+    /* "imeinterpreter.py":315
  *             """
  *             interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log.boot_reason)
  *             interpreted_log_output += '\n'             # <<<<<<<<<<<<<<
  *             interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
  * 
  */
-    __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_kp_s__9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 225, __pyx_L1_error)
+    __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_kp_s__10); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 315, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF_SET(__pyx_v_interpreted_log_output, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "imeinterpreter.py":226
+    /* "imeinterpreter.py":316
  *             interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log.boot_reason)
  *             interpreted_log_output += '\n'
  *             interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)             # <<<<<<<<<<<<<<
  * 
  *         return interpreted_log_output
  */
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_cur_lifecycle_log, __pyx_n_s_generate_ems_lifecycle_log_outpu); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 226, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_cur_lifecycle_log, __pyx_n_s_generate_ems_lifecycle_log_outpu); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 316, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __pyx_t_3 = NULL;
     __pyx_t_9 = 0;
@@ -7311,17 +9507,17 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
       PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_show_not_expired_subgraph};
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_9, 1+__pyx_t_9);
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 226, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 316, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
-    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 226, __pyx_L1_error)
+    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 316, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF_SET(__pyx_v_interpreted_log_output, __pyx_t_6);
     __pyx_t_6 = 0;
 
-    /* "imeinterpreter.py":217
+    /* "imeinterpreter.py":307
  *             interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
  *             return interpreted_log_output
  *         for cur_lifecycle_log_index in range(self.life_cycle_num):             # <<<<<<<<<<<<<<
@@ -7331,7 +9527,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "imeinterpreter.py":228
+  /* "imeinterpreter.py":318
  *             interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
  * 
  *         return interpreted_log_output             # <<<<<<<<<<<<<<
@@ -7343,7 +9539,7 @@ static PyObject *__pyx_pf_14imeinterpreter_14ImeInterpreter_10generate_ime_inter
   __pyx_r = __pyx_v_interpreted_log_output;
   goto __pyx_L0;
 
-  /* "imeinterpreter.py":212
+  /* "imeinterpreter.py":302
  *                                         ems_agent_restart_reasons[index_lifecycle_log]))
  * 
  *     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):             # <<<<<<<<<<<<<<
@@ -7385,8 +9581,12 @@ static PyMethodDef __pyx_methods[] = {
 
 static int __Pyx_CreateStringTabAndInitStrings(void) {
   __Pyx_StringTabEntry __pyx_string_tab[] = {
+    {&__pyx_n_s_AppWorkload, __pyx_k_AppWorkload, sizeof(__pyx_k_AppWorkload), 0, 0, 1, 1},
+    {&__pyx_kp_s_AppWorkload_log, __pyx_k_AppWorkload_log, sizeof(__pyx_k_AppWorkload_log), 0, 0, 1, 0},
+    {&__pyx_kp_s_AppWorkload_log_2, __pyx_k_AppWorkload_log_2, sizeof(__pyx_k_AppWorkload_log_2), 0, 0, 1, 0},
     {&__pyx_kp_s_Device_Reboot, __pyx_k_Device_Reboot, sizeof(__pyx_k_Device_Reboot), 0, 0, 1, 0},
     {&__pyx_n_s_EMSLifeCycle, __pyx_k_EMSLifeCycle, sizeof(__pyx_k_EMSLifeCycle), 0, 0, 1, 1},
+    {&__pyx_kp_s_Error_Path_does_not_contain_AppW, __pyx_k_Error_Path_does_not_contain_AppW, sizeof(__pyx_k_Error_Path_does_not_contain_AppW), 0, 0, 1, 0},
     {&__pyx_kp_s_Error_Path_does_not_contain_Intu, __pyx_k_Error_Path_does_not_contain_Intu, sizeof(__pyx_k_Error_Path_does_not_contain_Intu), 0, 0, 1, 0},
     {&__pyx_kp_s_Error_Path_does_not_contain_Intu_2, __pyx_k_Error_Path_does_not_contain_Intu_2, sizeof(__pyx_k_Error_Path_does_not_contain_Intu_2), 0, 0, 1, 0},
     {&__pyx_kp_s_Error_Path_does_not_contain_Intu_3, __pyx_k_Error_Path_does_not_contain_Intu_3, sizeof(__pyx_k_Error_Path_does_not_contain_Intu_3), 0, 0, 1, 0},
@@ -7397,7 +9597,11 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_ImeInterpreter___init, __pyx_k_ImeInterpreter___init, sizeof(__pyx_k_ImeInterpreter___init), 0, 0, 1, 1},
     {&__pyx_n_s_ImeInterpreter_generate_ime_inte, __pyx_k_ImeInterpreter_generate_ime_inte, sizeof(__pyx_k_ImeInterpreter_generate_ime_inte), 0, 0, 1, 1},
     {&__pyx_n_s_ImeInterpreter_initialize_life_c, __pyx_k_ImeInterpreter_initialize_life_c, sizeof(__pyx_k_ImeInterpreter_initialize_life_c), 0, 0, 1, 1},
+    {&__pyx_n_s_ImeInterpreter_load_all_app_work, __pyx_k_ImeInterpreter_load_all_app_work, sizeof(__pyx_k_ImeInterpreter_load_all_app_work), 0, 0, 1, 1},
     {&__pyx_n_s_ImeInterpreter_load_all_ime_logs, __pyx_k_ImeInterpreter_load_all_ime_logs, sizeof(__pyx_k_ImeInterpreter_load_all_ime_logs), 0, 0, 1, 1},
+    {&__pyx_n_s_ImeInterpreter_load_full_logs, __pyx_k_ImeInterpreter_load_full_logs, sizeof(__pyx_k_ImeInterpreter_load_full_logs), 0, 0, 1, 1},
+    {&__pyx_n_s_ImeInterpreter_merge_ime_and_app, __pyx_k_ImeInterpreter_merge_ime_and_app, sizeof(__pyx_k_ImeInterpreter_merge_ime_and_app), 0, 0, 1, 1},
+    {&__pyx_n_s_ImeInterpreter_open_log_file, __pyx_k_ImeInterpreter_open_log_file, sizeof(__pyx_k_ImeInterpreter_open_log_file), 0, 0, 1, 1},
     {&__pyx_n_s_ImeInterpreter_save_log_to_servi, __pyx_k_ImeInterpreter_save_log_to_servi, sizeof(__pyx_k_ImeInterpreter_save_log_to_servi), 0, 0, 1, 1},
     {&__pyx_n_s_ImeInterpreter_separate_log_into, __pyx_k_ImeInterpreter_separate_log_into, sizeof(__pyx_k_ImeInterpreter_separate_log_into), 0, 0, 1, 1},
     {&__pyx_kp_s_IntuneManagementExtension_log, __pyx_k_IntuneManagementExtension_log, sizeof(__pyx_k_IntuneManagementExtension_log), 0, 0, 1, 0},
@@ -7409,18 +9613,26 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_kp_s_Service_Manual_Restart, __pyx_k_Service_Manual_Restart, sizeof(__pyx_k_Service_Manual_Restart), 0, 0, 1, 0},
     {&__pyx_kp_s_Unable_to_load_log_via_ISO_8859, __pyx_k_Unable_to_load_log_via_ISO_8859, sizeof(__pyx_k_Unable_to_load_log_via_ISO_8859), 0, 0, 1, 0},
     {&__pyx_kp_s_Unable_to_load_log_via_utf_8, __pyx_k_Unable_to_load_log_via_utf_8, sizeof(__pyx_k_Unable_to_load_log_via_utf_8), 0, 0, 1, 0},
-    {&__pyx_n_s__10, __pyx_k__10, sizeof(__pyx_k__10), 0, 0, 1, 1},
-    {&__pyx_n_s__24, __pyx_k__24, sizeof(__pyx_k__24), 0, 0, 1, 1},
+    {&__pyx_kp_s__10, __pyx_k__10, sizeof(__pyx_k__10), 0, 0, 1, 0},
+    {&__pyx_n_s__11, __pyx_k__11, sizeof(__pyx_k__11), 0, 0, 1, 1},
+    {&__pyx_kp_s__3, __pyx_k__3, sizeof(__pyx_k__3), 0, 0, 1, 0},
+    {&__pyx_n_s__33, __pyx_k__33, sizeof(__pyx_k__33), 0, 0, 1, 1},
     {&__pyx_kp_s__5, __pyx_k__5, sizeof(__pyx_k__5), 0, 0, 1, 0},
-    {&__pyx_kp_s__8, __pyx_k__8, sizeof(__pyx_k__8), 0, 0, 1, 0},
-    {&__pyx_kp_s__9, __pyx_k__9, sizeof(__pyx_k__9), 0, 0, 1, 0},
     {&__pyx_n_s_agent_life_ending_reason, __pyx_k_agent_life_ending_reason, sizeof(__pyx_k_agent_life_ending_reason), 0, 0, 1, 1},
     {&__pyx_n_s_agent_lifecycle_log_index, __pyx_k_agent_lifecycle_log_index, sizeof(__pyx_k_agent_lifecycle_log_index), 0, 0, 1, 1},
     {&__pyx_n_s_agent_next_start_time, __pyx_k_agent_next_start_time, sizeof(__pyx_k_agent_next_start_time), 0, 0, 1, 1},
     {&__pyx_n_s_agent_next_start_time_datetime, __pyx_k_agent_next_start_time_datetime, sizeof(__pyx_k_agent_next_start_time_datetime), 0, 0, 1, 1},
     {&__pyx_n_s_agent_stop_time, __pyx_k_agent_stop_time, sizeof(__pyx_k_agent_stop_time), 0, 0, 1, 1},
     {&__pyx_n_s_agent_stop_time_datetime, __pyx_k_agent_stop_time_datetime, sizeof(__pyx_k_agent_stop_time_datetime), 0, 0, 1, 1},
+    {&__pyx_n_s_app_workload_log, __pyx_k_app_workload_log, sizeof(__pyx_k_app_workload_log), 0, 0, 1, 1},
+    {&__pyx_n_s_app_workload_log_exists, __pyx_k_app_workload_log_exists, sizeof(__pyx_k_app_workload_log_exists), 0, 0, 1, 1},
+    {&__pyx_n_s_app_workload_log_file_path, __pyx_k_app_workload_log_file_path, sizeof(__pyx_k_app_workload_log_file_path), 0, 0, 1, 1},
+    {&__pyx_n_s_app_workload_log_len, __pyx_k_app_workload_log_len, sizeof(__pyx_k_app_workload_log_len), 0, 0, 1, 1},
+    {&__pyx_n_s_app_workload_log_lower_file_path, __pyx_k_app_workload_log_lower_file_path, sizeof(__pyx_k_app_workload_log_lower_file_path), 0, 0, 1, 1},
+    {&__pyx_n_s_app_workload_logs, __pyx_k_app_workload_logs, sizeof(__pyx_k_app_workload_logs), 0, 0, 1, 1},
     {&__pyx_n_s_append, __pyx_k_append, sizeof(__pyx_k_append), 0, 0, 1, 1},
+    {&__pyx_kp_s_appworkload_log, __pyx_k_appworkload_log, sizeof(__pyx_k_appworkload_log), 0, 0, 1, 0},
+    {&__pyx_kp_s_appworkload_log_2, __pyx_k_appworkload_log_2, sizeof(__pyx_k_appworkload_log_2), 0, 0, 1, 0},
     {&__pyx_n_s_asyncio_coroutines, __pyx_k_asyncio_coroutines, sizeof(__pyx_k_asyncio_coroutines), 0, 0, 1, 1},
     {&__pyx_n_s_boot_reason, __pyx_k_boot_reason, sizeof(__pyx_k_boot_reason), 0, 0, 1, 1},
     {&__pyx_n_s_class_getitem, __pyx_k_class_getitem, sizeof(__pyx_k_class_getitem), 0, 0, 1, 1},
@@ -7433,9 +9645,8 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_cur_line, __pyx_k_cur_line, sizeof(__pyx_k_cur_line), 0, 0, 1, 1},
     {&__pyx_n_s_cur_start_line_top_index, __pyx_k_cur_start_line_top_index, sizeof(__pyx_k_cur_start_line_top_index), 0, 0, 1, 1},
     {&__pyx_n_s_cur_stop_line_top_index, __pyx_k_cur_stop_line_top_index, sizeof(__pyx_k_cur_stop_line_top_index), 0, 0, 1, 1},
+    {&__pyx_n_s_current_app_workload_log_as_line, __pyx_k_current_app_workload_log_as_line, sizeof(__pyx_k_current_app_workload_log_as_line), 0, 0, 1, 1},
     {&__pyx_n_s_current_ime_log_as_lines, __pyx_k_current_ime_log_as_lines, sizeof(__pyx_k_current_ime_log_as_lines), 0, 0, 1, 1},
-    {&__pyx_n_s_current_log_as_lines, __pyx_k_current_log_as_lines, sizeof(__pyx_k_current_log_as_lines), 0, 0, 1, 1},
-    {&__pyx_n_s_current_log_file, __pyx_k_current_log_file, sizeof(__pyx_k_current_log_file), 0, 0, 1, 1},
     {&__pyx_n_s_current_log_file_path, __pyx_k_current_log_file_path, sizeof(__pyx_k_current_log_file_path), 0, 0, 1, 1},
     {&__pyx_n_s_datetime, __pyx_k_datetime, sizeof(__pyx_k_datetime), 0, 0, 1, 1},
     {&__pyx_n_s_dict, __pyx_k_dict, sizeof(__pyx_k_dict), 0, 0, 1, 1},
@@ -7460,7 +9671,11 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_generate_ime_interpreter_log_out, __pyx_k_generate_ime_interpreter_log_out, sizeof(__pyx_k_generate_ime_interpreter_log_out), 0, 0, 1, 1},
     {&__pyx_n_s_get_timestamp_by_line, __pyx_k_get_timestamp_by_line, sizeof(__pyx_k_get_timestamp_by_line), 0, 0, 1, 1},
     {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
+    {&__pyx_n_s_ime_log, __pyx_k_ime_log, sizeof(__pyx_k_ime_log), 0, 0, 1, 1},
+    {&__pyx_n_s_ime_log_file_lower_path, __pyx_k_ime_log_file_lower_path, sizeof(__pyx_k_ime_log_file_lower_path), 0, 0, 1, 1},
     {&__pyx_n_s_ime_log_file_path, __pyx_k_ime_log_file_path, sizeof(__pyx_k_ime_log_file_path), 0, 0, 1, 1},
+    {&__pyx_n_s_ime_log_len, __pyx_k_ime_log_len, sizeof(__pyx_k_ime_log_len), 0, 0, 1, 1},
+    {&__pyx_n_s_ime_logs, __pyx_k_ime_logs, sizeof(__pyx_k_ime_logs), 0, 0, 1, 1},
     {&__pyx_n_s_imeinterpreter, __pyx_k_imeinterpreter, sizeof(__pyx_k_imeinterpreter), 0, 0, 1, 1},
     {&__pyx_kp_s_imeinterpreter_py, __pyx_k_imeinterpreter_py, sizeof(__pyx_k_imeinterpreter_py), 0, 0, 1, 0},
     {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
@@ -7479,22 +9694,33 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_isfile, __pyx_k_isfile, sizeof(__pyx_k_isfile), 0, 0, 1, 1},
     {&__pyx_n_s_last_start_time, __pyx_k_last_start_time, sizeof(__pyx_k_last_start_time), 0, 0, 1, 1},
     {&__pyx_n_s_last_stop_time, __pyx_k_last_stop_time, sizeof(__pyx_k_last_stop_time), 0, 0, 1, 1},
+    {&__pyx_n_s_left, __pyx_k_left, sizeof(__pyx_k_left), 0, 0, 1, 1},
+    {&__pyx_n_s_left_line, __pyx_k_left_line, sizeof(__pyx_k_left_line), 0, 0, 1, 1},
+    {&__pyx_n_s_left_time, __pyx_k_left_time, sizeof(__pyx_k_left_time), 0, 0, 1, 1},
     {&__pyx_n_s_life_cycle_list, __pyx_k_life_cycle_list, sizeof(__pyx_k_life_cycle_list), 0, 0, 1, 1},
     {&__pyx_n_s_life_cycle_num, __pyx_k_life_cycle_num, sizeof(__pyx_k_life_cycle_num), 0, 0, 1, 1},
     {&__pyx_n_s_listdir, __pyx_k_listdir, sizeof(__pyx_k_listdir), 0, 0, 1, 1},
+    {&__pyx_n_s_load_all_app_workload_logs, __pyx_k_load_all_app_workload_logs, sizeof(__pyx_k_load_all_app_workload_logs), 0, 0, 1, 1},
     {&__pyx_n_s_load_all_ime_logs, __pyx_k_load_all_ime_logs, sizeof(__pyx_k_load_all_ime_logs), 0, 0, 1, 1},
+    {&__pyx_n_s_load_full_logs, __pyx_k_load_full_logs, sizeof(__pyx_k_load_full_logs), 0, 0, 1, 1},
     {&__pyx_kp_s_log, __pyx_k_log, sizeof(__pyx_k_log), 0, 0, 1, 0},
+    {&__pyx_n_s_log_as_lines, __pyx_k_log_as_lines, sizeof(__pyx_k_log_as_lines), 0, 0, 1, 1},
+    {&__pyx_n_s_log_file, __pyx_k_log_file, sizeof(__pyx_k_log_file), 0, 0, 1, 1},
     {&__pyx_n_s_log_folder_path, __pyx_k_log_folder_path, sizeof(__pyx_k_log_folder_path), 0, 0, 1, 1},
+    {&__pyx_n_s_log_path, __pyx_k_log_path, sizeof(__pyx_k_log_path), 0, 0, 1, 1},
     {&__pyx_n_s_logprocessinglibrary, __pyx_k_logprocessinglibrary, sizeof(__pyx_k_logprocessinglibrary), 0, 0, 1, 1},
     {&__pyx_n_s_lower, __pyx_k_lower, sizeof(__pyx_k_lower), 0, 0, 1, 1},
     {&__pyx_kp_s_m_d_Y_H_M_S, __pyx_k_m_d_Y_H_M_S, sizeof(__pyx_k_m_d_Y_H_M_S), 0, 0, 1, 0},
     {&__pyx_n_s_made_up_line, __pyx_k_made_up_line, sizeof(__pyx_k_made_up_line), 0, 0, 1, 1},
     {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
+    {&__pyx_n_s_merge_ime_and_app_workload_logs, __pyx_k_merge_ime_and_app_workload_logs, sizeof(__pyx_k_merge_ime_and_app_workload_logs), 0, 0, 1, 1},
     {&__pyx_n_s_metaclass, __pyx_k_metaclass, sizeof(__pyx_k_metaclass), 0, 0, 1, 1},
     {&__pyx_n_s_mode, __pyx_k_mode, sizeof(__pyx_k_mode), 0, 0, 1, 1},
     {&__pyx_n_s_module, __pyx_k_module, sizeof(__pyx_k_module), 0, 0, 1, 1},
+    {&__pyx_n_s_most_recent_log_file_as_lines, __pyx_k_most_recent_log_file_as_lines, sizeof(__pyx_k_most_recent_log_file_as_lines), 0, 0, 1, 1},
     {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
     {&__pyx_n_s_open, __pyx_k_open, sizeof(__pyx_k_open), 0, 0, 1, 1},
+    {&__pyx_n_s_open_log_file, __pyx_k_open_log_file, sizeof(__pyx_k_open_log_file), 0, 0, 1, 1},
     {&__pyx_n_s_os, __pyx_k_os, sizeof(__pyx_k_os), 0, 0, 1, 1},
     {&__pyx_n_s_path, __pyx_k_path, sizeof(__pyx_k_path), 0, 0, 1, 1},
     {&__pyx_n_s_post_part_start_index, __pyx_k_post_part_start_index, sizeof(__pyx_k_post_part_start_index), 0, 0, 1, 1},
@@ -7505,6 +9731,9 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
     {&__pyx_n_s_readlines, __pyx_k_readlines, sizeof(__pyx_k_readlines), 0, 0, 1, 1},
     {&__pyx_n_s_remove, __pyx_k_remove, sizeof(__pyx_k_remove), 0, 0, 1, 1},
+    {&__pyx_n_s_right, __pyx_k_right, sizeof(__pyx_k_right), 0, 0, 1, 1},
+    {&__pyx_n_s_right_line, __pyx_k_right_line, sizeof(__pyx_k_right_line), 0, 0, 1, 1},
+    {&__pyx_n_s_right_time, __pyx_k_right_time, sizeof(__pyx_k_right_time), 0, 0, 1, 1},
     {&__pyx_n_s_save_log_to_service, __pyx_k_save_log_to_service, sizeof(__pyx_k_save_log_to_service), 0, 0, 1, 1},
     {&__pyx_n_s_seconds, __pyx_k_seconds, sizeof(__pyx_k_seconds), 0, 0, 1, 1},
     {&__pyx_n_s_self, __pyx_k_self, sizeof(__pyx_k_self), 0, 0, 1, 1},
@@ -7529,9 +9758,9 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
 }
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 41, __pyx_L1_error)
-  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) __PYX_ERR(0, 45, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) __PYX_ERR(0, 38, __pyx_L1_error)
+  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 42, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 189, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -7542,71 +9771,82 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "imeinterpreter.py":41
- *             ime_log_file_path = self.log_folder_path + '\\intunemanagementextension.log'
- *             if not (os.path.isfile(ime_log_file_path)):
- *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")             # <<<<<<<<<<<<<<
- *                 return None
- *             #exit(1100)
- */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_Error_Path_does_not_contain_Intu); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 41, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple_);
-  __Pyx_GIVEREF(__pyx_tuple_);
-
-  /* "imeinterpreter.py":49
- *             current_log_file.close()
+  /* "imeinterpreter.py":42
+ *             log_file.close()
  *         except:
  *             print("Unable to load log via utf-8")             # <<<<<<<<<<<<<<
  *             try:
- *                 current_log_file = open(ime_log_file_path, mode='r', encoding='ISO-8859-1')
+ *                 log_file = open(log_path, mode='r', encoding='ISO-8859-1')
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_load_log_via_utf_8); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_Unable_to_load_log_via_utf_8); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 42, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple_);
+  __Pyx_GIVEREF(__pyx_tuple_);
+
+  /* "imeinterpreter.py":48
+ *                 log_file.close()
+ *             except:
+ *                 print("Unable to load log via ISO-8859-1")             # <<<<<<<<<<<<<<
+ *                 log_as_lines = ""
+ *         return log_as_lines
+ */
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_load_log_via_ISO_8859); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "imeinterpreter.py":55
- *                 current_log_file.close()
- *             except:
- *                 print("Unable to load log via ISO-8859-1")             # <<<<<<<<<<<<<<
- * 
- *         full_log = []
- */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_load_log_via_ISO_8859); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 55, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__3);
-  __Pyx_GIVEREF(__pyx_tuple__3);
-
-  /* "imeinterpreter.py":69
+  /* "imeinterpreter.py":63
  *             dir_list.remove('IntuneManagementExtension.log')
  *         else:
  *             print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.1")             # <<<<<<<<<<<<<<
  *             return None
- *         #print(dir_list)
+ *         # print(dir_list)
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_Error_Path_does_not_contain_Intu_2); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_Error_Path_does_not_contain_Intu); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "imeinterpreter.py":187
+  /* "imeinterpreter.py":84
+ *             ime_log_file_path = ime_log_file_lower_path
+ *             if not (os.path.isfile(ime_log_file_lower_path)):
+ *                 print("Error! Path does not contain IntuneManagementExtension.log! Exit 1.0")             # <<<<<<<<<<<<<<
+ *                 return None
+ *             # exit(1100)
+ */
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_Error_Path_does_not_contain_Intu_2); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 84, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__6);
+  __Pyx_GIVEREF(__pyx_tuple__6);
+
+  /* "imeinterpreter.py":160
+ *             app_workload_log_file_path = app_workload_log_lower_file_path
+ *             if not (os.path.isfile(app_workload_log_lower_file_path)):
+ *                 print("Error! Path does not contain AppWorkload.log! Exit 1.3")             # <<<<<<<<<<<<<<
+ *                 return full_log
+ *             # exit(1100)
+ */
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_Error_Path_does_not_contain_AppW); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 160, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
+
+  /* "imeinterpreter.py":277
  *             if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:
  *                 agent_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
  *                 agent_stop_time_datetime = datetime.datetime.strptime(agent_stop_time[:-4], '%m-%d-%Y %H:%M:%S')             # <<<<<<<<<<<<<<
  *                 agent_next_start_time = logprocessinglibrary.get_timestamp_by_line(
  *                     self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index + 1]])
  */
-  __pyx_slice__6 = PySlice_New(Py_None, __pyx_int_neg_4, Py_None); if (unlikely(!__pyx_slice__6)) __PYX_ERR(0, 187, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__6);
-  __Pyx_GIVEREF(__pyx_slice__6);
+  __pyx_slice__8 = PySlice_New(Py_None, __pyx_int_neg_4, Py_None); if (unlikely(!__pyx_slice__8)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__8);
+  __Pyx_GIVEREF(__pyx_slice__8);
 
-  /* "imeinterpreter.py":205
+  /* "imeinterpreter.py":295
  *             self.separate_log_into_service_lifecycle()
  *         if len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons):
  *             print("Error len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons)")             # <<<<<<<<<<<<<<
  *             return None
  *             # exit(1000)
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_Error_len_ems_agent_lifecycle_lo); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 205, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__7);
-  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_Error_len_ems_agent_lifecycle_lo); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
 
   /* "imeinterpreter.py":24
  * 
@@ -7615,10 +9855,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         self.log_folder_path = log_folder_path
  *         self.life_cycle_list = []
  */
-  __pyx_tuple__11 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 24, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__11);
-  __Pyx_GIVEREF(__pyx_tuple__11);
-  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_init, 24, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 24, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_log_folder_path); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 24, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__12);
+  __Pyx_GIVEREF(__pyx_tuple__12);
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_init, 24, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 24, __pyx_L1_error)
 
   /* "imeinterpreter.py":32
  *         self.life_cycle_num = len(self.life_cycle_list)
@@ -7627,61 +9867,109 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         # saving uploaded log locally for further improvement
  *         pass
  */
-  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 32, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__13);
-  __Pyx_GIVEREF(__pyx_tuple__13);
-  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_save_log_to_service, 32, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(0, 32, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 32, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__14);
+  __Pyx_GIVEREF(__pyx_tuple__14);
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_save_log_to_service, 32, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 32, __pyx_L1_error)
 
   /* "imeinterpreter.py":36
  *         pass
  * 
- *     def load_all_ime_logs(self):             # <<<<<<<<<<<<<<
- *         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
- *         if not (os.path.isfile(ime_log_file_path)):
+ *     def open_log_file(self, log_path):             # <<<<<<<<<<<<<<
+ *         try:
+ *             log_file = open(log_path, mode='r', encoding='utf-8-sig')
  */
-  __pyx_tuple__15 = PyTuple_Pack(12, __pyx_n_s_self, __pyx_n_s_ime_log_file_path, __pyx_n_s_current_log_file, __pyx_n_s_current_ime_log_as_lines, __pyx_n_s_full_log, __pyx_n_s_dir_list, __pyx_n_s_each_log, __pyx_n_s_current_log_file_path, __pyx_n_s_current_log_as_lines, __pyx_n_s_post_part_start_index, __pyx_n_s_made_up_line, __pyx_n_s_i); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 36, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__15);
-  __Pyx_GIVEREF(__pyx_tuple__15);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_load_all_ime_logs, 36, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_tuple__16 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_log_path, __pyx_n_s_log_file, __pyx_n_s_log_as_lines); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__16);
+  __Pyx_GIVEREF(__pyx_tuple__16);
+  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_open_log_file, 36, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 36, __pyx_L1_error)
 
-  /* "imeinterpreter.py":93
+  /* "imeinterpreter.py":52
+ *         return log_as_lines
+ * 
+ *     def load_all_ime_logs(self):             # <<<<<<<<<<<<<<
+ *         # Listing older IME logs
+ *         dir_list = os.listdir(self.log_folder_path)
+ */
+  __pyx_tuple__18 = PyTuple_Pack(12, __pyx_n_s_self, __pyx_n_s_dir_list, __pyx_n_s_full_log, __pyx_n_s_each_log, __pyx_n_s_current_log_file_path, __pyx_n_s_current_ime_log_as_lines, __pyx_n_s_ime_log_file_path, __pyx_n_s_ime_log_file_lower_path, __pyx_n_s_most_recent_log_file_as_lines, __pyx_n_s_post_part_start_index, __pyx_n_s_made_up_line, __pyx_n_s_i); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__18);
+  __Pyx_GIVEREF(__pyx_tuple__18);
+  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_load_all_ime_logs, 52, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 52, __pyx_L1_error)
+
+  /* "imeinterpreter.py":96
  *         return full_log
+ * 
+ *     def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):             # <<<<<<<<<<<<<<
+ *         full_log = []
+ *         left, right = 0, 0
+ */
+  __pyx_tuple__20 = PyTuple_Pack(12, __pyx_n_s_self, __pyx_n_s_ime_logs, __pyx_n_s_app_workload_logs, __pyx_n_s_full_log, __pyx_n_s_left, __pyx_n_s_right, __pyx_n_s_ime_log_len, __pyx_n_s_app_workload_log_len, __pyx_n_s_left_line, __pyx_n_s_right_line, __pyx_n_s_left_time, __pyx_n_s_right_time); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__20);
+  __Pyx_GIVEREF(__pyx_tuple__20);
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_merge_ime_and_app_workload_logs, 96, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 96, __pyx_L1_error)
+
+  /* "imeinterpreter.py":124
+ *         return full_log
+ * 
+ *     def load_all_app_workload_logs(self):             # <<<<<<<<<<<<<<
+ *         """
+ *         Fix the change in log structure in 2407 that Win32 log entries are separated into AppWorkload.log
+ */
+  __pyx_tuple__22 = PyTuple_Pack(10, __pyx_n_s_self, __pyx_n_s_app_workload_log_file_path, __pyx_n_s_app_workload_log_lower_file_path, __pyx_n_s_dir_list, __pyx_n_s_full_log, __pyx_n_s_each_log, __pyx_n_s_current_log_file_path, __pyx_n_s_current_app_workload_log_as_line, __pyx_n_s_most_recent_log_file_as_lines, __pyx_n_s_i); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 124, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__22);
+  __Pyx_GIVEREF(__pyx_tuple__22);
+  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_load_all_app_workload_logs, 124, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 124, __pyx_L1_error)
+
+  /* "imeinterpreter.py":168
+ *         return full_log
+ * 
+ *     def load_full_logs(self):             # <<<<<<<<<<<<<<
+ *         app_workload_log_file_path = self.log_folder_path + '\\AppWorkload.log'
+ *         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
+ */
+  __pyx_tuple__24 = PyTuple_Pack(7, __pyx_n_s_self, __pyx_n_s_app_workload_log_file_path, __pyx_n_s_app_workload_log_lower_file_path, __pyx_n_s_app_workload_log_exists, __pyx_n_s_full_log, __pyx_n_s_ime_log, __pyx_n_s_app_workload_log); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 168, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__24);
+  __Pyx_GIVEREF(__pyx_tuple__24);
+  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_load_full_logs, 168, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 168, __pyx_L1_error)
+
+  /* "imeinterpreter.py":183
+ *             return full_log
  * 
  *     def separate_log_into_service_lifecycle(self):             # <<<<<<<<<<<<<<
  *         ems_agent_start_lines = []
  *         ems_agent_stop_lines = []
  */
-  __pyx_tuple__17 = PyTuple_Pack(25, __pyx_n_s_self, __pyx_n_s_ems_agent_start_lines, __pyx_n_s_ems_agent_stop_lines, __pyx_n_s_ems_agent_start_string, __pyx_n_s_ems_agent_stop_string, __pyx_n_s_full_log_len, __pyx_n_s_index, __pyx_n_s_cur_line, __pyx_n_s_start_lines_len, __pyx_n_s_stop_lines_len, __pyx_n_s_last_start_time, __pyx_n_s_last_stop_time, __pyx_n_s_ems_agent_sorted_start_lines, __pyx_n_s_ems_agent_sorted_stop_lines, __pyx_n_s_start_line_index, __pyx_n_s_stop_line_index, __pyx_n_s_cur_start_line_top_index, __pyx_n_s_cur_stop_line_top_index, __pyx_n_s_ems_agent_lifecycle_log_list, __pyx_n_s_agent_life_ending_reason, __pyx_n_s_agent_lifecycle_log_index, __pyx_n_s_agent_stop_time, __pyx_n_s_agent_stop_time_datetime, __pyx_n_s_agent_next_start_time, __pyx_n_s_agent_next_start_time_datetime); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__17);
-  __Pyx_GIVEREF(__pyx_tuple__17);
-  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 25, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_separate_log_into_service_lifecy, 93, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __pyx_tuple__26 = PyTuple_Pack(25, __pyx_n_s_self, __pyx_n_s_ems_agent_start_lines, __pyx_n_s_ems_agent_stop_lines, __pyx_n_s_ems_agent_start_string, __pyx_n_s_ems_agent_stop_string, __pyx_n_s_full_log_len, __pyx_n_s_index, __pyx_n_s_cur_line, __pyx_n_s_start_lines_len, __pyx_n_s_stop_lines_len, __pyx_n_s_last_start_time, __pyx_n_s_last_stop_time, __pyx_n_s_ems_agent_sorted_start_lines, __pyx_n_s_ems_agent_sorted_stop_lines, __pyx_n_s_start_line_index, __pyx_n_s_stop_line_index, __pyx_n_s_cur_start_line_top_index, __pyx_n_s_cur_stop_line_top_index, __pyx_n_s_ems_agent_lifecycle_log_list, __pyx_n_s_agent_life_ending_reason, __pyx_n_s_agent_lifecycle_log_index, __pyx_n_s_agent_stop_time, __pyx_n_s_agent_stop_time_datetime, __pyx_n_s_agent_next_start_time, __pyx_n_s_agent_next_start_time_datetime); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__26);
+  __Pyx_GIVEREF(__pyx_tuple__26);
+  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 25, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_separate_log_into_service_lifecy, 183, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 183, __pyx_L1_error)
 
-  /* "imeinterpreter.py":199
+  /* "imeinterpreter.py":289
  *         return ems_agent_lifecycle_log_list, agent_life_ending_reason
  * 
  *     def initialize_life_cycle_list(self):             # <<<<<<<<<<<<<<
  *         if self.full_log is None:
  *             return None
  */
-  __pyx_tuple__19 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_ems_agent_lifecycle_log_list, __pyx_n_s_ems_agent_restart_reasons, __pyx_n_s_index_lifecycle_log); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 199, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__19);
-  __Pyx_GIVEREF(__pyx_tuple__19);
-  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_initialize_life_cycle_list, 199, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 199, __pyx_L1_error)
+  __pyx_tuple__28 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_ems_agent_lifecycle_log_list, __pyx_n_s_ems_agent_restart_reasons, __pyx_n_s_index_lifecycle_log); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 289, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__28);
+  __Pyx_GIVEREF(__pyx_tuple__28);
+  __pyx_codeobj__29 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_initialize_life_cycle_list, 289, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__29)) __PYX_ERR(0, 289, __pyx_L1_error)
 
-  /* "imeinterpreter.py":212
+  /* "imeinterpreter.py":302
  *                                         ems_agent_restart_reasons[index_lifecycle_log]))
  * 
  *     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):             # <<<<<<<<<<<<<<
  *         interpreted_log_output = ""
  *         if self.full_log is None:
  */
-  __pyx_tuple__21 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_show_not_expired_subgraph, __pyx_n_s_interpreted_log_output, __pyx_n_s_cur_lifecycle_log_index, __pyx_n_s_cur_lifecycle_log); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 212, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__21);
-  __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_generate_ime_interpreter_log_out, 212, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 212, __pyx_L1_error)
-  __pyx_tuple__23 = PyTuple_Pack(1, ((PyObject *)Py_False)); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 212, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__23);
-  __Pyx_GIVEREF(__pyx_tuple__23);
+  __pyx_tuple__30 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_show_not_expired_subgraph, __pyx_n_s_interpreted_log_output, __pyx_n_s_cur_lifecycle_log_index, __pyx_n_s_cur_lifecycle_log); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(0, 302, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__30);
+  __Pyx_GIVEREF(__pyx_tuple__30);
+  __pyx_codeobj__31 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__30, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_imeinterpreter_py, __pyx_n_s_generate_ime_interpreter_log_out, 302, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__31)) __PYX_ERR(0, 302, __pyx_L1_error)
+  __pyx_tuple__32 = PyTuple_Pack(1, ((PyObject *)Py_False)); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(0, 302, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__32);
+  __Pyx_GIVEREF(__pyx_tuple__32);
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -8128,7 +10416,7 @@ if (!__Pyx_RefNanny) {
  *         self.log_folder_path = log_folder_path
  *         self.life_cycle_list = []
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_1__init__, 0, __pyx_n_s_ImeInterpreter___init, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 24, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_1__init__, 0, __pyx_n_s_ImeInterpreter___init, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 24, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_init, __pyx_t_3) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -8140,7 +10428,7 @@ if (!__Pyx_RefNanny) {
  *         # saving uploaded log locally for further improvement
  *         pass
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_3save_log_to_service, 0, __pyx_n_s_ImeInterpreter_save_log_to_servi, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__14)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 32, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_3save_log_to_service, 0, __pyx_n_s_ImeInterpreter_save_log_to_servi, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__15)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 32, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_save_log_to_service, __pyx_t_3) < 0) __PYX_ERR(0, 32, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -8148,50 +10436,98 @@ if (!__Pyx_RefNanny) {
   /* "imeinterpreter.py":36
  *         pass
  * 
- *     def load_all_ime_logs(self):             # <<<<<<<<<<<<<<
- *         ime_log_file_path = self.log_folder_path + '\\IntuneManagementExtension.log'
- *         if not (os.path.isfile(ime_log_file_path)):
+ *     def open_log_file(self, log_path):             # <<<<<<<<<<<<<<
+ *         try:
+ *             log_file = open(log_path, mode='r', encoding='utf-8-sig')
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_5load_all_ime_logs, 0, __pyx_n_s_ImeInterpreter_load_all_ime_logs, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__16)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_5open_log_file, 0, __pyx_n_s_ImeInterpreter_open_log_file, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__17)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_load_all_ime_logs, __pyx_t_3) < 0) __PYX_ERR(0, 36, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_open_log_file, __pyx_t_3) < 0) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "imeinterpreter.py":93
+  /* "imeinterpreter.py":52
+ *         return log_as_lines
+ * 
+ *     def load_all_ime_logs(self):             # <<<<<<<<<<<<<<
+ *         # Listing older IME logs
+ *         dir_list = os.listdir(self.log_folder_path)
+ */
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_7load_all_ime_logs, 0, __pyx_n_s_ImeInterpreter_load_all_ime_logs, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__19)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_load_all_ime_logs, __pyx_t_3) < 0) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "imeinterpreter.py":96
  *         return full_log
+ * 
+ *     def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):             # <<<<<<<<<<<<<<
+ *         full_log = []
+ *         left, right = 0, 0
+ */
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_9merge_ime_and_app_workload_logs, 0, __pyx_n_s_ImeInterpreter_merge_ime_and_app, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_merge_ime_and_app_workload_logs, __pyx_t_3) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "imeinterpreter.py":124
+ *         return full_log
+ * 
+ *     def load_all_app_workload_logs(self):             # <<<<<<<<<<<<<<
+ *         """
+ *         Fix the change in log structure in 2407 that Win32 log entries are separated into AppWorkload.log
+ */
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_11load_all_app_workload_logs, 0, __pyx_n_s_ImeInterpreter_load_all_app_work, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 124, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_load_all_app_workload_logs, __pyx_t_3) < 0) __PYX_ERR(0, 124, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "imeinterpreter.py":168
+ *         return full_log
+ * 
+ *     def load_full_logs(self):             # <<<<<<<<<<<<<<
+ *         app_workload_log_file_path = self.log_folder_path + '\\AppWorkload.log'
+ *         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
+ */
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_13load_full_logs, 0, __pyx_n_s_ImeInterpreter_load_full_logs, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__25)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 168, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_load_full_logs, __pyx_t_3) < 0) __PYX_ERR(0, 168, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "imeinterpreter.py":183
+ *             return full_log
  * 
  *     def separate_log_into_service_lifecycle(self):             # <<<<<<<<<<<<<<
  *         ems_agent_start_lines = []
  *         ems_agent_stop_lines = []
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_7separate_log_into_service_lifecycle, 0, __pyx_n_s_ImeInterpreter_separate_log_into, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__18)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_15separate_log_into_service_lifecycle, 0, __pyx_n_s_ImeInterpreter_separate_log_into, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__27)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 183, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_separate_log_into_service_lifecy, __pyx_t_3) < 0) __PYX_ERR(0, 93, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_separate_log_into_service_lifecy, __pyx_t_3) < 0) __PYX_ERR(0, 183, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "imeinterpreter.py":199
+  /* "imeinterpreter.py":289
  *         return ems_agent_lifecycle_log_list, agent_life_ending_reason
  * 
  *     def initialize_life_cycle_list(self):             # <<<<<<<<<<<<<<
  *         if self.full_log is None:
  *             return None
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_9initialize_life_cycle_list, 0, __pyx_n_s_ImeInterpreter_initialize_life_c, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__20)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 199, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_17initialize_life_cycle_list, 0, __pyx_n_s_ImeInterpreter_initialize_life_c, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__29)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 289, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_initialize_life_cycle_list, __pyx_t_3) < 0) __PYX_ERR(0, 199, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_initialize_life_cycle_list, __pyx_t_3) < 0) __PYX_ERR(0, 289, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "imeinterpreter.py":212
+  /* "imeinterpreter.py":302
  *                                         ems_agent_restart_reasons[index_lifecycle_log]))
  * 
  *     def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):             # <<<<<<<<<<<<<<
  *         interpreted_log_output = ""
  *         if self.full_log is None:
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_11generate_ime_interpreter_log_output, 0, __pyx_n_s_ImeInterpreter_generate_ime_inte, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_14imeinterpreter_14ImeInterpreter_19generate_ime_interpreter_log_output, 0, __pyx_n_s_ImeInterpreter_generate_ime_inte, NULL, __pyx_n_s_imeinterpreter, __pyx_d, ((PyObject *)__pyx_codeobj__31)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 302, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__23);
-  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_generate_ime_interpreter_log_out, __pyx_t_3) < 0) __PYX_ERR(0, 212, __pyx_L1_error)
+  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__32);
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_generate_ime_interpreter_log_out, __pyx_t_3) < 0) __PYX_ERR(0, 302, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "imeinterpreter.py":23
@@ -9131,75 +11467,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObj
     #endif
 }
 
-/* PyDictVersioning */
-#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
-    PyObject *dict = Py_TYPE(obj)->tp_dict;
-    return likely(dict) ? __PYX_GET_DICT_VERSION(dict) : 0;
-}
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj) {
-    PyObject **dictptr = NULL;
-    Py_ssize_t offset = Py_TYPE(obj)->tp_dictoffset;
-    if (offset) {
-#if CYTHON_COMPILING_IN_CPYTHON
-        dictptr = (likely(offset > 0)) ? (PyObject **) ((char *)obj + offset) : _PyObject_GetDictPtr(obj);
-#else
-        dictptr = _PyObject_GetDictPtr(obj);
-#endif
-    }
-    return (dictptr && *dictptr) ? __PYX_GET_DICT_VERSION(*dictptr) : 0;
-}
-static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version) {
-    PyObject *dict = Py_TYPE(obj)->tp_dict;
-    if (unlikely(!dict) || unlikely(tp_dict_version != __PYX_GET_DICT_VERSION(dict)))
-        return 0;
-    return obj_dict_version == __Pyx_get_object_dict_version(obj);
-}
-#endif
-
-/* GetModuleGlobalName */
-#if CYTHON_USE_DICT_VERSIONS
-static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
-#else
-static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
-#endif
-{
-    PyObject *result;
-#if !CYTHON_AVOID_BORROWED_REFS
-#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1 && PY_VERSION_HEX < 0x030d0000
-    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    } else if (unlikely(PyErr_Occurred())) {
-        return NULL;
-    }
-#elif CYTHON_COMPILING_IN_LIMITED_API
-    if (unlikely(!__pyx_m)) {
-        return NULL;
-    }
-    result = PyObject_GetAttr(__pyx_m, name);
-    if (likely(result)) {
-        return result;
-    }
-#else
-    result = PyDict_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-#endif
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-    PyErr_Clear();
-#endif
-    return __Pyx_GetBuiltinName(name);
-}
-
 /* GetTopmostException */
 #if CYTHON_USE_EXC_INFO_STACK && CYTHON_FAST_THREAD_STATE
 static _PyErr_StackItem *
@@ -9375,6 +11642,75 @@ bad:
     Py_XDECREF(local_value);
     Py_XDECREF(local_tb);
     return -1;
+}
+
+/* PyDictVersioning */
+#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
+    PyObject *dict = Py_TYPE(obj)->tp_dict;
+    return likely(dict) ? __PYX_GET_DICT_VERSION(dict) : 0;
+}
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj) {
+    PyObject **dictptr = NULL;
+    Py_ssize_t offset = Py_TYPE(obj)->tp_dictoffset;
+    if (offset) {
+#if CYTHON_COMPILING_IN_CPYTHON
+        dictptr = (likely(offset > 0)) ? (PyObject **) ((char *)obj + offset) : _PyObject_GetDictPtr(obj);
+#else
+        dictptr = _PyObject_GetDictPtr(obj);
+#endif
+    }
+    return (dictptr && *dictptr) ? __PYX_GET_DICT_VERSION(*dictptr) : 0;
+}
+static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version) {
+    PyObject *dict = Py_TYPE(obj)->tp_dict;
+    if (unlikely(!dict) || unlikely(tp_dict_version != __PYX_GET_DICT_VERSION(dict)))
+        return 0;
+    return obj_dict_version == __Pyx_get_object_dict_version(obj);
+}
+#endif
+
+/* GetModuleGlobalName */
+#if CYTHON_USE_DICT_VERSIONS
+static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
+#else
+static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
+#endif
+{
+    PyObject *result;
+#if !CYTHON_AVOID_BORROWED_REFS
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1 && PY_VERSION_HEX < 0x030d0000
+    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    } else if (unlikely(PyErr_Occurred())) {
+        return NULL;
+    }
+#elif CYTHON_COMPILING_IN_LIMITED_API
+    if (unlikely(!__pyx_m)) {
+        return NULL;
+    }
+    result = PyObject_GetAttr(__pyx_m, name);
+    if (likely(result)) {
+        return result;
+    }
+#else
+    result = PyDict_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+#endif
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+    PyErr_Clear();
+#endif
+    return __Pyx_GetBuiltinName(name);
 }
 
 /* GetItemInt */
@@ -9707,11 +12043,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(PyObject* obj,
     __Pyx_DECREF_TypeName(obj_type_name);
 bad:
     return NULL;
-}
-
-/* RaiseUnboundLocalError */
-static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname) {
-    PyErr_Format(PyExc_UnboundLocalError, "local variable '%s' referenced before assignment", varname);
 }
 
 /* PyObjectCallOneArg */
@@ -10224,7 +12555,7 @@ static PyObject *__Pyx_ImportDottedModule_WalkParts(PyObject *module, PyObject *
 #endif
 static PyObject *__Pyx__ImportDottedModule(PyObject *name, PyObject *parts_tuple) {
 #if PY_MAJOR_VERSION < 3
-    PyObject *module, *from_list, *star = __pyx_n_s__10;
+    PyObject *module, *from_list, *star = __pyx_n_s__11;
     CYTHON_UNUSED_VAR(parts_tuple);
     from_list = PyList_New(1);
     if (unlikely(!from_list))
@@ -12196,7 +14527,7 @@ __Pyx_PyType_GetName(PyTypeObject* tp)
     if (unlikely(name == NULL) || unlikely(!PyUnicode_Check(name))) {
         PyErr_Clear();
         Py_XDECREF(name);
-        name = __Pyx_NewRef(__pyx_n_s__24);
+        name = __Pyx_NewRef(__pyx_n_s__33);
     }
     return name;
 }
