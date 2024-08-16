@@ -2,6 +2,8 @@ import tkinter
 from tkinter import ttk
 from tkinter import filedialog
 import imeinterpreter
+import configparser
+import requests
 '''
 Developing plan:
 
@@ -75,10 +77,25 @@ class Root(tkinter.Tk):
         self.enable_full_log = tkinter.BooleanVar()
         self.enable_full_log.set(False)
 
-        self.enable_full_log_label_frame = ttk.LabelFrame(self.action_frame, text="Enable full log", height=15, width=30)
+        self.enable_full_log_label_frame = ttk.LabelFrame(self.action_frame, text="Enable full log", height=15, width=60)
 
         self.on_off_button = OnOffButton(self.enable_full_log_label_frame)
         self.full_log_button_init()
+
+        self.version_local = "v4.0.0"
+        self.version_to_display = tkinter.StringVar()
+        self.version_to_display.set(self.version_local)
+        self.version_label_frame = ttk.LabelFrame(self.action_frame, text="Version", height=30,
+                                                          width=60)
+        self.version_label = ttk.Label(self.version_label_frame, textvariable=self.version_to_display)
+        try:
+            config_local = configparser.ConfigParser()
+            config_local.read('config.ini')
+            self.version_local = config_local['DEFAULT']['version']
+            self.version_to_display.set(self.version_local)
+        except:
+            print("Unable to read local version from config.ini!")
+        self.version_label_init()
 
         self.text_output = ""
         self.text_output_init()
@@ -97,15 +114,15 @@ class Root(tkinter.Tk):
 
     def browse_button_init(self):
         self.browse_button = ttk.Button(self.action_frame, text="Browse IME log Folder", command=self.file_dialog)
-        self.browse_button.grid(column=0, row=0, sticky=tkinter.W)
+        self.browse_button.grid(column=0, row=0, padx=5, pady=5, sticky=tkinter.W)
 
     def button_analyze_init(self):
         self.button_analyze = ttk.Button(self.action_frame, text="Start Analyzing", command=lambda: self.start_analyze(self.log_folder_name))
-        self.button_analyze.grid(column=0, row=3, sticky=tkinter.W)
+        self.button_analyze.grid(column=0, row=3, padx=5, pady=5, sticky=tkinter.W)
 
     def button_clear_init(self):
         self.button_clear = ttk.Button(self.action_frame, text="Clear Result", command=self.clear_result)
-        self.button_clear.grid(column=0, row=1, sticky=tkinter.W)
+        self.button_clear.grid(column=0, row=1, padx=5, pady=5, sticky=tkinter.W)
 
     def text_output_init(self):
         # Create text widget and specify size.
@@ -115,7 +132,27 @@ class Root(tkinter.Tk):
 
     def full_log_button_init(self):
         self.enable_full_log_label_frame.grid(column=0, row=2, sticky=tkinter.W)
-        self.on_off_button.grid(column=0, row=0, sticky=tkinter.W)
+        self.on_off_button.grid(column=0, row=0, padx=5, pady=5,  sticky=tkinter.W)
+
+    def version_label_init(self):
+        self.version_label_frame.grid(column=0, row=10, padx=5, pady=25, sticky=tkinter.SW)
+        self.version_label.grid(column=0, row=0, padx=5, pady=5, sticky=tkinter.SW)
+        try:
+            url = 'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/config.ini'
+            response = requests.get(url)
+            config_github = configparser.ConfigParser()
+            config_as_string = response.content.decode('utf-8')
+            config_github.read_string(config_as_string)
+            version_github = config_github['DEFAULT']['version']
+            if version_github != self.version_local:
+                print("New version found! Run selfupdater.exe to update!")
+                self.version_to_display.set(self.version_local + "\n" + "Latest Version is: " + version_github +"\nUse selfupdater.exe to\nupdate after closing")
+            else:
+                print("You are up to date!")
+        except:
+            print("Unable to check GitHub latest version!")
+            self.version_to_display.set(self.version_local + "\n" + "Unable to check latest\n version on GitHub!")
+            self.version_label.update()
 
     def clear_result(self):
         self.text_output.delete("1.0", "end")
