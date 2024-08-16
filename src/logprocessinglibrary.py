@@ -58,42 +58,49 @@ def locate_line_contains_keyword(full_log, keyword):
 
 def process_breaking_line_log(full_log):
     """
-    <![LOG[AAD User check is failed, exception is System.ComponentModel.Win32Exception (0x80004005):
-    An attempt was made to reference a token that does not exist
-    at Microsoft.Management.Services.IntuneWindowsAgent.AgentCommon.ImpersonateHelper.<DoActionWithImpersonation>d__4.
-    MoveNext()
-
-    or
-
-    <![LOG[[Win32App][WinGetApp][WinGetAppDetectionExecutor] Completed detection for app with id:
-    9c393ca7-92fc-4e9e-94d0-f8e303734f7b.
-    WinGet operation result:
-
+    eg.
+    <![LOG[[Win32App][ActionProcessor] App with id: 4f0de38e-fe59-4ebf-8660-b2e3bd57bb09, effective intent: RequiredInstall, and enforceability: Enforceable has projected enforcement classification: EnforcementPoint with desired state: Present. Current state is:
+    Detection = NotDetected
+    Applicability =  Applicable
+    Reboot = Clean
+    Local start time = 1/1/0001 12:00:00 AM
+    Local deadline time = 1/1/0001 12:00:00 AM
+    GRS expired = True]LOG]!><time="12:50:53.0788084" date="2-27-2023" component="IntuneManagementExtension" context="" type="1" thread="14" file="">
+    <![LOG[[Win32App][ActionProcessor] Found: 0 apps with intent to uninstall before enforcing installs: [].]LOG]!><time="12:50:53.0788084" date="2-27-2023" component="IntuneManagementExtension" context="" type="1" thread="14" file="">
     """
+
+    log_keyword_table = init_keyword_table()
     log_len = len(full_log)
     line_index_iter = 0
-    temp_log = full_log[line_index_iter].replace('\n', ' | ')
-    line_index_iter = line_index_iter + 1
-    while line_index_iter < log_len and "-1" == locate_thread(full_log[line_index_iter]):
-        temp_log = temp_log + full_log[line_index_iter].replace('\n', ' | ')
+    temp_log = []
+    while line_index_iter < log_len:
+        # Normal line with start and thread
+        if full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):
+            temp_log.append(full_log[line_index_iter])
+        elif full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):
+            """
+            start of broken log
+            <![LOG[AAD User check is failed, exception is System.ComponentModel.Win32Exception (0x80004005):
+            """
+
+            temp_log.append(full_log[line_index_iter].replace('\n', ' | '))
+        elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):
+            """
+            middle of broken log, no start, no thread.
+            Append to last line string end.
+            """
+            temp_log[-1] = temp_log[-1] + full_log[line_index_iter].replace('\n', ' | ')
+        elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):
+            """
+            end of broken log, no start, got thread.
+            Append to last line string end.
+            """
+            temp_log[-1] = temp_log[-1] + full_log[line_index_iter]
+
         line_index_iter = line_index_iter + 1
-    if line_index_iter < log_len:
-        '''last line
 
-        Error code: ]LOG]!><time="11:41:35.9474014" date="3-23-2023" 
-        component="IntuneManagementExtension" context="" type="1" thread="22" file="">
+    return temp_log
 
-        or
-
-        at Microsoft.Management.Services.IntuneWindowsAgent.AgentCommon.
-        DiscoveryService.<IsAADUserInternal>d__17.MoveNext(), session is 1]LOG]!>
-        <time="12:37:52.0636654" date="3-23-2023" 
-        component="IntuneManagementExtension" context="" type="1" thread="5" file="">
-        '''
-        temp_log = temp_log + full_log[line_index_iter]
-        return temp_log
-    else:
-        return ""
 
 
 def find_app_id_with_starting_string(log_line, start_string):

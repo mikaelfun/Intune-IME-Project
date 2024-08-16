@@ -69,24 +69,6 @@ class EMSLifeCycle:
                     application_poller_logs.append(cur_poller_log)
                     line_index_stop_list.remove(line_index_iter)
                     break
-                elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(
-                        self.full_log[line_index_iter]):
-                    # breaking log start line
-                    """
-                    eg.
-                    <![LOG[[Win32App][ActionProcessor] App with id: 4f0de38e-fe59-4ebf-8660-b2e3bd57bb09, effective intent: RequiredInstall, and enforceability: Enforceable has projected enforcement classification: EnforcementPoint with desired state: Present. Current state is:
-                    Detection = NotDetected
-                    Applicability =  Applicable
-                    Reboot = Clean
-                    Local start time = 1/1/0001 12:00:00 AM
-                    Local deadline time = 1/1/0001 12:00:00 AM
-                    GRS expired = True]LOG]!><time="12:50:53.0788084" date="2-27-2023" component="IntuneManagementExtension" context="" type="1" thread="14" file="">
-                    <![LOG[[Win32App][ActionProcessor] Found: 0 apps with intent to uninstall before enforcing installs: [].]LOG]!><time="12:50:53.0788084" date="2-27-2023" component="IntuneManagementExtension" context="" type="1" thread="14" file="">
-                    """
-                    temp_log = logprocessinglibrary.process_breaking_line_log(self.full_log[line_index_iter:])
-                    if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:
-                        cur_poller_log = cur_poller_log + temp_log
-                    line_index_iter = line_index_iter + temp_log.count(' | ') + 1
                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
                     """
                     Fixing for UWP app have multiple threads logs in one app poller
@@ -120,15 +102,7 @@ class EMSLifeCycle:
                 cur_poller_log = self.full_log[each_start_index]
                 line_index_iter = each_start_index
                 while line_index_iter < self.log_len:
-                    if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(
-                            self.full_log[line_index_iter]):
-                        # beginning of line breaking logs
-                        temp_log = logprocessinglibrary.process_breaking_line_log(self.full_log[line_index_iter:])
-
-                        if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:
-                            cur_poller_log = cur_poller_log + temp_log
-                        line_index_iter = line_index_iter + temp_log.count(' | ') + 1
-                    elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
+                    if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
                         """
                         Fixing for UWP app have multiple threads logs in one app poller
                         """

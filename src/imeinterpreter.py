@@ -96,8 +96,10 @@ class ImeInterpreter:
     def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):
         full_log = []
         left, right = 0, 0
+
         ime_log_len = len(ime_logs)
         app_workload_log_len = len(app_workload_logs)
+
         while left < ime_log_len and right < app_workload_log_len:
             left_line = ime_logs[left]
             right_line = app_workload_logs[right]
@@ -116,7 +118,7 @@ class ImeInterpreter:
         while right < app_workload_log_len:
             full_log.append(app_workload_logs[right])
             right = right + 1
-        # with open('C:\\temp\\temp\\imeout.log', 'a') as outfile:
+        # with open('C:\\temp\\temp\\imeout.log', 'w') as outfile:
         #     for i in range(len(full_log)):
         #         outfile.writelines(full_log[i])
         return full_log
@@ -173,11 +175,22 @@ class ImeInterpreter:
 
         if not app_workload_log_exists:
             full_log = self.load_all_ime_logs()
-            return full_log
+            """
+            Handled lines without thread here, before passing to emslifecyle process.
+            Merged breaking lines into 1 line with |
+            """
+            ime_logs = logprocessinglibrary.process_breaking_line_log(full_log)
+            return ime_logs
         else:
             ime_log = self.load_all_ime_logs()
             app_workload_log = self.load_all_app_workload_logs()
-            full_log = self.merge_ime_and_app_workload_logs(ime_log, app_workload_log)
+            """
+            Handled lines without thread here, before passing to emslifecyle process.
+            Merged breaking lines into 1 line with |
+            """
+            ime_logs = logprocessinglibrary.process_breaking_line_log(ime_log)
+            app_workload_logs = logprocessinglibrary.process_breaking_line_log(app_workload_log)
+            full_log = self.merge_ime_and_app_workload_logs(ime_logs, app_workload_logs)
             return full_log
 
     def separate_log_into_service_lifecycle(self):

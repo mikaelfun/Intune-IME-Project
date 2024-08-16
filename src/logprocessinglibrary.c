@@ -1912,12 +1912,33 @@ static CYTHON_INLINE PyObject *__Pyx_PyObject_GetItem(PyObject *obj, PyObject *k
 #define __Pyx_PyObject_GetItem(obj, key)  PyObject_GetItem(obj, key)
 #endif
 
+/* DictGetItem.proto */
+#if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
+static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key);
+#define __Pyx_PyObject_Dict_GetItem(obj, name)\
+    (likely(PyDict_CheckExact(obj)) ?\
+     __Pyx_PyDict_GetItem(obj, name) : PyObject_GetItem(obj, name))
+#else
+#define __Pyx_PyDict_GetItem(d, key) PyObject_GetItem(d, key)
+#define __Pyx_PyObject_Dict_GetItem(obj, name)  PyObject_GetItem(obj, name)
+#endif
+
 /* StrEquals.proto */
 #if PY_MAJOR_VERSION >= 3
 #define __Pyx_PyString_Equals __Pyx_PyUnicode_Equals
 #else
 #define __Pyx_PyString_Equals __Pyx_PyBytes_Equals
 #endif
+
+/* SetItemInt.proto */
+#define __Pyx_SetItemInt(o, i, v, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_SetItemInt_Fast(o, (Py_ssize_t)i, v, is_list, wraparound, boundscheck) :\
+    (is_list ? (PyErr_SetString(PyExc_IndexError, "list assignment index out of range"), -1) :\
+               __Pyx_SetItemInt_Generic(o, to_py_func(i), v)))
+static int __Pyx_SetItemInt_Generic(PyObject *o, PyObject *j, PyObject *v);
+static CYTHON_INLINE int __Pyx_SetItemInt_Fast(PyObject *o, Py_ssize_t i, PyObject *v,
+                                               int is_list, int wraparound, int boundscheck);
 
 /* Import.proto */
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
@@ -2104,6 +2125,14 @@ static void __pyx_insert_code_object(int code_line, PyCodeObject* code_object);
 static void __Pyx_AddTraceback(const char *funcname, int c_line,
                                int py_line, const char *filename);
 
+/* GCCDiagnostics.proto */
+#if !defined(__INTEL_COMPILER) && defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#define __Pyx_HAS_GCC_DIAGNOSTIC
+#endif
+
+/* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+
 /* FormatTypeName.proto */
 #if CYTHON_COMPILING_IN_LIMITED_API
 typedef PyObject *__Pyx_TypeName;
@@ -2116,14 +2145,6 @@ typedef const char *__Pyx_TypeName;
 #define __Pyx_PyType_GetName(tp) ((tp)->tp_name)
 #define __Pyx_DECREF_TypeName(obj)
 #endif
-
-/* GCCDiagnostics.proto */
-#if !defined(__INTEL_COMPILER) && defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#define __Pyx_HAS_GCC_DIAGNOSTIC
-#endif
-
-/* CIntToPy.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
@@ -2175,10 +2196,9 @@ static const char __pyx_k_r[] = "r";
 static const char __pyx_k__3[] = " ";
 static const char __pyx_k__4[] = "\n";
 static const char __pyx_k__5[] = " | ";
-static const char __pyx_k__7[] = "";
-static const char __pyx_k__8[] = "*";
+static const char __pyx_k__7[] = "*";
 static const char __pyx_k_os[] = "os";
-static const char __pyx_k__24[] = "?";
+static const char __pyx_k__23[] = "?";
 static const char __pyx_k_date[] = "date=";
 static const char __pyx_k_exit[] = "__exit__";
 static const char __pyx_k_file[] = "\" file=";
@@ -2228,10 +2248,12 @@ static const char __pyx_k_CONST_APP_ID_LEN[] = "CONST_APP_ID_LEN";
 static const char __pyx_k_app_id_index_end[] = "app_id_index_end";
 static const char __pyx_k_thread_index_end[] = "thread_index_end";
 static const char __pyx_k_CONST_USER_ID_LEN[] = "CONST_USER_ID_LEN";
+static const char __pyx_k_log_keyword_table[] = "log_keyword_table";
 static const char __pyx_k_app_id_index_start[] = "app_id_index_start";
 static const char __pyx_k_asyncio_coroutines[] = "asyncio.coroutines";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_init_keyword_table[] = "init_keyword_table";
+static const char __pyx_k_LOG_STARTING_STRING[] = "LOG_STARTING_STRING";
 static const char __pyx_k_CONST_LOGGING_LENGTH[] = "CONST_LOGGING_LENGTH";
 static const char __pyx_k_logprocessinglibrary[] = "logprocessinglibrary";
 static const char __pyx_k_get_timestamp_by_line[] = "get_timestamp_by_line";
@@ -2290,12 +2312,12 @@ typedef struct {
   PyObject *__pyx_n_s_CONST_META_DEPENDENT_APP_VALUE_I;
   PyObject *__pyx_n_s_CONST_META_VALUE_INDEX;
   PyObject *__pyx_n_s_CONST_USER_ID_LEN;
-  PyObject *__pyx_n_s__24;
+  PyObject *__pyx_n_s_LOG_STARTING_STRING;
+  PyObject *__pyx_n_s__23;
   PyObject *__pyx_kp_s__3;
   PyObject *__pyx_kp_s__4;
   PyObject *__pyx_kp_s__5;
-  PyObject *__pyx_kp_s__7;
-  PyObject *__pyx_n_s__8;
+  PyObject *__pyx_n_s__7;
   PyObject *__pyx_n_s_app_id_index_end;
   PyObject *__pyx_n_s_app_id_index_start;
   PyObject *__pyx_n_s_asyncio_coroutines;
@@ -2334,6 +2356,7 @@ typedef struct {
   PyObject *__pyx_n_s_locate_line_contains_keyword;
   PyObject *__pyx_n_s_locate_line_startswith_keyword;
   PyObject *__pyx_n_s_locate_thread;
+  PyObject *__pyx_n_s_log_keyword_table;
   PyObject *__pyx_n_s_log_len;
   PyObject *__pyx_n_s_log_line;
   PyObject *__pyx_kp_s_logging_keyword_table_json;
@@ -2374,21 +2397,21 @@ typedef struct {
   PyObject *__pyx_tuple_;
   PyObject *__pyx_tuple__2;
   PyObject *__pyx_tuple__6;
-  PyObject *__pyx_tuple__9;
-  PyObject *__pyx_tuple__11;
-  PyObject *__pyx_tuple__13;
-  PyObject *__pyx_tuple__15;
-  PyObject *__pyx_tuple__17;
-  PyObject *__pyx_tuple__20;
-  PyObject *__pyx_tuple__22;
-  PyObject *__pyx_codeobj__10;
-  PyObject *__pyx_codeobj__12;
-  PyObject *__pyx_codeobj__14;
-  PyObject *__pyx_codeobj__16;
+  PyObject *__pyx_tuple__8;
+  PyObject *__pyx_tuple__10;
+  PyObject *__pyx_tuple__12;
+  PyObject *__pyx_tuple__14;
+  PyObject *__pyx_tuple__16;
+  PyObject *__pyx_tuple__19;
+  PyObject *__pyx_tuple__21;
+  PyObject *__pyx_codeobj__9;
+  PyObject *__pyx_codeobj__11;
+  PyObject *__pyx_codeobj__13;
+  PyObject *__pyx_codeobj__15;
+  PyObject *__pyx_codeobj__17;
   PyObject *__pyx_codeobj__18;
-  PyObject *__pyx_codeobj__19;
-  PyObject *__pyx_codeobj__21;
-  PyObject *__pyx_codeobj__23;
+  PyObject *__pyx_codeobj__20;
+  PyObject *__pyx_codeobj__22;
 } __pyx_mstate;
 
 #if CYTHON_USE_MODULE_STATE
@@ -2438,12 +2461,12 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_CONST_META_DEPENDENT_APP_VALUE_I);
   Py_CLEAR(clear_module_state->__pyx_n_s_CONST_META_VALUE_INDEX);
   Py_CLEAR(clear_module_state->__pyx_n_s_CONST_USER_ID_LEN);
-  Py_CLEAR(clear_module_state->__pyx_n_s__24);
+  Py_CLEAR(clear_module_state->__pyx_n_s_LOG_STARTING_STRING);
+  Py_CLEAR(clear_module_state->__pyx_n_s__23);
   Py_CLEAR(clear_module_state->__pyx_kp_s__3);
   Py_CLEAR(clear_module_state->__pyx_kp_s__4);
   Py_CLEAR(clear_module_state->__pyx_kp_s__5);
-  Py_CLEAR(clear_module_state->__pyx_kp_s__7);
-  Py_CLEAR(clear_module_state->__pyx_n_s__8);
+  Py_CLEAR(clear_module_state->__pyx_n_s__7);
   Py_CLEAR(clear_module_state->__pyx_n_s_app_id_index_end);
   Py_CLEAR(clear_module_state->__pyx_n_s_app_id_index_start);
   Py_CLEAR(clear_module_state->__pyx_n_s_asyncio_coroutines);
@@ -2482,6 +2505,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_locate_line_contains_keyword);
   Py_CLEAR(clear_module_state->__pyx_n_s_locate_line_startswith_keyword);
   Py_CLEAR(clear_module_state->__pyx_n_s_locate_thread);
+  Py_CLEAR(clear_module_state->__pyx_n_s_log_keyword_table);
   Py_CLEAR(clear_module_state->__pyx_n_s_log_len);
   Py_CLEAR(clear_module_state->__pyx_n_s_log_line);
   Py_CLEAR(clear_module_state->__pyx_kp_s_logging_keyword_table_json);
@@ -2522,21 +2546,21 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_tuple_);
   Py_CLEAR(clear_module_state->__pyx_tuple__2);
   Py_CLEAR(clear_module_state->__pyx_tuple__6);
-  Py_CLEAR(clear_module_state->__pyx_tuple__9);
-  Py_CLEAR(clear_module_state->__pyx_tuple__11);
-  Py_CLEAR(clear_module_state->__pyx_tuple__13);
-  Py_CLEAR(clear_module_state->__pyx_tuple__15);
-  Py_CLEAR(clear_module_state->__pyx_tuple__17);
-  Py_CLEAR(clear_module_state->__pyx_tuple__20);
-  Py_CLEAR(clear_module_state->__pyx_tuple__22);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__10);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__12);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__14);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__16);
+  Py_CLEAR(clear_module_state->__pyx_tuple__8);
+  Py_CLEAR(clear_module_state->__pyx_tuple__10);
+  Py_CLEAR(clear_module_state->__pyx_tuple__12);
+  Py_CLEAR(clear_module_state->__pyx_tuple__14);
+  Py_CLEAR(clear_module_state->__pyx_tuple__16);
+  Py_CLEAR(clear_module_state->__pyx_tuple__19);
+  Py_CLEAR(clear_module_state->__pyx_tuple__21);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__9);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__11);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__13);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__15);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__17);
   Py_CLEAR(clear_module_state->__pyx_codeobj__18);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__19);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__21);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__23);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__20);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__22);
   return 0;
 }
 #endif
@@ -2564,12 +2588,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_CONST_META_DEPENDENT_APP_VALUE_I);
   Py_VISIT(traverse_module_state->__pyx_n_s_CONST_META_VALUE_INDEX);
   Py_VISIT(traverse_module_state->__pyx_n_s_CONST_USER_ID_LEN);
-  Py_VISIT(traverse_module_state->__pyx_n_s__24);
+  Py_VISIT(traverse_module_state->__pyx_n_s_LOG_STARTING_STRING);
+  Py_VISIT(traverse_module_state->__pyx_n_s__23);
   Py_VISIT(traverse_module_state->__pyx_kp_s__3);
   Py_VISIT(traverse_module_state->__pyx_kp_s__4);
   Py_VISIT(traverse_module_state->__pyx_kp_s__5);
-  Py_VISIT(traverse_module_state->__pyx_kp_s__7);
-  Py_VISIT(traverse_module_state->__pyx_n_s__8);
+  Py_VISIT(traverse_module_state->__pyx_n_s__7);
   Py_VISIT(traverse_module_state->__pyx_n_s_app_id_index_end);
   Py_VISIT(traverse_module_state->__pyx_n_s_app_id_index_start);
   Py_VISIT(traverse_module_state->__pyx_n_s_asyncio_coroutines);
@@ -2608,6 +2632,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_locate_line_contains_keyword);
   Py_VISIT(traverse_module_state->__pyx_n_s_locate_line_startswith_keyword);
   Py_VISIT(traverse_module_state->__pyx_n_s_locate_thread);
+  Py_VISIT(traverse_module_state->__pyx_n_s_log_keyword_table);
   Py_VISIT(traverse_module_state->__pyx_n_s_log_len);
   Py_VISIT(traverse_module_state->__pyx_n_s_log_line);
   Py_VISIT(traverse_module_state->__pyx_kp_s_logging_keyword_table_json);
@@ -2648,21 +2673,21 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_tuple_);
   Py_VISIT(traverse_module_state->__pyx_tuple__2);
   Py_VISIT(traverse_module_state->__pyx_tuple__6);
-  Py_VISIT(traverse_module_state->__pyx_tuple__9);
-  Py_VISIT(traverse_module_state->__pyx_tuple__11);
-  Py_VISIT(traverse_module_state->__pyx_tuple__13);
-  Py_VISIT(traverse_module_state->__pyx_tuple__15);
-  Py_VISIT(traverse_module_state->__pyx_tuple__17);
-  Py_VISIT(traverse_module_state->__pyx_tuple__20);
-  Py_VISIT(traverse_module_state->__pyx_tuple__22);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__10);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__12);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__14);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__16);
+  Py_VISIT(traverse_module_state->__pyx_tuple__8);
+  Py_VISIT(traverse_module_state->__pyx_tuple__10);
+  Py_VISIT(traverse_module_state->__pyx_tuple__12);
+  Py_VISIT(traverse_module_state->__pyx_tuple__14);
+  Py_VISIT(traverse_module_state->__pyx_tuple__16);
+  Py_VISIT(traverse_module_state->__pyx_tuple__19);
+  Py_VISIT(traverse_module_state->__pyx_tuple__21);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__9);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__11);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__13);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__15);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__17);
   Py_VISIT(traverse_module_state->__pyx_codeobj__18);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__19);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__21);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__23);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__20);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__22);
   return 0;
 }
 #endif
@@ -2700,12 +2725,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_CONST_META_DEPENDENT_APP_VALUE_I __pyx_mstate_global->__pyx_n_s_CONST_META_DEPENDENT_APP_VALUE_I
 #define __pyx_n_s_CONST_META_VALUE_INDEX __pyx_mstate_global->__pyx_n_s_CONST_META_VALUE_INDEX
 #define __pyx_n_s_CONST_USER_ID_LEN __pyx_mstate_global->__pyx_n_s_CONST_USER_ID_LEN
-#define __pyx_n_s__24 __pyx_mstate_global->__pyx_n_s__24
+#define __pyx_n_s_LOG_STARTING_STRING __pyx_mstate_global->__pyx_n_s_LOG_STARTING_STRING
+#define __pyx_n_s__23 __pyx_mstate_global->__pyx_n_s__23
 #define __pyx_kp_s__3 __pyx_mstate_global->__pyx_kp_s__3
 #define __pyx_kp_s__4 __pyx_mstate_global->__pyx_kp_s__4
 #define __pyx_kp_s__5 __pyx_mstate_global->__pyx_kp_s__5
-#define __pyx_kp_s__7 __pyx_mstate_global->__pyx_kp_s__7
-#define __pyx_n_s__8 __pyx_mstate_global->__pyx_n_s__8
+#define __pyx_n_s__7 __pyx_mstate_global->__pyx_n_s__7
 #define __pyx_n_s_app_id_index_end __pyx_mstate_global->__pyx_n_s_app_id_index_end
 #define __pyx_n_s_app_id_index_start __pyx_mstate_global->__pyx_n_s_app_id_index_start
 #define __pyx_n_s_asyncio_coroutines __pyx_mstate_global->__pyx_n_s_asyncio_coroutines
@@ -2744,6 +2769,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_locate_line_contains_keyword __pyx_mstate_global->__pyx_n_s_locate_line_contains_keyword
 #define __pyx_n_s_locate_line_startswith_keyword __pyx_mstate_global->__pyx_n_s_locate_line_startswith_keyword
 #define __pyx_n_s_locate_thread __pyx_mstate_global->__pyx_n_s_locate_thread
+#define __pyx_n_s_log_keyword_table __pyx_mstate_global->__pyx_n_s_log_keyword_table
 #define __pyx_n_s_log_len __pyx_mstate_global->__pyx_n_s_log_len
 #define __pyx_n_s_log_line __pyx_mstate_global->__pyx_n_s_log_line
 #define __pyx_kp_s_logging_keyword_table_json __pyx_mstate_global->__pyx_kp_s_logging_keyword_table_json
@@ -2784,21 +2810,21 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_tuple_ __pyx_mstate_global->__pyx_tuple_
 #define __pyx_tuple__2 __pyx_mstate_global->__pyx_tuple__2
 #define __pyx_tuple__6 __pyx_mstate_global->__pyx_tuple__6
-#define __pyx_tuple__9 __pyx_mstate_global->__pyx_tuple__9
-#define __pyx_tuple__11 __pyx_mstate_global->__pyx_tuple__11
-#define __pyx_tuple__13 __pyx_mstate_global->__pyx_tuple__13
-#define __pyx_tuple__15 __pyx_mstate_global->__pyx_tuple__15
-#define __pyx_tuple__17 __pyx_mstate_global->__pyx_tuple__17
-#define __pyx_tuple__20 __pyx_mstate_global->__pyx_tuple__20
-#define __pyx_tuple__22 __pyx_mstate_global->__pyx_tuple__22
-#define __pyx_codeobj__10 __pyx_mstate_global->__pyx_codeobj__10
-#define __pyx_codeobj__12 __pyx_mstate_global->__pyx_codeobj__12
-#define __pyx_codeobj__14 __pyx_mstate_global->__pyx_codeobj__14
-#define __pyx_codeobj__16 __pyx_mstate_global->__pyx_codeobj__16
+#define __pyx_tuple__8 __pyx_mstate_global->__pyx_tuple__8
+#define __pyx_tuple__10 __pyx_mstate_global->__pyx_tuple__10
+#define __pyx_tuple__12 __pyx_mstate_global->__pyx_tuple__12
+#define __pyx_tuple__14 __pyx_mstate_global->__pyx_tuple__14
+#define __pyx_tuple__16 __pyx_mstate_global->__pyx_tuple__16
+#define __pyx_tuple__19 __pyx_mstate_global->__pyx_tuple__19
+#define __pyx_tuple__21 __pyx_mstate_global->__pyx_tuple__21
+#define __pyx_codeobj__9 __pyx_mstate_global->__pyx_codeobj__9
+#define __pyx_codeobj__11 __pyx_mstate_global->__pyx_codeobj__11
+#define __pyx_codeobj__13 __pyx_mstate_global->__pyx_codeobj__13
+#define __pyx_codeobj__15 __pyx_mstate_global->__pyx_codeobj__15
+#define __pyx_codeobj__17 __pyx_mstate_global->__pyx_codeobj__17
 #define __pyx_codeobj__18 __pyx_mstate_global->__pyx_codeobj__18
-#define __pyx_codeobj__19 __pyx_mstate_global->__pyx_codeobj__19
-#define __pyx_codeobj__21 __pyx_mstate_global->__pyx_codeobj__21
-#define __pyx_codeobj__23 __pyx_mstate_global->__pyx_codeobj__23
+#define __pyx_codeobj__20 __pyx_mstate_global->__pyx_codeobj__20
+#define __pyx_codeobj__22 __pyx_mstate_global->__pyx_codeobj__22
 /* #### Code section: module_code ### */
 
 /* "logprocessinglibrary.py":13
@@ -4308,7 +4334,7 @@ static PyObject *__pyx_pf_20logprocessinglibrary_10locate_line_contains_keyword(
  * 
  * def process_breaking_line_log(full_log):             # <<<<<<<<<<<<<<
  *     """
- *     <![LOG[AAD User check is failed, exception is System.ComponentModel.Win32Exception (0x80004005):
+ *     eg.
  */
 
 /* Python wrapper */
@@ -4319,7 +4345,7 @@ PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-PyDoc_STRVAR(__pyx_doc_20logprocessinglibrary_12process_breaking_line_log, "\n    <![LOG[AAD User check is failed, exception is System.ComponentModel.Win32Exception (0x80004005):\n    An attempt was made to reference a token that does not exist\n    at Microsoft.Management.Services.IntuneWindowsAgent.AgentCommon.ImpersonateHelper.<DoActionWithImpersonation>d__4.\n    MoveNext()\n\n    or\n\n    <![LOG[[Win32App][WinGetApp][WinGetAppDetectionExecutor] Completed detection for app with id:\n    9c393ca7-92fc-4e9e-94d0-f8e303734f7b.\n    WinGet operation result:\n\n    ");
+PyDoc_STRVAR(__pyx_doc_20logprocessinglibrary_12process_breaking_line_log, "\n    eg.\n    <![LOG[[Win32App][ActionProcessor] App with id: 4f0de38e-fe59-4ebf-8660-b2e3bd57bb09, effective intent: RequiredInstall, and enforceability: Enforceable has projected enforcement classification: EnforcementPoint with desired state: Present. Current state is:\n    Detection = NotDetected\n    Applicability =  Applicable\n    Reboot = Clean\n    Local start time = 1/1/0001 12:00:00 AM\n    Local deadline time = 1/1/0001 12:00:00 AM\n    GRS expired = True]LOG]!><time=\"12:50:53.0788084\" date=\"2-27-2023\" component=\"IntuneManagementExtension\" context=\"\" type=\"1\" thread=\"14\" file=\"\">\n    <![LOG[[Win32App][ActionProcessor] Found: 0 apps with intent to uninstall before enforcing installs: [].]LOG]!><time=\"12:50:53.0788084\" date=\"2-27-2023\" component=\"IntuneManagementExtension\" context=\"\" type=\"1\" thread=\"14\" file=\"\">\n    ");
 static PyMethodDef __pyx_mdef_20logprocessinglibrary_13process_breaking_line_log = {"process_breaking_line_log", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_20logprocessinglibrary_13process_breaking_line_log, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_20logprocessinglibrary_12process_breaking_line_log};
 static PyObject *__pyx_pw_20logprocessinglibrary_13process_breaking_line_log(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
@@ -4409,40 +4435,77 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 }
 
 static PyObject *__pyx_pf_20logprocessinglibrary_12process_breaking_line_log(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_full_log) {
+  PyObject *__pyx_v_log_keyword_table = NULL;
   Py_ssize_t __pyx_v_log_len;
   PyObject *__pyx_v_line_index_iter = NULL;
   PyObject *__pyx_v_temp_log = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  Py_ssize_t __pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
   int __pyx_t_4;
-  int __pyx_t_5;
-  PyObject *__pyx_t_6 = NULL;
+  Py_ssize_t __pyx_t_5;
+  int __pyx_t_6;
   PyObject *__pyx_t_7 = NULL;
   int __pyx_t_8;
+  int __pyx_t_9;
+  int __pyx_t_10;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("process_breaking_line_log", 1);
 
+  /* "logprocessinglibrary.py":72
+ *     """
+ * 
+ *     log_keyword_table = init_keyword_table()             # <<<<<<<<<<<<<<
+ *     log_len = len(full_log)
+ *     line_index_iter = 0
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_init_keyword_table); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  __pyx_t_4 = 0;
+  #if CYTHON_UNPACK_METHODS
+  if (unlikely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+      __pyx_t_4 = 1;
+    }
+  }
+  #endif
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_3, NULL};
+    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  }
+  __pyx_v_log_keyword_table = __pyx_t_1;
+  __pyx_t_1 = 0;
+
   /* "logprocessinglibrary.py":73
  * 
- *     """
+ *     log_keyword_table = init_keyword_table()
  *     log_len = len(full_log)             # <<<<<<<<<<<<<<
  *     line_index_iter = 0
- *     temp_log = full_log[line_index_iter].replace('\n', ' | ')
+ *     temp_log = []
  */
-  __pyx_t_1 = PyObject_Length(__pyx_v_full_log); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 73, __pyx_L1_error)
-  __pyx_v_log_len = __pyx_t_1;
+  __pyx_t_5 = PyObject_Length(__pyx_v_full_log); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 73, __pyx_L1_error)
+  __pyx_v_log_len = __pyx_t_5;
 
   /* "logprocessinglibrary.py":74
- *     """
+ *     log_keyword_table = init_keyword_table()
  *     log_len = len(full_log)
  *     line_index_iter = 0             # <<<<<<<<<<<<<<
- *     temp_log = full_log[line_index_iter].replace('\n', ' | ')
- *     line_index_iter = line_index_iter + 1
+ *     temp_log = []
+ *     while line_index_iter < log_len:
  */
   __Pyx_INCREF(__pyx_int_0);
   __pyx_v_line_index_iter = __pyx_int_0;
@@ -4450,58 +4513,398 @@ static PyObject *__pyx_pf_20logprocessinglibrary_12process_breaking_line_log(CYT
   /* "logprocessinglibrary.py":75
  *     log_len = len(full_log)
  *     line_index_iter = 0
- *     temp_log = full_log[line_index_iter].replace('\n', ' | ')             # <<<<<<<<<<<<<<
- *     line_index_iter = line_index_iter + 1
- *     while line_index_iter < log_len and "-1" == locate_thread(full_log[line_index_iter]):
+ *     temp_log = []             # <<<<<<<<<<<<<<
+ *     while line_index_iter < log_len:
+ *         # Normal line with start and thread
  */
-  __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_replace); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_v_temp_log = __pyx_t_2;
-  __pyx_t_2 = 0;
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_temp_log = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
   /* "logprocessinglibrary.py":76
  *     line_index_iter = 0
- *     temp_log = full_log[line_index_iter].replace('\n', ' | ')
- *     line_index_iter = line_index_iter + 1             # <<<<<<<<<<<<<<
- *     while line_index_iter < log_len and "-1" == locate_thread(full_log[line_index_iter]):
- *         temp_log = temp_log + full_log[line_index_iter].replace('\n', ' | ')
- */
-  __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF_SET(__pyx_v_line_index_iter, __pyx_t_2);
-  __pyx_t_2 = 0;
-
-  /* "logprocessinglibrary.py":77
- *     temp_log = full_log[line_index_iter].replace('\n', ' | ')
- *     line_index_iter = line_index_iter + 1
- *     while line_index_iter < log_len and "-1" == locate_thread(full_log[line_index_iter]):             # <<<<<<<<<<<<<<
- *         temp_log = temp_log + full_log[line_index_iter].replace('\n', ' | ')
- *         line_index_iter = line_index_iter + 1
+ *     temp_log = []
+ *     while line_index_iter < log_len:             # <<<<<<<<<<<<<<
+ *         # Normal line with start and thread
+ *         if full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):
  */
   while (1) {
-    __pyx_t_2 = PyInt_FromSsize_t(__pyx_v_log_len); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyObject_RichCompare(__pyx_v_line_index_iter, __pyx_t_2, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
+    __pyx_t_1 = PyInt_FromSsize_t(__pyx_v_log_len); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PyObject_RichCompare(__pyx_v_line_index_iter, __pyx_t_1, Py_LT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 76, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 77, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (__pyx_t_5) {
-    } else {
-      __pyx_t_4 = __pyx_t_5;
-      goto __pyx_L5_bool_binop_done;
-    }
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 77, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
+    if (!__pyx_t_6) break;
+
+    /* "logprocessinglibrary.py":78
+ *     while line_index_iter < log_len:
+ *         # Normal line with start and thread
+ *         if full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):             # <<<<<<<<<<<<<<
+ *             temp_log.append(full_log[line_index_iter])
+ *         elif full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):
+ */
+    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_startswith); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_log_keyword_table, __pyx_n_s_LOG_STARTING_STRING); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_7 = NULL;
-    __pyx_t_8 = 0;
+    __pyx_t_4 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_7)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_7);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __pyx_t_4 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_1};
+      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (__pyx_t_8) {
+    } else {
+      __pyx_t_6 = __pyx_t_8;
+      goto __pyx_L6_bool_binop_done;
+    }
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_7 = NULL;
+    __pyx_t_4 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (unlikely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_7)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_7);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __pyx_t_4 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_1};
+      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __pyx_t_8 = (__Pyx_PyString_Equals(__pyx_kp_s_1, __pyx_t_2, Py_NE)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_6 = __pyx_t_8;
+    __pyx_L6_bool_binop_done:;
+    if (__pyx_t_6) {
+
+      /* "logprocessinglibrary.py":79
+ *         # Normal line with start and thread
+ *         if full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):
+ *             temp_log.append(full_log[line_index_iter])             # <<<<<<<<<<<<<<
+ *         elif full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):
+ *             """
+ */
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_temp_log, __pyx_t_2); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 79, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+      /* "logprocessinglibrary.py":78
+ *     while line_index_iter < log_len:
+ *         # Normal line with start and thread
+ *         if full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):             # <<<<<<<<<<<<<<
+ *             temp_log.append(full_log[line_index_iter])
+ *         elif full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):
+ */
+      goto __pyx_L5;
+    }
+
+    /* "logprocessinglibrary.py":80
+ *         if full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):
+ *             temp_log.append(full_log[line_index_iter])
+ *         elif full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):             # <<<<<<<<<<<<<<
+ *             """
+ *             start of broken log
+ */
+    __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_startswith); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v_log_keyword_table, __pyx_n_s_LOG_STARTING_STRING); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_7 = NULL;
+    __pyx_t_4 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_1))) {
+      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_1);
+      if (likely(__pyx_t_7)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+        __Pyx_INCREF(__pyx_t_7);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_1, function);
+        __pyx_t_4 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_3};
+      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    }
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 80, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (__pyx_t_8) {
+    } else {
+      __pyx_t_6 = __pyx_t_8;
+      goto __pyx_L8_bool_binop_done;
+    }
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_7 = NULL;
+    __pyx_t_4 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (unlikely(PyMethod_Check(__pyx_t_1))) {
+      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_1);
+      if (likely(__pyx_t_7)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+        __Pyx_INCREF(__pyx_t_7);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_1, function);
+        __pyx_t_4 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_3};
+      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    }
+    __pyx_t_8 = (__Pyx_PyString_Equals(__pyx_kp_s_1, __pyx_t_2, Py_EQ)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 80, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_6 = __pyx_t_8;
+    __pyx_L8_bool_binop_done:;
+    if (__pyx_t_6) {
+
+      /* "logprocessinglibrary.py":86
+ *             """
+ * 
+ *             temp_log.append(full_log[line_index_iter].replace('\n', ' | '))             # <<<<<<<<<<<<<<
+ *         elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):
+ *             """
+ */
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_replace); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_temp_log, __pyx_t_2); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 86, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+      /* "logprocessinglibrary.py":80
+ *         if full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):
+ *             temp_log.append(full_log[line_index_iter])
+ *         elif full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):             # <<<<<<<<<<<<<<
+ *             """
+ *             start of broken log
+ */
+      goto __pyx_L5;
+    }
+
+    /* "logprocessinglibrary.py":87
+ * 
+ *             temp_log.append(full_log[line_index_iter].replace('\n', ' | '))
+ *         elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):             # <<<<<<<<<<<<<<
+ *             """
+ *             middle of broken log, no start, no thread.
+ */
+    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_startswith); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_log_keyword_table, __pyx_n_s_LOG_STARTING_STRING); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_7 = NULL;
+    __pyx_t_4 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_7)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_7);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __pyx_t_4 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_1};
+      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 87, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_10 = (!__pyx_t_8);
+    if (__pyx_t_10) {
+    } else {
+      __pyx_t_6 = __pyx_t_10;
+      goto __pyx_L10_bool_binop_done;
+    }
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_7 = NULL;
+    __pyx_t_4 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (unlikely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_7)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_7);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __pyx_t_4 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_1};
+      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 87, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_kp_s_1, __pyx_t_2, Py_EQ)); if (unlikely((__pyx_t_10 < 0))) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_6 = __pyx_t_10;
+    __pyx_L10_bool_binop_done:;
+    if (__pyx_t_6) {
+
+      /* "logprocessinglibrary.py":92
+ *             Append to last line string end.
+ *             """
+ *             temp_log[-1] = temp_log[-1] + full_log[line_index_iter].replace('\n', ' | ')             # <<<<<<<<<<<<<<
+ *         elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):
+ *             """
+ */
+      __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_temp_log, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_replace); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_1 = PyNumber_Add(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely((__Pyx_SetItemInt(__pyx_v_temp_log, -1L, __pyx_t_1, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0))) __PYX_ERR(0, 92, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+      /* "logprocessinglibrary.py":87
+ * 
+ *             temp_log.append(full_log[line_index_iter].replace('\n', ' | '))
+ *         elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):             # <<<<<<<<<<<<<<
+ *             """
+ *             middle of broken log, no start, no thread.
+ */
+      goto __pyx_L5;
+    }
+
+    /* "logprocessinglibrary.py":93
+ *             """
+ *             temp_log[-1] = temp_log[-1] + full_log[line_index_iter].replace('\n', ' | ')
+ *         elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):             # <<<<<<<<<<<<<<
+ *             """
+ *             end of broken log, no start, got thread.
+ */
+    __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_startswith); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v_log_keyword_table, __pyx_n_s_LOG_STARTING_STRING); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_7 = NULL;
+    __pyx_t_4 = 0;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_2))) {
+      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_2);
+      if (likely(__pyx_t_7)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        __Pyx_INCREF(__pyx_t_7);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_2, function);
+        __pyx_t_4 = 1;
+      }
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_3};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
+      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    }
+    __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_10 < 0))) __PYX_ERR(0, 93, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_8 = (!__pyx_t_10);
+    if (__pyx_t_8) {
+    } else {
+      __pyx_t_6 = __pyx_t_8;
+      goto __pyx_L12_bool_binop_done;
+    }
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_7 = NULL;
+    __pyx_t_4 = 0;
     #if CYTHON_UNPACK_METHODS
     if (unlikely(PyMethod_Check(__pyx_t_2))) {
       __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_2);
@@ -4510,141 +4913,96 @@ static PyObject *__pyx_pf_20logprocessinglibrary_12process_breaking_line_log(CYT
         __Pyx_INCREF(__pyx_t_7);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_2, function);
-        __pyx_t_8 = 1;
+        __pyx_t_4 = 1;
       }
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_6};
-      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_8, 1+__pyx_t_8);
+      PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_3};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
       __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     }
-    __pyx_t_5 = (__Pyx_PyString_Equals(__pyx_kp_s_1, __pyx_t_3, Py_EQ)); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 77, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_4 = __pyx_t_5;
-    __pyx_L5_bool_binop_done:;
-    if (!__pyx_t_4) break;
+    __pyx_t_8 = (__Pyx_PyString_Equals(__pyx_kp_s_1, __pyx_t_1, Py_NE)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 93, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_6 = __pyx_t_8;
+    __pyx_L12_bool_binop_done:;
+    if (__pyx_t_6) {
 
-    /* "logprocessinglibrary.py":78
- *     line_index_iter = line_index_iter + 1
- *     while line_index_iter < log_len and "-1" == locate_thread(full_log[line_index_iter]):
- *         temp_log = temp_log + full_log[line_index_iter].replace('\n', ' | ')             # <<<<<<<<<<<<<<
+      /* "logprocessinglibrary.py":98
+ *             Append to last line string end.
+ *             """
+ *             temp_log[-1] = temp_log[-1] + full_log[line_index_iter]             # <<<<<<<<<<<<<<
+ * 
  *         line_index_iter = line_index_iter + 1
- *     if line_index_iter < log_len:
  */
-    __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_replace); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyNumber_Add(__pyx_v_temp_log, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF_SET(__pyx_v_temp_log, __pyx_t_2);
-    __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_temp_log, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_3 = PyNumber_Add(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 98, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (unlikely((__Pyx_SetItemInt(__pyx_v_temp_log, -1L, __pyx_t_3, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0))) __PYX_ERR(0, 98, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "logprocessinglibrary.py":79
- *     while line_index_iter < log_len and "-1" == locate_thread(full_log[line_index_iter]):
- *         temp_log = temp_log + full_log[line_index_iter].replace('\n', ' | ')
+      /* "logprocessinglibrary.py":93
+ *             """
+ *             temp_log[-1] = temp_log[-1] + full_log[line_index_iter].replace('\n', ' | ')
+ *         elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):             # <<<<<<<<<<<<<<
+ *             """
+ *             end of broken log, no start, got thread.
+ */
+    }
+    __pyx_L5:;
+
+    /* "logprocessinglibrary.py":100
+ *             temp_log[-1] = temp_log[-1] + full_log[line_index_iter]
+ * 
  *         line_index_iter = line_index_iter + 1             # <<<<<<<<<<<<<<
- *     if line_index_iter < log_len:
- *         '''last line
- */
-    __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF_SET(__pyx_v_line_index_iter, __pyx_t_2);
-    __pyx_t_2 = 0;
-  }
-
-  /* "logprocessinglibrary.py":80
- *         temp_log = temp_log + full_log[line_index_iter].replace('\n', ' | ')
- *         line_index_iter = line_index_iter + 1
- *     if line_index_iter < log_len:             # <<<<<<<<<<<<<<
- *         '''last line
  * 
+ *     return temp_log
  */
-  __pyx_t_2 = PyInt_FromSsize_t(__pyx_v_log_len); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_v_line_index_iter, __pyx_t_2, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 80, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__pyx_t_4) {
-
-    /* "logprocessinglibrary.py":93
- *         component="IntuneManagementExtension" context="" type="1" thread="5" file="">
- *         '''
- *         temp_log = temp_log + full_log[line_index_iter]             # <<<<<<<<<<<<<<
- *         return temp_log
- *     else:
- */
-    __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_full_log, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 100, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = PyNumber_Add(__pyx_v_temp_log, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF_SET(__pyx_v_temp_log, __pyx_t_2);
-    __pyx_t_2 = 0;
+    __Pyx_DECREF_SET(__pyx_v_line_index_iter, __pyx_t_3);
+    __pyx_t_3 = 0;
+  }
 
-    /* "logprocessinglibrary.py":94
- *         '''
- *         temp_log = temp_log + full_log[line_index_iter]
- *         return temp_log             # <<<<<<<<<<<<<<
- *     else:
- *         return ""
- */
-    __Pyx_XDECREF(__pyx_r);
-    __Pyx_INCREF(__pyx_v_temp_log);
-    __pyx_r = __pyx_v_temp_log;
-    goto __pyx_L0;
-
-    /* "logprocessinglibrary.py":80
- *         temp_log = temp_log + full_log[line_index_iter].replace('\n', ' | ')
+  /* "logprocessinglibrary.py":102
  *         line_index_iter = line_index_iter + 1
- *     if line_index_iter < log_len:             # <<<<<<<<<<<<<<
- *         '''last line
  * 
- */
-  }
-
-  /* "logprocessinglibrary.py":96
- *         return temp_log
- *     else:
- *         return ""             # <<<<<<<<<<<<<<
+ *     return temp_log             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  /*else*/ {
-    __Pyx_XDECREF(__pyx_r);
-    __Pyx_INCREF(__pyx_kp_s__7);
-    __pyx_r = __pyx_kp_s__7;
-    goto __pyx_L0;
-  }
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_temp_log);
+  __pyx_r = __pyx_v_temp_log;
+  goto __pyx_L0;
 
   /* "logprocessinglibrary.py":59
  * 
  * 
  * def process_breaking_line_log(full_log):             # <<<<<<<<<<<<<<
  *     """
- *     <![LOG[AAD User check is failed, exception is System.ComponentModel.Win32Exception (0x80004005):
+ *     eg.
  */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_AddTraceback("logprocessinglibrary.process_breaking_line_log", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_log_keyword_table);
   __Pyx_XDECREF(__pyx_v_line_index_iter);
   __Pyx_XDECREF(__pyx_v_temp_log);
   __Pyx_XGIVEREF(__pyx_r);
@@ -4652,7 +5010,7 @@ static PyObject *__pyx_pf_20logprocessinglibrary_12process_breaking_line_log(CYT
   return __pyx_r;
 }
 
-/* "logprocessinglibrary.py":99
+/* "logprocessinglibrary.py":106
  * 
  * 
  * def find_app_id_with_starting_string(log_line, start_string):             # <<<<<<<<<<<<<<
@@ -4717,7 +5075,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 99, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -4725,14 +5083,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 99, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("find_app_id_with_starting_string", 1, 2, 2, 1); __PYX_ERR(0, 99, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("find_app_id_with_starting_string", 1, 2, 2, 1); __PYX_ERR(0, 106, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "find_app_id_with_starting_string") < 0)) __PYX_ERR(0, 99, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "find_app_id_with_starting_string") < 0)) __PYX_ERR(0, 106, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -4745,7 +5103,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("find_app_id_with_starting_string", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 99, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("find_app_id_with_starting_string", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 106, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4788,14 +5146,14 @@ static PyObject *__pyx_pf_20logprocessinglibrary_14find_app_id_with_starting_str
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("find_app_id_with_starting_string", 1);
 
-  /* "logprocessinglibrary.py":108
+  /* "logprocessinglibrary.py":115
  *     :return:
  *     """
  *     app_id_index_start = log_line.find(start_string) + len(start_string)             # <<<<<<<<<<<<<<
  *     app_id_index_end = app_id_index_start + CONST_APP_ID_LEN
  *     cur_app_id = log_line[app_id_index_start:app_id_index_end]
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_log_line, __pyx_n_s_find); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_log_line, __pyx_n_s_find); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -4815,47 +5173,47 @@ static PyObject *__pyx_pf_20logprocessinglibrary_14find_app_id_with_starting_str
     PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_start_string};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
-  __pyx_t_5 = PyObject_Length(__pyx_v_start_string); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 108, __pyx_L1_error)
-  __pyx_t_2 = PyInt_FromSsize_t(__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_5 = PyObject_Length(__pyx_v_start_string); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 115, __pyx_L1_error)
+  __pyx_t_2 = PyInt_FromSsize_t(__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyNumber_Add(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_3 = PyNumber_Add(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_app_id_index_start = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "logprocessinglibrary.py":109
+  /* "logprocessinglibrary.py":116
  *     """
  *     app_id_index_start = log_line.find(start_string) + len(start_string)
  *     app_id_index_end = app_id_index_start + CONST_APP_ID_LEN             # <<<<<<<<<<<<<<
  *     cur_app_id = log_line[app_id_index_start:app_id_index_end]
  *     return cur_app_id
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_CONST_APP_ID_LEN); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 109, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_CONST_APP_ID_LEN); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = PyNumber_Add(__pyx_v_app_id_index_start, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 109, __pyx_L1_error)
+  __pyx_t_2 = PyNumber_Add(__pyx_v_app_id_index_start, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_app_id_index_end = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "logprocessinglibrary.py":110
+  /* "logprocessinglibrary.py":117
  *     app_id_index_start = log_line.find(start_string) + len(start_string)
  *     app_id_index_end = app_id_index_start + CONST_APP_ID_LEN
  *     cur_app_id = log_line[app_id_index_start:app_id_index_end]             # <<<<<<<<<<<<<<
  *     return cur_app_id
  */
-  __pyx_t_2 = __Pyx_PyObject_GetSlice(__pyx_v_log_line, 0, 0, &__pyx_v_app_id_index_start, &__pyx_v_app_id_index_end, NULL, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 110, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetSlice(__pyx_v_log_line, 0, 0, &__pyx_v_app_id_index_start, &__pyx_v_app_id_index_end, NULL, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_cur_app_id = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "logprocessinglibrary.py":111
+  /* "logprocessinglibrary.py":118
  *     app_id_index_end = app_id_index_start + CONST_APP_ID_LEN
  *     cur_app_id = log_line[app_id_index_start:app_id_index_end]
  *     return cur_app_id             # <<<<<<<<<<<<<<
@@ -4865,7 +5223,7 @@ static PyObject *__pyx_pf_20logprocessinglibrary_14find_app_id_with_starting_str
   __pyx_r = __pyx_v_cur_app_id;
   goto __pyx_L0;
 
-  /* "logprocessinglibrary.py":99
+  /* "logprocessinglibrary.py":106
  * 
  * 
  * def find_app_id_with_starting_string(log_line, start_string):             # <<<<<<<<<<<<<<
@@ -4912,12 +5270,12 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_CONST_META_DEPENDENT_APP_VALUE_I, __pyx_k_CONST_META_DEPENDENT_APP_VALUE_I, sizeof(__pyx_k_CONST_META_DEPENDENT_APP_VALUE_I), 0, 0, 1, 1},
     {&__pyx_n_s_CONST_META_VALUE_INDEX, __pyx_k_CONST_META_VALUE_INDEX, sizeof(__pyx_k_CONST_META_VALUE_INDEX), 0, 0, 1, 1},
     {&__pyx_n_s_CONST_USER_ID_LEN, __pyx_k_CONST_USER_ID_LEN, sizeof(__pyx_k_CONST_USER_ID_LEN), 0, 0, 1, 1},
-    {&__pyx_n_s__24, __pyx_k__24, sizeof(__pyx_k__24), 0, 0, 1, 1},
+    {&__pyx_n_s_LOG_STARTING_STRING, __pyx_k_LOG_STARTING_STRING, sizeof(__pyx_k_LOG_STARTING_STRING), 0, 0, 1, 1},
+    {&__pyx_n_s__23, __pyx_k__23, sizeof(__pyx_k__23), 0, 0, 1, 1},
     {&__pyx_kp_s__3, __pyx_k__3, sizeof(__pyx_k__3), 0, 0, 1, 0},
     {&__pyx_kp_s__4, __pyx_k__4, sizeof(__pyx_k__4), 0, 0, 1, 0},
     {&__pyx_kp_s__5, __pyx_k__5, sizeof(__pyx_k__5), 0, 0, 1, 0},
-    {&__pyx_kp_s__7, __pyx_k__7, sizeof(__pyx_k__7), 0, 0, 1, 0},
-    {&__pyx_n_s__8, __pyx_k__8, sizeof(__pyx_k__8), 0, 0, 1, 1},
+    {&__pyx_n_s__7, __pyx_k__7, sizeof(__pyx_k__7), 0, 0, 1, 1},
     {&__pyx_n_s_app_id_index_end, __pyx_k_app_id_index_end, sizeof(__pyx_k_app_id_index_end), 0, 0, 1, 1},
     {&__pyx_n_s_app_id_index_start, __pyx_k_app_id_index_start, sizeof(__pyx_k_app_id_index_start), 0, 0, 1, 1},
     {&__pyx_n_s_asyncio_coroutines, __pyx_k_asyncio_coroutines, sizeof(__pyx_k_asyncio_coroutines), 0, 0, 1, 1},
@@ -4956,6 +5314,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_locate_line_contains_keyword, __pyx_k_locate_line_contains_keyword, sizeof(__pyx_k_locate_line_contains_keyword), 0, 0, 1, 1},
     {&__pyx_n_s_locate_line_startswith_keyword, __pyx_k_locate_line_startswith_keyword, sizeof(__pyx_k_locate_line_startswith_keyword), 0, 0, 1, 1},
     {&__pyx_n_s_locate_thread, __pyx_k_locate_thread, sizeof(__pyx_k_locate_thread), 0, 0, 1, 1},
+    {&__pyx_n_s_log_keyword_table, __pyx_k_log_keyword_table, sizeof(__pyx_k_log_keyword_table), 0, 0, 1, 1},
     {&__pyx_n_s_log_len, __pyx_k_log_len, sizeof(__pyx_k_log_len), 0, 0, 1, 1},
     {&__pyx_n_s_log_line, __pyx_k_log_line, sizeof(__pyx_k_log_line), 0, 0, 1, 1},
     {&__pyx_kp_s_logging_keyword_table_json, __pyx_k_logging_keyword_table_json, sizeof(__pyx_k_logging_keyword_table_json), 0, 0, 1, 0},
@@ -5013,14 +5372,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "logprocessinglibrary.py":75
- *     log_len = len(full_log)
- *     line_index_iter = 0
- *     temp_log = full_log[line_index_iter].replace('\n', ' | ')             # <<<<<<<<<<<<<<
- *     line_index_iter = line_index_iter + 1
- *     while line_index_iter < log_len and "-1" == locate_thread(full_log[line_index_iter]):
+  /* "logprocessinglibrary.py":86
+ *             """
+ * 
+ *             temp_log.append(full_log[line_index_iter].replace('\n', ' | '))             # <<<<<<<<<<<<<<
+ *         elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):
+ *             """
  */
-  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_kp_s__4, __pyx_kp_s__5); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 75, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_kp_s__4, __pyx_kp_s__5); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 86, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
@@ -5031,10 +5390,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     with open('logging keyword table.json', 'r') as f:
  *         json_table = json.load(f)
  */
-  __pyx_tuple__9 = PyTuple_Pack(2, __pyx_n_s_f, __pyx_n_s_json_table); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 13, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__9);
-  __Pyx_GIVEREF(__pyx_tuple__9);
-  __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_init_keyword_table, 13, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) __PYX_ERR(0, 13, __pyx_L1_error)
+  __pyx_tuple__8 = PyTuple_Pack(2, __pyx_n_s_f, __pyx_n_s_json_table); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 13, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__8);
+  __Pyx_GIVEREF(__pyx_tuple__8);
+  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_init_keyword_table, 13, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 13, __pyx_L1_error)
 
   /* "logprocessinglibrary.py":19
  * 
@@ -5043,10 +5402,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     # datetime in log looks like <time="09:11:50.3993219" date="3-12-2021" component="
  *     time_index = log_line.find("time=") + 6
  */
-  __pyx_tuple__11 = PyTuple_Pack(6, __pyx_n_s_log_line, __pyx_n_s_time_index, __pyx_n_s_date_index, __pyx_n_s_component_index, __pyx_n_s_line_date, __pyx_n_s_line_time); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 19, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__11);
-  __Pyx_GIVEREF(__pyx_tuple__11);
-  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_get_timestamp_by_line, 19, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(6, __pyx_n_s_log_line, __pyx_n_s_time_index, __pyx_n_s_date_index, __pyx_n_s_component_index, __pyx_n_s_line_date, __pyx_n_s_line_time); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__10);
+  __Pyx_GIVEREF(__pyx_tuple__10);
+  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_get_timestamp_by_line, 19, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 19, __pyx_L1_error)
 
   /* "logprocessinglibrary.py":30
  * 
@@ -5055,10 +5414,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     return datetime.datetime.strptime(date_string, '%m-%d-%Y %H:%M:%S')
  * 
  */
-  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_n_s_date_string); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 30, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__13);
-  __Pyx_GIVEREF(__pyx_tuple__13);
-  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_convert_date_string_to_date_time, 30, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_n_s_date_string); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__12);
+  __Pyx_GIVEREF(__pyx_tuple__12);
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_convert_date_string_to_date_time, 30, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 30, __pyx_L1_error)
 
   /* "logprocessinglibrary.py":34
  * 
@@ -5067,10 +5426,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     thread_index = line.find('thread="') + 8
  *     thread_index_end = line.find('" file=')
  */
-  __pyx_tuple__15 = PyTuple_Pack(3, __pyx_n_s_line, __pyx_n_s_thread_index, __pyx_n_s_thread_index_end); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 34, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__15);
-  __Pyx_GIVEREF(__pyx_tuple__15);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_locate_thread, 34, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 34, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(3, __pyx_n_s_line, __pyx_n_s_thread_index, __pyx_n_s_thread_index_end); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 34, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__14);
+  __Pyx_GIVEREF(__pyx_tuple__14);
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_locate_thread, 34, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 34, __pyx_L1_error)
 
   /* "logprocessinglibrary.py":43
  * 
@@ -5079,10 +5438,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     line_index_list = []
  *     for index in range(len(full_log)):
  */
-  __pyx_tuple__17 = PyTuple_Pack(4, __pyx_n_s_full_log, __pyx_n_s_keyword, __pyx_n_s_line_index_list, __pyx_n_s_index); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 43, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__17);
-  __Pyx_GIVEREF(__pyx_tuple__17);
-  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_locate_line_startswith_keyword, 43, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_tuple__16 = PyTuple_Pack(4, __pyx_n_s_full_log, __pyx_n_s_keyword, __pyx_n_s_line_index_list, __pyx_n_s_index); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__16);
+  __Pyx_GIVEREF(__pyx_tuple__16);
+  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_locate_line_startswith_keyword, 43, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 43, __pyx_L1_error)
 
   /* "logprocessinglibrary.py":51
  * 
@@ -5091,31 +5450,31 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     line_index_list = []
  *     for index in range(len(full_log)):
  */
-  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_locate_line_contains_keyword, 51, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_locate_line_contains_keyword, 51, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 51, __pyx_L1_error)
 
   /* "logprocessinglibrary.py":59
  * 
  * 
  * def process_breaking_line_log(full_log):             # <<<<<<<<<<<<<<
  *     """
- *     <![LOG[AAD User check is failed, exception is System.ComponentModel.Win32Exception (0x80004005):
+ *     eg.
  */
-  __pyx_tuple__20 = PyTuple_Pack(4, __pyx_n_s_full_log, __pyx_n_s_log_len, __pyx_n_s_line_index_iter, __pyx_n_s_temp_log); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 59, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__20);
-  __Pyx_GIVEREF(__pyx_tuple__20);
-  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_process_breaking_line_log, 59, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_tuple__19 = PyTuple_Pack(5, __pyx_n_s_full_log, __pyx_n_s_log_keyword_table, __pyx_n_s_log_len, __pyx_n_s_line_index_iter, __pyx_n_s_temp_log); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__19);
+  __Pyx_GIVEREF(__pyx_tuple__19);
+  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_process_breaking_line_log, 59, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 59, __pyx_L1_error)
 
-  /* "logprocessinglibrary.py":99
+  /* "logprocessinglibrary.py":106
  * 
  * 
  * def find_app_id_with_starting_string(log_line, start_string):             # <<<<<<<<<<<<<<
  *     """
  *     <![LOG[[Win32App][ActionProcessor] No action required for app with id: b3d77df6-8802-414f-867e-457394d80cca.]LOG]!
  */
-  __pyx_tuple__22 = PyTuple_Pack(5, __pyx_n_s_log_line, __pyx_n_s_start_string, __pyx_n_s_app_id_index_start, __pyx_n_s_app_id_index_end, __pyx_n_s_cur_app_id); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 99, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__22);
-  __Pyx_GIVEREF(__pyx_tuple__22);
-  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_find_app_id_with_starting_string, 99, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_tuple__21 = PyTuple_Pack(5, __pyx_n_s_log_line, __pyx_n_s_start_string, __pyx_n_s_app_id_index_start, __pyx_n_s_app_id_index_end, __pyx_n_s_cur_app_id); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__21);
+  __Pyx_GIVEREF(__pyx_tuple__21);
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_logprocessinglibrary_py, __pyx_n_s_find_app_id_with_starting_string, 106, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -5585,7 +5944,7 @@ if (!__Pyx_RefNanny) {
  *     with open('logging keyword table.json', 'r') as f:
  *         json_table = json.load(f)
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_1init_keyword_table, 0, __pyx_n_s_init_keyword_table, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__10)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 13, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_1init_keyword_table, 0, __pyx_n_s_init_keyword_table, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_init_keyword_table, __pyx_t_2) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5597,7 +5956,7 @@ if (!__Pyx_RefNanny) {
  *     # datetime in log looks like <time="09:11:50.3993219" date="3-12-2021" component="
  *     time_index = log_line.find("time=") + 6
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_3get_timestamp_by_line, 0, __pyx_n_s_get_timestamp_by_line, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_3get_timestamp_by_line, 0, __pyx_n_s_get_timestamp_by_line, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__11)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 19, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_timestamp_by_line, __pyx_t_2) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5609,7 +5968,7 @@ if (!__Pyx_RefNanny) {
  *     return datetime.datetime.strptime(date_string, '%m-%d-%Y %H:%M:%S')
  * 
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_5convert_date_string_to_date_time, 0, __pyx_n_s_convert_date_string_to_date_time, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__14)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_5convert_date_string_to_date_time, 0, __pyx_n_s_convert_date_string_to_date_time, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_convert_date_string_to_date_time, __pyx_t_2) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5621,7 +5980,7 @@ if (!__Pyx_RefNanny) {
  *     thread_index = line.find('thread="') + 8
  *     thread_index_end = line.find('" file=')
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_7locate_thread, 0, __pyx_n_s_locate_thread, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__16)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_7locate_thread, 0, __pyx_n_s_locate_thread, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__15)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_locate_thread, __pyx_t_2) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5633,7 +5992,7 @@ if (!__Pyx_RefNanny) {
  *     line_index_list = []
  *     for index in range(len(full_log)):
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_9locate_line_startswith_keyword, 0, __pyx_n_s_locate_line_startswith_keyword, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__18)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_9locate_line_startswith_keyword, 0, __pyx_n_s_locate_line_startswith_keyword, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__17)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_locate_line_startswith_keyword, __pyx_t_2) < 0) __PYX_ERR(0, 43, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5645,7 +6004,7 @@ if (!__Pyx_RefNanny) {
  *     line_index_list = []
  *     for index in range(len(full_log)):
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_11locate_line_contains_keyword, 0, __pyx_n_s_locate_line_contains_keyword, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__19)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_11locate_line_contains_keyword, 0, __pyx_n_s_locate_line_contains_keyword, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__18)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_locate_line_contains_keyword, __pyx_t_2) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5655,23 +6014,23 @@ if (!__Pyx_RefNanny) {
  * 
  * def process_breaking_line_log(full_log):             # <<<<<<<<<<<<<<
  *     """
- *     <![LOG[AAD User check is failed, exception is System.ComponentModel.Win32Exception (0x80004005):
+ *     eg.
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_13process_breaking_line_log, 0, __pyx_n_s_process_breaking_line_log, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_13process_breaking_line_log, 0, __pyx_n_s_process_breaking_line_log, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__20)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_process_breaking_line_log, __pyx_t_2) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "logprocessinglibrary.py":99
+  /* "logprocessinglibrary.py":106
  * 
  * 
  * def find_app_id_with_starting_string(log_line, start_string):             # <<<<<<<<<<<<<<
  *     """
  *     <![LOG[[Win32App][ActionProcessor] No action required for app with id: b3d77df6-8802-414f-867e-457394d80cca.]LOG]!
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_15find_app_id_with_starting_string, 0, __pyx_n_s_find_app_id_with_starting_string, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_20logprocessinglibrary_15find_app_id_with_starting_string, 0, __pyx_n_s_find_app_id_with_starting_string, NULL, __pyx_n_s_logprocessinglibrary, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_find_app_id_with_starting_string, __pyx_t_2) < 0) __PYX_ERR(0, 99, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_find_app_id_with_starting_string, __pyx_t_2) < 0) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "logprocessinglibrary.py":1
@@ -7446,6 +7805,88 @@ static PyObject *__Pyx_PyObject_GetItem(PyObject *obj, PyObject *key) {
 }
 #endif
 
+/* DictGetItem */
+#if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
+static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
+    PyObject *value;
+    value = PyDict_GetItemWithError(d, key);
+    if (unlikely(!value)) {
+        if (!PyErr_Occurred()) {
+            if (unlikely(PyTuple_Check(key))) {
+                PyObject* args = PyTuple_Pack(1, key);
+                if (likely(args)) {
+                    PyErr_SetObject(PyExc_KeyError, args);
+                    Py_DECREF(args);
+                }
+            } else {
+                PyErr_SetObject(PyExc_KeyError, key);
+            }
+        }
+        return NULL;
+    }
+    Py_INCREF(value);
+    return value;
+}
+#endif
+
+/* SetItemInt */
+static int __Pyx_SetItemInt_Generic(PyObject *o, PyObject *j, PyObject *v) {
+    int r;
+    if (unlikely(!j)) return -1;
+    r = PyObject_SetItem(o, j, v);
+    Py_DECREF(j);
+    return r;
+}
+static CYTHON_INLINE int __Pyx_SetItemInt_Fast(PyObject *o, Py_ssize_t i, PyObject *v, int is_list,
+                                               CYTHON_NCP_UNUSED int wraparound, CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS && CYTHON_USE_TYPE_SLOTS
+    if (is_list || PyList_CheckExact(o)) {
+        Py_ssize_t n = (!wraparound) ? i : ((likely(i >= 0)) ? i : i + PyList_GET_SIZE(o));
+        if ((!boundscheck) || likely(__Pyx_is_valid_index(n, PyList_GET_SIZE(o)))) {
+            PyObject* old = PyList_GET_ITEM(o, n);
+            Py_INCREF(v);
+            PyList_SET_ITEM(o, n, v);
+            Py_DECREF(old);
+            return 1;
+        }
+    } else {
+        PyMappingMethods *mm = Py_TYPE(o)->tp_as_mapping;
+        PySequenceMethods *sm = Py_TYPE(o)->tp_as_sequence;
+        if (mm && mm->mp_ass_subscript) {
+            int r;
+            PyObject *key = PyInt_FromSsize_t(i);
+            if (unlikely(!key)) return -1;
+            r = mm->mp_ass_subscript(o, key, v);
+            Py_DECREF(key);
+            return r;
+        }
+        if (likely(sm && sm->sq_ass_item)) {
+            if (wraparound && unlikely(i < 0) && likely(sm->sq_length)) {
+                Py_ssize_t l = sm->sq_length(o);
+                if (likely(l >= 0)) {
+                    i += l;
+                } else {
+                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
+                        return -1;
+                    PyErr_Clear();
+                }
+            }
+            return sm->sq_ass_item(o, i, v);
+        }
+    }
+#else
+#if CYTHON_COMPILING_IN_PYPY
+    if (is_list || (PySequence_Check(o) && !PyDict_Check(o)))
+#else
+    if (is_list || PySequence_Check(o))
+#endif
+    {
+        return PySequence_SetItem(o, i, v);
+    }
+#endif
+    return __Pyx_SetItemInt_Generic(o, PyInt_FromSsize_t(i), v);
+}
+
 /* Import */
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level) {
     PyObject *module = 0;
@@ -7582,7 +8023,7 @@ static PyObject *__Pyx_ImportDottedModule_WalkParts(PyObject *module, PyObject *
 #endif
 static PyObject *__Pyx__ImportDottedModule(PyObject *name, PyObject *parts_tuple) {
 #if PY_MAJOR_VERSION < 3
-    PyObject *module, *from_list, *star = __pyx_n_s__8;
+    PyObject *module, *from_list, *star = __pyx_n_s__7;
     CYTHON_UNUSED_VAR(parts_tuple);
     from_list = PyList_New(1);
     if (unlikely(!from_list))
@@ -9199,22 +9640,6 @@ bad:
 }
 #endif
 
-/* FormatTypeName */
-#if CYTHON_COMPILING_IN_LIMITED_API
-static __Pyx_TypeName
-__Pyx_PyType_GetName(PyTypeObject* tp)
-{
-    PyObject *name = __Pyx_PyObject_GetAttrStr((PyObject *)tp,
-                                               __pyx_n_s_name);
-    if (unlikely(name == NULL) || unlikely(!PyUnicode_Check(name))) {
-        PyErr_Clear();
-        Py_XDECREF(name);
-        name = __Pyx_NewRef(__pyx_n_s__24);
-    }
-    return name;
-}
-#endif
-
 /* CIntToPy */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
 #ifdef __Pyx_HAS_GCC_DIAGNOSTIC
@@ -9278,6 +9703,22 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
 #endif
     }
 }
+
+/* FormatTypeName */
+#if CYTHON_COMPILING_IN_LIMITED_API
+static __Pyx_TypeName
+__Pyx_PyType_GetName(PyTypeObject* tp)
+{
+    PyObject *name = __Pyx_PyObject_GetAttrStr((PyObject *)tp,
+                                               __pyx_n_s_name);
+    if (unlikely(name == NULL) || unlikely(!PyUnicode_Check(name))) {
+        PyErr_Clear();
+        Py_XDECREF(name);
+        name = __Pyx_NewRef(__pyx_n_s__23);
+    }
+    return name;
+}
+#endif
 
 /* CIntFromPyVerify */
 #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\

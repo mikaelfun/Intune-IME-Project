@@ -1913,19 +1913,6 @@ static CYTHON_INLINE int __Pyx_PySequence_ContainsTF(PyObject* item, PyObject* s
     return unlikely(result < 0) ? result : (result == (eq == Py_EQ));
 }
 
-/* StrEquals.proto */
-#if PY_MAJOR_VERSION >= 3
-#define __Pyx_PyString_Equals __Pyx_PyUnicode_Equals
-#else
-#define __Pyx_PyString_Equals __Pyx_PyBytes_Equals
-#endif
-
-/* SliceObject.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(
-        PyObject* obj, Py_ssize_t cstart, Py_ssize_t cstop,
-        PyObject** py_start, PyObject** py_stop, PyObject** py_slice,
-        int has_cstart, int has_cstop, int wraparound);
-
 /* PyObjectCallNoArg.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
 
@@ -1986,6 +1973,13 @@ static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected);
 
 /* append.proto */
 static CYTHON_INLINE int __Pyx_PyObject_Append(PyObject* L, PyObject* x);
+
+/* StrEquals.proto */
+#if PY_MAJOR_VERSION >= 3
+#define __Pyx_PyString_Equals __Pyx_PyUnicode_Equals
+#else
+#define __Pyx_PyString_Equals __Pyx_PyBytes_Equals
+#endif
 
 /* Import.proto */
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
@@ -2267,11 +2261,9 @@ int __pyx_module_is_main_emslifecycle = 0;
 static PyObject *__pyx_builtin_range;
 /* #### Code section: string_decls ### */
 static const char __pyx_k_[] = "";
-static const char __pyx_k_1[] = "-1";
-static const char __pyx_k__2[] = " | ";
-static const char __pyx_k__3[] = "\n";
-static const char __pyx_k__4[] = "*";
-static const char __pyx_k__14[] = "?";
+static const char __pyx_k__2[] = "\n";
+static const char __pyx_k__3[] = "*";
+static const char __pyx_k__13[] = "?";
 static const char __pyx_k_doc[] = "__doc__";
 static const char __pyx_k_pop[] = "pop";
 static const char __pyx_k_dict[] = "__dict__";
@@ -2282,7 +2274,6 @@ static const char __pyx_k_self[] = "self";
 static const char __pyx_k_spec[] = "__spec__";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_clear[] = "clear";
-static const char __pyx_k_count[] = "count";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_super[] = "super";
 static const char __pyx_k_append[] = "append";
@@ -2294,7 +2285,6 @@ static const char __pyx_k_prepare[] = "__prepare__";
 static const char __pyx_k_full_log[] = "full_log";
 static const char __pyx_k_qualname[] = "__qualname__";
 static const char __pyx_k_set_name[] = "__set_name__";
-static const char __pyx_k_temp_log[] = "temp_log";
 static const char __pyx_k_metaclass[] = "__metaclass__";
 static const char __pyx_k_poller_num[] = "poller_num";
 static const char __pyx_k_startswith[] = "startswith";
@@ -2335,7 +2325,6 @@ static const char __pyx_k_interpreted_log_output[] = "interpreted_log_output";
 static const char __pyx_k_application_poller_logs[] = "application_poller_logs";
 static const char __pyx_k_cur_app_poller_log_index[] = "cur_app_poller_log_index";
 static const char __pyx_k_ems_lifecycle_log_output[] = "ems_lifecycle_log_output";
-static const char __pyx_k_process_breaking_line_log[] = "process_breaking_line_log";
 static const char __pyx_k_show_not_expired_subgraph[] = "show_not_expired_subgraph";
 static const char __pyx_k_LOG_APP_POLLER_STOP_STRING[] = "LOG_APP_POLLER_STOP_STRING";
 static const char __pyx_k_application_poller_threads[] = "application_poller_threads";
@@ -2387,7 +2376,6 @@ typedef struct {
   #if CYTHON_USE_MODULE_STATE
   #endif
   PyObject *__pyx_kp_s_;
-  PyObject *__pyx_kp_s_1;
   PyObject *__pyx_n_s_ApplicationPoller;
   PyObject *__pyx_n_s_EMSLifeCycle;
   PyObject *__pyx_n_s_EMSLifeCycle___init;
@@ -2399,10 +2387,9 @@ typedef struct {
   PyObject *__pyx_n_s_LOG_APP_POLLER_STOP_STRING;
   PyObject *__pyx_n_s_LOG_MSFB_THREAD_ID_EXCEPTION_HEA;
   PyObject *__pyx_n_s_LOG_STARTING_STRING;
-  PyObject *__pyx_n_s__14;
+  PyObject *__pyx_n_s__13;
   PyObject *__pyx_kp_s__2;
-  PyObject *__pyx_kp_s__3;
-  PyObject *__pyx_n_s__4;
+  PyObject *__pyx_n_s__3;
   PyObject *__pyx_n_s_app_poller_log_list;
   PyObject *__pyx_n_s_app_poller_object_list;
   PyObject *__pyx_n_s_app_poller_thread_list;
@@ -2415,7 +2402,6 @@ typedef struct {
   PyObject *__pyx_n_s_class_getitem;
   PyObject *__pyx_n_s_clear;
   PyObject *__pyx_n_s_cline_in_traceback;
-  PyObject *__pyx_n_s_count;
   PyObject *__pyx_n_s_cur_app_poller_log;
   PyObject *__pyx_n_s_cur_app_poller_log_index;
   PyObject *__pyx_n_s_cur_poller_log;
@@ -2457,7 +2443,6 @@ typedef struct {
   PyObject *__pyx_n_s_poller_num;
   PyObject *__pyx_n_s_pop;
   PyObject *__pyx_n_s_prepare;
-  PyObject *__pyx_n_s_process_breaking_line_log;
   PyObject *__pyx_n_s_qualname;
   PyObject *__pyx_n_s_range;
   PyObject *__pyx_n_s_remove;
@@ -2467,20 +2452,19 @@ typedef struct {
   PyObject *__pyx_n_s_spec;
   PyObject *__pyx_n_s_startswith;
   PyObject *__pyx_n_s_super;
-  PyObject *__pyx_n_s_temp_log;
   PyObject *__pyx_n_s_test;
   PyObject *__pyx_n_s_thread_id_exception_headers;
   PyObject *__pyx_int_0;
   PyObject *__pyx_int_1;
-  PyObject *__pyx_tuple__5;
+  PyObject *__pyx_tuple__4;
+  PyObject *__pyx_tuple__6;
   PyObject *__pyx_tuple__7;
-  PyObject *__pyx_tuple__8;
-  PyObject *__pyx_tuple__10;
-  PyObject *__pyx_tuple__12;
-  PyObject *__pyx_codeobj__6;
-  PyObject *__pyx_codeobj__9;
-  PyObject *__pyx_codeobj__11;
-  PyObject *__pyx_codeobj__13;
+  PyObject *__pyx_tuple__9;
+  PyObject *__pyx_tuple__11;
+  PyObject *__pyx_codeobj__5;
+  PyObject *__pyx_codeobj__8;
+  PyObject *__pyx_codeobj__10;
+  PyObject *__pyx_codeobj__12;
 } __pyx_mstate;
 
 #if CYTHON_USE_MODULE_STATE
@@ -2524,7 +2508,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_FusedFunctionType);
   #endif
   Py_CLEAR(clear_module_state->__pyx_kp_s_);
-  Py_CLEAR(clear_module_state->__pyx_kp_s_1);
   Py_CLEAR(clear_module_state->__pyx_n_s_ApplicationPoller);
   Py_CLEAR(clear_module_state->__pyx_n_s_EMSLifeCycle);
   Py_CLEAR(clear_module_state->__pyx_n_s_EMSLifeCycle___init);
@@ -2536,10 +2519,9 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_LOG_APP_POLLER_STOP_STRING);
   Py_CLEAR(clear_module_state->__pyx_n_s_LOG_MSFB_THREAD_ID_EXCEPTION_HEA);
   Py_CLEAR(clear_module_state->__pyx_n_s_LOG_STARTING_STRING);
-  Py_CLEAR(clear_module_state->__pyx_n_s__14);
+  Py_CLEAR(clear_module_state->__pyx_n_s__13);
   Py_CLEAR(clear_module_state->__pyx_kp_s__2);
-  Py_CLEAR(clear_module_state->__pyx_kp_s__3);
-  Py_CLEAR(clear_module_state->__pyx_n_s__4);
+  Py_CLEAR(clear_module_state->__pyx_n_s__3);
   Py_CLEAR(clear_module_state->__pyx_n_s_app_poller_log_list);
   Py_CLEAR(clear_module_state->__pyx_n_s_app_poller_object_list);
   Py_CLEAR(clear_module_state->__pyx_n_s_app_poller_thread_list);
@@ -2552,7 +2534,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_class_getitem);
   Py_CLEAR(clear_module_state->__pyx_n_s_clear);
   Py_CLEAR(clear_module_state->__pyx_n_s_cline_in_traceback);
-  Py_CLEAR(clear_module_state->__pyx_n_s_count);
   Py_CLEAR(clear_module_state->__pyx_n_s_cur_app_poller_log);
   Py_CLEAR(clear_module_state->__pyx_n_s_cur_app_poller_log_index);
   Py_CLEAR(clear_module_state->__pyx_n_s_cur_poller_log);
@@ -2594,7 +2575,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_poller_num);
   Py_CLEAR(clear_module_state->__pyx_n_s_pop);
   Py_CLEAR(clear_module_state->__pyx_n_s_prepare);
-  Py_CLEAR(clear_module_state->__pyx_n_s_process_breaking_line_log);
   Py_CLEAR(clear_module_state->__pyx_n_s_qualname);
   Py_CLEAR(clear_module_state->__pyx_n_s_range);
   Py_CLEAR(clear_module_state->__pyx_n_s_remove);
@@ -2604,20 +2584,19 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_spec);
   Py_CLEAR(clear_module_state->__pyx_n_s_startswith);
   Py_CLEAR(clear_module_state->__pyx_n_s_super);
-  Py_CLEAR(clear_module_state->__pyx_n_s_temp_log);
   Py_CLEAR(clear_module_state->__pyx_n_s_test);
   Py_CLEAR(clear_module_state->__pyx_n_s_thread_id_exception_headers);
   Py_CLEAR(clear_module_state->__pyx_int_0);
   Py_CLEAR(clear_module_state->__pyx_int_1);
-  Py_CLEAR(clear_module_state->__pyx_tuple__5);
+  Py_CLEAR(clear_module_state->__pyx_tuple__4);
+  Py_CLEAR(clear_module_state->__pyx_tuple__6);
   Py_CLEAR(clear_module_state->__pyx_tuple__7);
-  Py_CLEAR(clear_module_state->__pyx_tuple__8);
-  Py_CLEAR(clear_module_state->__pyx_tuple__10);
-  Py_CLEAR(clear_module_state->__pyx_tuple__12);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__6);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__9);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__11);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__13);
+  Py_CLEAR(clear_module_state->__pyx_tuple__9);
+  Py_CLEAR(clear_module_state->__pyx_tuple__11);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__5);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__8);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__10);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__12);
   return 0;
 }
 #endif
@@ -2639,7 +2618,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_FusedFunctionType);
   #endif
   Py_VISIT(traverse_module_state->__pyx_kp_s_);
-  Py_VISIT(traverse_module_state->__pyx_kp_s_1);
   Py_VISIT(traverse_module_state->__pyx_n_s_ApplicationPoller);
   Py_VISIT(traverse_module_state->__pyx_n_s_EMSLifeCycle);
   Py_VISIT(traverse_module_state->__pyx_n_s_EMSLifeCycle___init);
@@ -2651,10 +2629,9 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_LOG_APP_POLLER_STOP_STRING);
   Py_VISIT(traverse_module_state->__pyx_n_s_LOG_MSFB_THREAD_ID_EXCEPTION_HEA);
   Py_VISIT(traverse_module_state->__pyx_n_s_LOG_STARTING_STRING);
-  Py_VISIT(traverse_module_state->__pyx_n_s__14);
+  Py_VISIT(traverse_module_state->__pyx_n_s__13);
   Py_VISIT(traverse_module_state->__pyx_kp_s__2);
-  Py_VISIT(traverse_module_state->__pyx_kp_s__3);
-  Py_VISIT(traverse_module_state->__pyx_n_s__4);
+  Py_VISIT(traverse_module_state->__pyx_n_s__3);
   Py_VISIT(traverse_module_state->__pyx_n_s_app_poller_log_list);
   Py_VISIT(traverse_module_state->__pyx_n_s_app_poller_object_list);
   Py_VISIT(traverse_module_state->__pyx_n_s_app_poller_thread_list);
@@ -2667,7 +2644,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_class_getitem);
   Py_VISIT(traverse_module_state->__pyx_n_s_clear);
   Py_VISIT(traverse_module_state->__pyx_n_s_cline_in_traceback);
-  Py_VISIT(traverse_module_state->__pyx_n_s_count);
   Py_VISIT(traverse_module_state->__pyx_n_s_cur_app_poller_log);
   Py_VISIT(traverse_module_state->__pyx_n_s_cur_app_poller_log_index);
   Py_VISIT(traverse_module_state->__pyx_n_s_cur_poller_log);
@@ -2709,7 +2685,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_poller_num);
   Py_VISIT(traverse_module_state->__pyx_n_s_pop);
   Py_VISIT(traverse_module_state->__pyx_n_s_prepare);
-  Py_VISIT(traverse_module_state->__pyx_n_s_process_breaking_line_log);
   Py_VISIT(traverse_module_state->__pyx_n_s_qualname);
   Py_VISIT(traverse_module_state->__pyx_n_s_range);
   Py_VISIT(traverse_module_state->__pyx_n_s_remove);
@@ -2719,20 +2694,19 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_spec);
   Py_VISIT(traverse_module_state->__pyx_n_s_startswith);
   Py_VISIT(traverse_module_state->__pyx_n_s_super);
-  Py_VISIT(traverse_module_state->__pyx_n_s_temp_log);
   Py_VISIT(traverse_module_state->__pyx_n_s_test);
   Py_VISIT(traverse_module_state->__pyx_n_s_thread_id_exception_headers);
   Py_VISIT(traverse_module_state->__pyx_int_0);
   Py_VISIT(traverse_module_state->__pyx_int_1);
-  Py_VISIT(traverse_module_state->__pyx_tuple__5);
+  Py_VISIT(traverse_module_state->__pyx_tuple__4);
+  Py_VISIT(traverse_module_state->__pyx_tuple__6);
   Py_VISIT(traverse_module_state->__pyx_tuple__7);
-  Py_VISIT(traverse_module_state->__pyx_tuple__8);
-  Py_VISIT(traverse_module_state->__pyx_tuple__10);
-  Py_VISIT(traverse_module_state->__pyx_tuple__12);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__6);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__9);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__11);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__13);
+  Py_VISIT(traverse_module_state->__pyx_tuple__9);
+  Py_VISIT(traverse_module_state->__pyx_tuple__11);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__5);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__8);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__10);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__12);
   return 0;
 }
 #endif
@@ -2764,7 +2738,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #if CYTHON_USE_MODULE_STATE
 #endif
 #define __pyx_kp_s_ __pyx_mstate_global->__pyx_kp_s_
-#define __pyx_kp_s_1 __pyx_mstate_global->__pyx_kp_s_1
 #define __pyx_n_s_ApplicationPoller __pyx_mstate_global->__pyx_n_s_ApplicationPoller
 #define __pyx_n_s_EMSLifeCycle __pyx_mstate_global->__pyx_n_s_EMSLifeCycle
 #define __pyx_n_s_EMSLifeCycle___init __pyx_mstate_global->__pyx_n_s_EMSLifeCycle___init
@@ -2776,10 +2749,9 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_LOG_APP_POLLER_STOP_STRING __pyx_mstate_global->__pyx_n_s_LOG_APP_POLLER_STOP_STRING
 #define __pyx_n_s_LOG_MSFB_THREAD_ID_EXCEPTION_HEA __pyx_mstate_global->__pyx_n_s_LOG_MSFB_THREAD_ID_EXCEPTION_HEA
 #define __pyx_n_s_LOG_STARTING_STRING __pyx_mstate_global->__pyx_n_s_LOG_STARTING_STRING
-#define __pyx_n_s__14 __pyx_mstate_global->__pyx_n_s__14
+#define __pyx_n_s__13 __pyx_mstate_global->__pyx_n_s__13
 #define __pyx_kp_s__2 __pyx_mstate_global->__pyx_kp_s__2
-#define __pyx_kp_s__3 __pyx_mstate_global->__pyx_kp_s__3
-#define __pyx_n_s__4 __pyx_mstate_global->__pyx_n_s__4
+#define __pyx_n_s__3 __pyx_mstate_global->__pyx_n_s__3
 #define __pyx_n_s_app_poller_log_list __pyx_mstate_global->__pyx_n_s_app_poller_log_list
 #define __pyx_n_s_app_poller_object_list __pyx_mstate_global->__pyx_n_s_app_poller_object_list
 #define __pyx_n_s_app_poller_thread_list __pyx_mstate_global->__pyx_n_s_app_poller_thread_list
@@ -2792,7 +2764,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_class_getitem __pyx_mstate_global->__pyx_n_s_class_getitem
 #define __pyx_n_s_clear __pyx_mstate_global->__pyx_n_s_clear
 #define __pyx_n_s_cline_in_traceback __pyx_mstate_global->__pyx_n_s_cline_in_traceback
-#define __pyx_n_s_count __pyx_mstate_global->__pyx_n_s_count
 #define __pyx_n_s_cur_app_poller_log __pyx_mstate_global->__pyx_n_s_cur_app_poller_log
 #define __pyx_n_s_cur_app_poller_log_index __pyx_mstate_global->__pyx_n_s_cur_app_poller_log_index
 #define __pyx_n_s_cur_poller_log __pyx_mstate_global->__pyx_n_s_cur_poller_log
@@ -2834,7 +2805,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_poller_num __pyx_mstate_global->__pyx_n_s_poller_num
 #define __pyx_n_s_pop __pyx_mstate_global->__pyx_n_s_pop
 #define __pyx_n_s_prepare __pyx_mstate_global->__pyx_n_s_prepare
-#define __pyx_n_s_process_breaking_line_log __pyx_mstate_global->__pyx_n_s_process_breaking_line_log
 #define __pyx_n_s_qualname __pyx_mstate_global->__pyx_n_s_qualname
 #define __pyx_n_s_range __pyx_mstate_global->__pyx_n_s_range
 #define __pyx_n_s_remove __pyx_mstate_global->__pyx_n_s_remove
@@ -2844,20 +2814,19 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_spec __pyx_mstate_global->__pyx_n_s_spec
 #define __pyx_n_s_startswith __pyx_mstate_global->__pyx_n_s_startswith
 #define __pyx_n_s_super __pyx_mstate_global->__pyx_n_s_super
-#define __pyx_n_s_temp_log __pyx_mstate_global->__pyx_n_s_temp_log
 #define __pyx_n_s_test __pyx_mstate_global->__pyx_n_s_test
 #define __pyx_n_s_thread_id_exception_headers __pyx_mstate_global->__pyx_n_s_thread_id_exception_headers
 #define __pyx_int_0 __pyx_mstate_global->__pyx_int_0
 #define __pyx_int_1 __pyx_mstate_global->__pyx_int_1
-#define __pyx_tuple__5 __pyx_mstate_global->__pyx_tuple__5
+#define __pyx_tuple__4 __pyx_mstate_global->__pyx_tuple__4
+#define __pyx_tuple__6 __pyx_mstate_global->__pyx_tuple__6
 #define __pyx_tuple__7 __pyx_mstate_global->__pyx_tuple__7
-#define __pyx_tuple__8 __pyx_mstate_global->__pyx_tuple__8
-#define __pyx_tuple__10 __pyx_mstate_global->__pyx_tuple__10
-#define __pyx_tuple__12 __pyx_mstate_global->__pyx_tuple__12
-#define __pyx_codeobj__6 __pyx_mstate_global->__pyx_codeobj__6
-#define __pyx_codeobj__9 __pyx_mstate_global->__pyx_codeobj__9
-#define __pyx_codeobj__11 __pyx_mstate_global->__pyx_codeobj__11
-#define __pyx_codeobj__13 __pyx_mstate_global->__pyx_codeobj__13
+#define __pyx_tuple__9 __pyx_mstate_global->__pyx_tuple__9
+#define __pyx_tuple__11 __pyx_mstate_global->__pyx_tuple__11
+#define __pyx_codeobj__5 __pyx_mstate_global->__pyx_codeobj__5
+#define __pyx_codeobj__8 __pyx_mstate_global->__pyx_codeobj__8
+#define __pyx_codeobj__10 __pyx_mstate_global->__pyx_codeobj__10
+#define __pyx_codeobj__12 __pyx_mstate_global->__pyx_codeobj__12
 /* #### Code section: module_code ### */
 
 /* "emslifecycle.py":21
@@ -3269,7 +3238,6 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
   PyObject *__pyx_v_cur_poller_thread = NULL;
   PyObject *__pyx_v_cur_poller_log = NULL;
   PyObject *__pyx_v_line_index_iter = NULL;
-  PyObject *__pyx_v_temp_log = NULL;
   PyObject *__pyx_v_thread_id_exception_headers = NULL;
   int __pyx_v_is_msfb_second_thread;
   PyObject *__pyx_v_each_header = NULL;
@@ -3638,7 +3606,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  *                     application_poller_logs.append(cur_poller_log)
  *                     line_index_stop_list.remove(line_index_iter)             # <<<<<<<<<<<<<<
  *                     break
- *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(
+ *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
  */
         __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_line_index_stop_list, __pyx_n_s_remove); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
@@ -3670,8 +3638,8 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  *                     application_poller_logs.append(cur_poller_log)
  *                     line_index_stop_list.remove(line_index_iter)
  *                     break             # <<<<<<<<<<<<<<
- *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(
- *                         self.full_log[line_index_iter]):
+ *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
+ *                     """
  */
         goto __pyx_L8_break;
 
@@ -3687,9 +3655,9 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
       /* "emslifecycle.py":72
  *                     line_index_stop_list.remove(line_index_iter)
  *                     break
- *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(             # <<<<<<<<<<<<<<
- *                         self.full_log[line_index_iter]):
- *                     # breaking log start line
+ *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):             # <<<<<<<<<<<<<<
+ *                     """
+ *                     Fixing for UWP app have multiple threads logs in one app poller
  */
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -3727,293 +3695,26 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       }
-      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 72, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 72, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (__pyx_t_9) {
-      } else {
-        __pyx_t_7 = __pyx_t_9;
-        goto __pyx_L12_bool_binop_done;
-      }
-      __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 72, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-      /* "emslifecycle.py":73
- *                     break
- *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(
- *                         self.full_log[line_index_iter]):             # <<<<<<<<<<<<<<
- *                     # breaking log start line
- *                     """
- */
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 73, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = NULL;
-      __pyx_t_6 = 0;
-      #if CYTHON_UNPACK_METHODS
-      if (unlikely(PyMethod_Check(__pyx_t_4))) {
-        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_4);
-        if (likely(__pyx_t_1)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-          __Pyx_INCREF(__pyx_t_1);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_4, function);
-          __pyx_t_6 = 1;
-        }
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_t_5};
-        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      }
-      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_kp_s_1, __pyx_t_3, Py_EQ)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 72, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_7 = __pyx_t_9;
-      __pyx_L12_bool_binop_done:;
-
-      /* "emslifecycle.py":72
- *                     line_index_stop_list.remove(line_index_iter)
- *                     break
- *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(             # <<<<<<<<<<<<<<
- *                         self.full_log[line_index_iter]):
- *                     # breaking log start line
- */
       if (__pyx_t_7) {
 
-        /* "emslifecycle.py":86
- *                     <![LOG[[Win32App][ActionProcessor] Found: 0 apps with intent to uninstall before enforcing installs: [].]LOG]!><time="12:50:53.0788084" date="2-27-2023" component="IntuneManagementExtension" context="" type="1" thread="14" file="">
- *                     """
- *                     temp_log = logprocessinglibrary.process_breaking_line_log(self.full_log[line_index_iter:])             # <<<<<<<<<<<<<<
- *                     if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:
- *                         cur_poller_log = cur_poller_log + temp_log
- */
-        __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 86, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_process_breaking_line_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 86, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 86, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_t_4, 0, 0, &__pyx_v_line_index_iter, NULL, NULL, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_4 = NULL;
-        __pyx_t_6 = 0;
-        #if CYTHON_UNPACK_METHODS
-        if (unlikely(PyMethod_Check(__pyx_t_5))) {
-          __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_5);
-          if (likely(__pyx_t_4)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
-            __Pyx_INCREF(__pyx_t_4);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_5, function);
-            __pyx_t_6 = 1;
-          }
-        }
-        #endif
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_t_1};
-          __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        }
-        __Pyx_XDECREF_SET(__pyx_v_temp_log, __pyx_t_3);
-        __pyx_t_3 = 0;
-
-        /* "emslifecycle.py":87
- *                     """
- *                     temp_log = logprocessinglibrary.process_breaking_line_log(self.full_log[line_index_iter:])
- *                     if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:             # <<<<<<<<<<<<<<
- *                         cur_poller_log = cur_poller_log + temp_log
- *                     line_index_iter = line_index_iter + temp_log.count(' | ') + 1
- */
-        __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_temp_log, __pyx_kp_s_, Py_NE)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 87, __pyx_L1_error)
-        if (__pyx_t_9) {
-        } else {
-          __pyx_t_7 = __pyx_t_9;
-          goto __pyx_L15_bool_binop_done;
-        }
-        __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 87, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 87, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_5 = NULL;
-        __pyx_t_6 = 0;
-        #if CYTHON_UNPACK_METHODS
-        if (unlikely(PyMethod_Check(__pyx_t_1))) {
-          __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_1);
-          if (likely(__pyx_t_5)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-            __Pyx_INCREF(__pyx_t_5);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_1, function);
-            __pyx_t_6 = 1;
-          }
-        }
-        #endif
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_v_temp_log};
-          __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-          __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        }
-        __pyx_t_1 = PyObject_RichCompare(__pyx_t_3, __pyx_v_cur_poller_thread, Py_EQ); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 87, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 87, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_7 = __pyx_t_9;
-        __pyx_L15_bool_binop_done:;
-        if (__pyx_t_7) {
-
-          /* "emslifecycle.py":88
- *                     temp_log = logprocessinglibrary.process_breaking_line_log(self.full_log[line_index_iter:])
- *                     if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:
- *                         cur_poller_log = cur_poller_log + temp_log             # <<<<<<<<<<<<<<
- *                     line_index_iter = line_index_iter + temp_log.count(' | ') + 1
- *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
- */
-          __pyx_t_1 = PyNumber_Add(__pyx_v_cur_poller_log, __pyx_v_temp_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 88, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF_SET(__pyx_v_cur_poller_log, __pyx_t_1);
-          __pyx_t_1 = 0;
-
-          /* "emslifecycle.py":87
- *                     """
- *                     temp_log = logprocessinglibrary.process_breaking_line_log(self.full_log[line_index_iter:])
- *                     if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:             # <<<<<<<<<<<<<<
- *                         cur_poller_log = cur_poller_log + temp_log
- *                     line_index_iter = line_index_iter + temp_log.count(' | ') + 1
- */
-        }
-
-        /* "emslifecycle.py":89
- *                     if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:
- *                         cur_poller_log = cur_poller_log + temp_log
- *                     line_index_iter = line_index_iter + temp_log.count(' | ') + 1             # <<<<<<<<<<<<<<
- *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
- *                     """
- */
-        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_temp_log, __pyx_n_s_count); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_5 = NULL;
-        __pyx_t_6 = 0;
-        #if CYTHON_UNPACK_METHODS
-        if (likely(PyMethod_Check(__pyx_t_3))) {
-          __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_3);
-          if (likely(__pyx_t_5)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-            __Pyx_INCREF(__pyx_t_5);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_3, function);
-            __pyx_t_6 = 1;
-          }
-        }
-        #endif
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_kp_s__2};
-          __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-          __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        }
-        __pyx_t_3 = PyNumber_Add(__pyx_v_line_index_iter, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_t_3, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __Pyx_DECREF_SET(__pyx_v_line_index_iter, __pyx_t_1);
-        __pyx_t_1 = 0;
-
-        /* "emslifecycle.py":72
- *                     line_index_stop_list.remove(line_index_iter)
- *                     break
- *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(             # <<<<<<<<<<<<<<
- *                         self.full_log[line_index_iter]):
- *                     # breaking log start line
- */
-        goto __pyx_L9;
-      }
-
-      /* "emslifecycle.py":90
- *                         cur_poller_log = cur_poller_log + temp_log
- *                     line_index_iter = line_index_iter + temp_log.count(' | ') + 1
- *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):             # <<<<<<<<<<<<<<
- *                     """
- *                     Fixing for UWP app have multiple threads logs in one app poller
- */
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_3, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 90, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_startswith); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_keyword_table); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 90, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_t_5, __pyx_n_s_LOG_STARTING_STRING); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 90, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = NULL;
-      __pyx_t_6 = 0;
-      #if CYTHON_UNPACK_METHODS
-      if (likely(PyMethod_Check(__pyx_t_3))) {
-        __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_3);
-        if (likely(__pyx_t_5)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-          __Pyx_INCREF(__pyx_t_5);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_3, function);
-          __pyx_t_6 = 1;
-        }
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_t_4};
-        __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      }
-      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 90, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (__pyx_t_7) {
-
-        /* "emslifecycle.py":94
+        /* "emslifecycle.py":76
  *                     Fixing for UWP app have multiple threads logs in one app poller
  *                     """
  *                     thread_id_exception_headers = self.log_keyword_table['LOG_MSFB_THREAD_ID_EXCEPTION_HEADERS']             # <<<<<<<<<<<<<<
  *                     is_msfb_second_thread = False
  *                     for each_header in thread_id_exception_headers:
  */
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_keyword_table); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 94, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_s_LOG_MSFB_THREAD_ID_EXCEPTION_HEA); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 94, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_keyword_table); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF_SET(__pyx_v_thread_id_exception_headers, __pyx_t_3);
-        __pyx_t_3 = 0;
+        __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_t_3, __pyx_n_s_LOG_MSFB_THREAD_ID_EXCEPTION_HEA); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_XDECREF_SET(__pyx_v_thread_id_exception_headers, __pyx_t_1);
+        __pyx_t_1 = 0;
 
-        /* "emslifecycle.py":95
+        /* "emslifecycle.py":77
  *                     """
  *                     thread_id_exception_headers = self.log_keyword_table['LOG_MSFB_THREAD_ID_EXCEPTION_HEADERS']
  *                     is_msfb_second_thread = False             # <<<<<<<<<<<<<<
@@ -4022,7 +3723,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
         __pyx_v_is_msfb_second_thread = 0;
 
-        /* "emslifecycle.py":96
+        /* "emslifecycle.py":78
  *                     thread_id_exception_headers = self.log_keyword_table['LOG_MSFB_THREAD_ID_EXCEPTION_HEADERS']
  *                     is_msfb_second_thread = False
  *                     for each_header in thread_id_exception_headers:             # <<<<<<<<<<<<<<
@@ -4030,73 +3731,73 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  *                             is_msfb_second_thread = True
  */
         if (likely(PyList_CheckExact(__pyx_v_thread_id_exception_headers)) || PyTuple_CheckExact(__pyx_v_thread_id_exception_headers)) {
-          __pyx_t_3 = __pyx_v_thread_id_exception_headers; __Pyx_INCREF(__pyx_t_3);
+          __pyx_t_1 = __pyx_v_thread_id_exception_headers; __Pyx_INCREF(__pyx_t_1);
           __pyx_t_8 = 0;
           __pyx_t_11 = NULL;
         } else {
-          __pyx_t_8 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_v_thread_id_exception_headers); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_11 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 96, __pyx_L1_error)
+          __pyx_t_8 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_thread_id_exception_headers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_11 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 78, __pyx_L1_error)
         }
         for (;;) {
           if (likely(!__pyx_t_11)) {
-            if (likely(PyList_CheckExact(__pyx_t_3))) {
+            if (likely(PyList_CheckExact(__pyx_t_1))) {
               {
-                Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_3);
+                Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
                 #if !CYTHON_ASSUME_SAFE_MACROS
-                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 96, __pyx_L1_error)
+                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 78, __pyx_L1_error)
                 #endif
                 if (__pyx_t_8 >= __pyx_temp) break;
               }
               #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-              __pyx_t_1 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_8); __Pyx_INCREF(__pyx_t_1); __pyx_t_8++; if (unlikely((0 < 0))) __PYX_ERR(0, 96, __pyx_L1_error)
+              __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_8); __Pyx_INCREF(__pyx_t_3); __pyx_t_8++; if (unlikely((0 < 0))) __PYX_ERR(0, 78, __pyx_L1_error)
               #else
-              __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_1);
+              __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_3);
               #endif
             } else {
               {
-                Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_3);
+                Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
                 #if !CYTHON_ASSUME_SAFE_MACROS
-                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 96, __pyx_L1_error)
+                if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 78, __pyx_L1_error)
                 #endif
                 if (__pyx_t_8 >= __pyx_temp) break;
               }
               #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-              __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_8); __Pyx_INCREF(__pyx_t_1); __pyx_t_8++; if (unlikely((0 < 0))) __PYX_ERR(0, 96, __pyx_L1_error)
+              __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_8); __Pyx_INCREF(__pyx_t_3); __pyx_t_8++; if (unlikely((0 < 0))) __PYX_ERR(0, 78, __pyx_L1_error)
               #else
-              __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_1);
+              __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_3);
               #endif
             }
           } else {
-            __pyx_t_1 = __pyx_t_11(__pyx_t_3);
-            if (unlikely(!__pyx_t_1)) {
+            __pyx_t_3 = __pyx_t_11(__pyx_t_1);
+            if (unlikely(!__pyx_t_3)) {
               PyObject* exc_type = PyErr_Occurred();
               if (exc_type) {
                 if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-                else __PYX_ERR(0, 96, __pyx_L1_error)
+                else __PYX_ERR(0, 78, __pyx_L1_error)
               }
               break;
             }
-            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_GOTREF(__pyx_t_3);
           }
-          __Pyx_XDECREF_SET(__pyx_v_each_header, __pyx_t_1);
-          __pyx_t_1 = 0;
+          __Pyx_XDECREF_SET(__pyx_v_each_header, __pyx_t_3);
+          __pyx_t_3 = 0;
 
-          /* "emslifecycle.py":97
+          /* "emslifecycle.py":79
  *                     is_msfb_second_thread = False
  *                     for each_header in thread_id_exception_headers:
  *                         if self.full_log[line_index_iter].startswith(each_header):             # <<<<<<<<<<<<<<
  *                             is_msfb_second_thread = True
  *                     if cur_poller_thread == logprocessinglibrary.locate_thread(self.full_log[line_index_iter]) or is_msfb_second_thread:
  */
-          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 79, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 97, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 79, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_startswith); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_startswith); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 79, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __pyx_t_5 = NULL;
@@ -4115,17 +3816,17 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
           #endif
           {
             PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_v_each_header};
-            __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
+            __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
             __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_1);
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 79, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_3);
             __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           }
-          __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 97, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 79, __pyx_L1_error)
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
           if (__pyx_t_7) {
 
-            /* "emslifecycle.py":98
+            /* "emslifecycle.py":80
  *                     for each_header in thread_id_exception_headers:
  *                         if self.full_log[line_index_iter].startswith(each_header):
  *                             is_msfb_second_thread = True             # <<<<<<<<<<<<<<
@@ -4134,7 +3835,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
             __pyx_v_is_msfb_second_thread = 1;
 
-            /* "emslifecycle.py":97
+            /* "emslifecycle.py":79
  *                     is_msfb_second_thread = False
  *                     for each_header in thread_id_exception_headers:
  *                         if self.full_log[line_index_iter].startswith(each_header):             # <<<<<<<<<<<<<<
@@ -4143,7 +3844,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
           }
 
-          /* "emslifecycle.py":96
+          /* "emslifecycle.py":78
  *                     thread_id_exception_headers = self.log_keyword_table['LOG_MSFB_THREAD_ID_EXCEPTION_HEADERS']
  *                     is_msfb_second_thread = False
  *                     for each_header in thread_id_exception_headers:             # <<<<<<<<<<<<<<
@@ -4151,33 +3852,33 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  *                             is_msfb_second_thread = True
  */
         }
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "emslifecycle.py":99
+        /* "emslifecycle.py":81
  *                         if self.full_log[line_index_iter].startswith(each_header):
  *                             is_msfb_second_thread = True
  *                     if cur_poller_thread == logprocessinglibrary.locate_thread(self.full_log[line_index_iter]) or is_msfb_second_thread:             # <<<<<<<<<<<<<<
  *                         # normal log line with same thread id
  *                         cur_poller_log = cur_poller_log + self.full_log[line_index_iter]
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 99, __pyx_L1_error)
+        __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 99, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_3, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = NULL;
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_t_3 = NULL;
         __pyx_t_6 = 0;
         #if CYTHON_UNPACK_METHODS
         if (unlikely(PyMethod_Check(__pyx_t_4))) {
-          __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_4);
-          if (likely(__pyx_t_1)) {
+          __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_4);
+          if (likely(__pyx_t_3)) {
             PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-            __Pyx_INCREF(__pyx_t_1);
+            __Pyx_INCREF(__pyx_t_3);
             __Pyx_INCREF(function);
             __Pyx_DECREF_SET(__pyx_t_4, function);
             __pyx_t_6 = 1;
@@ -4185,46 +3886,46 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
         }
         #endif
         {
-          PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_t_5};
-          __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-          __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+          PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_t_5};
+          __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 99, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
+          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         }
-        __pyx_t_4 = PyObject_RichCompare(__pyx_v_cur_poller_thread, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 99, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 99, __pyx_L1_error)
+        __pyx_t_4 = PyObject_RichCompare(__pyx_v_cur_poller_thread, __pyx_t_1, Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 81, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         if (!__pyx_t_9) {
         } else {
           __pyx_t_7 = __pyx_t_9;
-          goto __pyx_L22_bool_binop_done;
+          goto __pyx_L17_bool_binop_done;
         }
         __pyx_t_7 = __pyx_v_is_msfb_second_thread;
-        __pyx_L22_bool_binop_done:;
+        __pyx_L17_bool_binop_done:;
         if (__pyx_t_7) {
 
-          /* "emslifecycle.py":101
+          /* "emslifecycle.py":83
  *                     if cur_poller_thread == logprocessinglibrary.locate_thread(self.full_log[line_index_iter]) or is_msfb_second_thread:
  *                         # normal log line with same thread id
  *                         cur_poller_log = cur_poller_log + self.full_log[line_index_iter]             # <<<<<<<<<<<<<<
  * 
  *                     line_index_iter = line_index_iter + 1
  */
-          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 101, __pyx_L1_error)
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 83, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 101, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
+          __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_t_4 = PyNumber_Add(__pyx_v_cur_poller_log, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 101, __pyx_L1_error)
+          __pyx_t_4 = PyNumber_Add(__pyx_v_cur_poller_log, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 83, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_DECREF_SET(__pyx_v_cur_poller_log, __pyx_t_4);
           __pyx_t_4 = 0;
 
-          /* "emslifecycle.py":99
+          /* "emslifecycle.py":81
  *                         if self.full_log[line_index_iter].startswith(each_header):
  *                             is_msfb_second_thread = True
  *                     if cur_poller_thread == logprocessinglibrary.locate_thread(self.full_log[line_index_iter]) or is_msfb_second_thread:             # <<<<<<<<<<<<<<
@@ -4233,21 +3934,21 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
         }
 
-        /* "emslifecycle.py":103
+        /* "emslifecycle.py":85
  *                         cur_poller_log = cur_poller_log + self.full_log[line_index_iter]
  * 
  *                     line_index_iter = line_index_iter + 1             # <<<<<<<<<<<<<<
  *                 else:
  *                     line_index_iter = line_index_iter + 1
  */
-        __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 103, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 85, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF_SET(__pyx_v_line_index_iter, __pyx_t_4);
         __pyx_t_4 = 0;
 
-        /* "emslifecycle.py":90
- *                         cur_poller_log = cur_poller_log + temp_log
- *                     line_index_iter = line_index_iter + temp_log.count(' | ') + 1
+        /* "emslifecycle.py":72
+ *                     line_index_stop_list.remove(line_index_iter)
+ *                     break
  *                 elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):             # <<<<<<<<<<<<<<
  *                     """
  *                     Fixing for UWP app have multiple threads logs in one app poller
@@ -4255,7 +3956,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
         goto __pyx_L9;
       }
 
-      /* "emslifecycle.py":105
+      /* "emslifecycle.py":87
  *                     line_index_iter = line_index_iter + 1
  *                 else:
  *                     line_index_iter = line_index_iter + 1             # <<<<<<<<<<<<<<
@@ -4263,7 +3964,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  *             if line_index_iter >= self.log_len:
  */
       /*else*/ {
-        __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 105, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 87, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF_SET(__pyx_v_line_index_iter, __pyx_t_4);
         __pyx_t_4 = 0;
@@ -4272,31 +3973,31 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
     }
     __pyx_L8_break:;
 
-    /* "emslifecycle.py":107
+    /* "emslifecycle.py":89
  *                     line_index_iter = line_index_iter + 1
  * 
  *             if line_index_iter >= self.log_len:             # <<<<<<<<<<<<<<
  *                 application_poller_logs.append(cur_poller_log)
  * 
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_len); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 107, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_len); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 89, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_3 = PyObject_RichCompare(__pyx_v_line_index_iter, __pyx_t_4, Py_GE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L1_error)
+    __pyx_t_1 = PyObject_RichCompare(__pyx_v_line_index_iter, __pyx_t_4, Py_GE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 107, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 89, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (__pyx_t_7) {
 
-      /* "emslifecycle.py":108
+      /* "emslifecycle.py":90
  * 
  *             if line_index_iter >= self.log_len:
  *                 application_poller_logs.append(cur_poller_log)             # <<<<<<<<<<<<<<
  * 
  *         if len(line_index_stop_list) != 0:
  */
-      __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_application_poller_logs, __pyx_v_cur_poller_log); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 108, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_application_poller_logs, __pyx_v_cur_poller_log); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 90, __pyx_L1_error)
 
-      /* "emslifecycle.py":107
+      /* "emslifecycle.py":89
  *                     line_index_iter = line_index_iter + 1
  * 
  *             if line_index_iter >= self.log_len:             # <<<<<<<<<<<<<<
@@ -4306,25 +4007,25 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
     }
   }
 
-  /* "emslifecycle.py":110
+  /* "emslifecycle.py":92
  *                 application_poller_logs.append(cur_poller_log)
  * 
  *         if len(line_index_stop_list) != 0:             # <<<<<<<<<<<<<<
  *             # Dropping all
  *             line_index_stop_list.clear()
  */
-  __pyx_t_8 = PyObject_Length(__pyx_v_line_index_stop_list); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 110, __pyx_L1_error)
+  __pyx_t_8 = PyObject_Length(__pyx_v_line_index_stop_list); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 92, __pyx_L1_error)
   __pyx_t_7 = (__pyx_t_8 != 0);
   if (__pyx_t_7) {
 
-    /* "emslifecycle.py":112
+    /* "emslifecycle.py":94
  *         if len(line_index_stop_list) != 0:
  *             # Dropping all
  *             line_index_stop_list.clear()             # <<<<<<<<<<<<<<
  * 
  *         if len(line_index_start_list) != 0:
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_line_index_stop_list, __pyx_n_s_clear); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 112, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_line_index_stop_list, __pyx_n_s_clear); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 94, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = NULL;
     __pyx_t_6 = 0;
@@ -4342,15 +4043,15 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
     #endif
     {
       PyObject *__pyx_callargs[2] = {__pyx_t_5, NULL};
-      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 0+__pyx_t_6);
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 0+__pyx_t_6);
       __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 112, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 94, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "emslifecycle.py":110
+    /* "emslifecycle.py":92
  *                 application_poller_logs.append(cur_poller_log)
  * 
  *         if len(line_index_stop_list) != 0:             # <<<<<<<<<<<<<<
@@ -4359,18 +4060,18 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
   }
 
-  /* "emslifecycle.py":114
+  /* "emslifecycle.py":96
  *             line_index_stop_list.clear()
  * 
  *         if len(line_index_start_list) != 0:             # <<<<<<<<<<<<<<
  *             # forming the application poller session from start index to end of log.
  *             while len(line_index_start_list) > 0:
  */
-  __pyx_t_8 = PyObject_Length(__pyx_v_line_index_start_list); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 114, __pyx_L1_error)
+  __pyx_t_8 = PyObject_Length(__pyx_v_line_index_start_list); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 96, __pyx_L1_error)
   __pyx_t_7 = (__pyx_t_8 != 0);
   if (__pyx_t_7) {
 
-    /* "emslifecycle.py":116
+    /* "emslifecycle.py":98
  *         if len(line_index_start_list) != 0:
  *             # forming the application poller session from start index to end of log.
  *             while len(line_index_start_list) > 0:             # <<<<<<<<<<<<<<
@@ -4378,38 +4079,38 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  *                 cur_poller_thread = logprocessinglibrary.locate_thread(self.full_log[each_start_index])
  */
     while (1) {
-      __pyx_t_8 = PyObject_Length(__pyx_v_line_index_start_list); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 116, __pyx_L1_error)
+      __pyx_t_8 = PyObject_Length(__pyx_v_line_index_start_list); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 98, __pyx_L1_error)
       __pyx_t_7 = (__pyx_t_8 > 0);
       if (!__pyx_t_7) break;
 
-      /* "emslifecycle.py":117
+      /* "emslifecycle.py":99
  *             # forming the application poller session from start index to end of log.
  *             while len(line_index_start_list) > 0:
  *                 each_start_index = line_index_start_list.pop()             # <<<<<<<<<<<<<<
  *                 cur_poller_thread = logprocessinglibrary.locate_thread(self.full_log[each_start_index])
  *                 application_poller_threads.append(cur_poller_thread)
  */
-      __pyx_t_3 = __Pyx_PyObject_Pop(__pyx_v_line_index_start_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 117, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_XDECREF_SET(__pyx_v_each_start_index, __pyx_t_3);
-      __pyx_t_3 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Pop(__pyx_v_line_index_start_list); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_XDECREF_SET(__pyx_v_each_start_index, __pyx_t_1);
+      __pyx_t_1 = 0;
 
-      /* "emslifecycle.py":118
+      /* "emslifecycle.py":100
  *             while len(line_index_start_list) > 0:
  *                 each_start_index = line_index_start_list.pop()
  *                 cur_poller_thread = logprocessinglibrary.locate_thread(self.full_log[each_start_index])             # <<<<<<<<<<<<<<
  *                 application_poller_threads.append(cur_poller_thread)
  *                 cur_poller_log = self.full_log[each_start_index]
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 118, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 100, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 118, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 100, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 118, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 100, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_v_each_start_index); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_v_each_start_index); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 100, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_4 = NULL;
       __pyx_t_6 = 0;
@@ -4426,95 +4127,95 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
       }
       #endif
       {
-        PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_t_1};
-        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
+        PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_t_3};
+        __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 118, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       }
-      __Pyx_XDECREF_SET(__pyx_v_cur_poller_thread, __pyx_t_3);
-      __pyx_t_3 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_cur_poller_thread, __pyx_t_1);
+      __pyx_t_1 = 0;
 
-      /* "emslifecycle.py":119
+      /* "emslifecycle.py":101
  *                 each_start_index = line_index_start_list.pop()
  *                 cur_poller_thread = logprocessinglibrary.locate_thread(self.full_log[each_start_index])
  *                 application_poller_threads.append(cur_poller_thread)             # <<<<<<<<<<<<<<
  *                 cur_poller_log = self.full_log[each_start_index]
  *                 line_index_iter = each_start_index
  */
-      __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_application_poller_threads, __pyx_v_cur_poller_thread); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 119, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_application_poller_threads, __pyx_v_cur_poller_thread); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 101, __pyx_L1_error)
 
-      /* "emslifecycle.py":120
+      /* "emslifecycle.py":102
  *                 cur_poller_thread = logprocessinglibrary.locate_thread(self.full_log[each_start_index])
  *                 application_poller_threads.append(cur_poller_thread)
  *                 cur_poller_log = self.full_log[each_start_index]             # <<<<<<<<<<<<<<
  *                 line_index_iter = each_start_index
  *                 while line_index_iter < self.log_len:
  */
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 120, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_3, __pyx_v_each_start_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 120, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 102, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_v_each_start_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 102, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_XDECREF_SET(__pyx_v_cur_poller_log, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "emslifecycle.py":121
+      /* "emslifecycle.py":103
  *                 application_poller_threads.append(cur_poller_thread)
  *                 cur_poller_log = self.full_log[each_start_index]
  *                 line_index_iter = each_start_index             # <<<<<<<<<<<<<<
  *                 while line_index_iter < self.log_len:
- *                     if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(
+ *                     if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
  */
       __Pyx_INCREF(__pyx_v_each_start_index);
       __Pyx_XDECREF_SET(__pyx_v_line_index_iter, __pyx_v_each_start_index);
 
-      /* "emslifecycle.py":122
+      /* "emslifecycle.py":104
  *                 cur_poller_log = self.full_log[each_start_index]
  *                 line_index_iter = each_start_index
  *                 while line_index_iter < self.log_len:             # <<<<<<<<<<<<<<
- *                     if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(
- *                             self.full_log[line_index_iter]):
+ *                     if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
+ *                         """
  */
       while (1) {
-        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_len); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 122, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_len); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 104, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_3 = PyObject_RichCompare(__pyx_v_line_index_iter, __pyx_t_5, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L1_error)
+        __pyx_t_1 = PyObject_RichCompare(__pyx_v_line_index_iter, __pyx_t_5, Py_LT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 122, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 104, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         if (!__pyx_t_7) break;
 
-        /* "emslifecycle.py":123
+        /* "emslifecycle.py":105
  *                 line_index_iter = each_start_index
  *                 while line_index_iter < self.log_len:
- *                     if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(             # <<<<<<<<<<<<<<
- *                             self.full_log[line_index_iter]):
- *                         # beginning of line breaking logs
+ *                     if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):             # <<<<<<<<<<<<<<
+ *                         """
+ *                         Fixing for UWP app have multiple threads logs in one app poller
  */
-        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 123, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_startswith); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 123, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_startswith); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_keyword_table); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_s_LOG_STARTING_STRING); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 123, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_keyword_table); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_t_3, __pyx_n_s_LOG_STARTING_STRING); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 105, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = NULL;
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_t_3 = NULL;
         __pyx_t_6 = 0;
         #if CYTHON_UNPACK_METHODS
         if (likely(PyMethod_Check(__pyx_t_5))) {
-          __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_5);
-          if (likely(__pyx_t_1)) {
+          __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_5);
+          if (likely(__pyx_t_3)) {
             PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
-            __Pyx_INCREF(__pyx_t_1);
+            __Pyx_INCREF(__pyx_t_3);
             __Pyx_INCREF(function);
             __Pyx_DECREF_SET(__pyx_t_5, function);
             __pyx_t_6 = 1;
@@ -4522,301 +4223,34 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
         }
         #endif
         {
-          PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_t_4};
-          __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-          __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+          PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_t_4};
+          __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 123, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
+          if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
         }
-        __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 123, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        if (__pyx_t_9) {
-        } else {
-          __pyx_t_7 = __pyx_t_9;
-          goto __pyx_L32_bool_binop_done;
-        }
-        __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 123, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 123, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-
-        /* "emslifecycle.py":124
- *                 while line_index_iter < self.log_len:
- *                     if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(
- *                             self.full_log[line_index_iter]):             # <<<<<<<<<<<<<<
- *                         # beginning of line breaking logs
- *                         temp_log = logprocessinglibrary.process_breaking_line_log(self.full_log[line_index_iter:])
- */
-        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 124, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 124, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_5 = NULL;
-        __pyx_t_6 = 0;
-        #if CYTHON_UNPACK_METHODS
-        if (unlikely(PyMethod_Check(__pyx_t_4))) {
-          __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
-          if (likely(__pyx_t_5)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-            __Pyx_INCREF(__pyx_t_5);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_4, function);
-            __pyx_t_6 = 1;
-          }
-        }
-        #endif
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_t_1};
-          __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-          __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 123, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        }
-        __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_kp_s_1, __pyx_t_3, Py_EQ)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 123, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __pyx_t_7 = __pyx_t_9;
-        __pyx_L32_bool_binop_done:;
-
-        /* "emslifecycle.py":123
- *                 line_index_iter = each_start_index
- *                 while line_index_iter < self.log_len:
- *                     if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(             # <<<<<<<<<<<<<<
- *                             self.full_log[line_index_iter]):
- *                         # beginning of line breaking logs
- */
+        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 105, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         if (__pyx_t_7) {
 
-          /* "emslifecycle.py":126
- *                             self.full_log[line_index_iter]):
- *                         # beginning of line breaking logs
- *                         temp_log = logprocessinglibrary.process_breaking_line_log(self.full_log[line_index_iter:])             # <<<<<<<<<<<<<<
- * 
- *                         if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:
- */
-          __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 126, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_process_breaking_line_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 126, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_5 = __Pyx_PyObject_GetSlice(__pyx_t_4, 0, 0, &__pyx_v_line_index_iter, NULL, NULL, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 126, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_t_4 = NULL;
-          __pyx_t_6 = 0;
-          #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_1))) {
-            __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_1);
-            if (likely(__pyx_t_4)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-              __Pyx_INCREF(__pyx_t_4);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_1, function);
-              __pyx_t_6 = 1;
-            }
-          }
-          #endif
-          {
-            PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_t_5};
-            __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-            __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 126, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          }
-          __Pyx_XDECREF_SET(__pyx_v_temp_log, __pyx_t_3);
-          __pyx_t_3 = 0;
-
-          /* "emslifecycle.py":128
- *                         temp_log = logprocessinglibrary.process_breaking_line_log(self.full_log[line_index_iter:])
- * 
- *                         if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:             # <<<<<<<<<<<<<<
- *                             cur_poller_log = cur_poller_log + temp_log
- *                         line_index_iter = line_index_iter + temp_log.count(' | ') + 1
- */
-          __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_temp_log, __pyx_kp_s_, Py_NE)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 128, __pyx_L1_error)
-          if (__pyx_t_9) {
-          } else {
-            __pyx_t_7 = __pyx_t_9;
-            goto __pyx_L35_bool_binop_done;
-          }
-          __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 128, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = NULL;
-          __pyx_t_6 = 0;
-          #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_5))) {
-            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_5);
-            if (likely(__pyx_t_1)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
-              __Pyx_INCREF(__pyx_t_1);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_5, function);
-              __pyx_t_6 = 1;
-            }
-          }
-          #endif
-          {
-            PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_v_temp_log};
-            __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 128, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          }
-          __pyx_t_5 = PyObject_RichCompare(__pyx_t_3, __pyx_v_cur_poller_thread, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 128, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 128, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          __pyx_t_7 = __pyx_t_9;
-          __pyx_L35_bool_binop_done:;
-          if (__pyx_t_7) {
-
-            /* "emslifecycle.py":129
- * 
- *                         if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:
- *                             cur_poller_log = cur_poller_log + temp_log             # <<<<<<<<<<<<<<
- *                         line_index_iter = line_index_iter + temp_log.count(' | ') + 1
- *                     elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
- */
-            __pyx_t_5 = PyNumber_Add(__pyx_v_cur_poller_log, __pyx_v_temp_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 129, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __Pyx_DECREF_SET(__pyx_v_cur_poller_log, __pyx_t_5);
-            __pyx_t_5 = 0;
-
-            /* "emslifecycle.py":128
- *                         temp_log = logprocessinglibrary.process_breaking_line_log(self.full_log[line_index_iter:])
- * 
- *                         if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:             # <<<<<<<<<<<<<<
- *                             cur_poller_log = cur_poller_log + temp_log
- *                         line_index_iter = line_index_iter + temp_log.count(' | ') + 1
- */
-          }
-
-          /* "emslifecycle.py":130
- *                         if temp_log != "" and logprocessinglibrary.locate_thread(temp_log) == cur_poller_thread:
- *                             cur_poller_log = cur_poller_log + temp_log
- *                         line_index_iter = line_index_iter + temp_log.count(' | ') + 1             # <<<<<<<<<<<<<<
- *                     elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):
- *                         """
- */
-          __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_temp_log, __pyx_n_s_count); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_1 = NULL;
-          __pyx_t_6 = 0;
-          #if CYTHON_UNPACK_METHODS
-          if (likely(PyMethod_Check(__pyx_t_3))) {
-            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
-            if (likely(__pyx_t_1)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-              __Pyx_INCREF(__pyx_t_1);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_3, function);
-              __pyx_t_6 = 1;
-            }
-          }
-          #endif
-          {
-            PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_kp_s__2};
-            __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 130, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          }
-          __pyx_t_3 = PyNumber_Add(__pyx_v_line_index_iter, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          __pyx_t_5 = __Pyx_PyInt_AddObjC(__pyx_t_3, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 130, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __Pyx_DECREF_SET(__pyx_v_line_index_iter, __pyx_t_5);
-          __pyx_t_5 = 0;
-
-          /* "emslifecycle.py":123
- *                 line_index_iter = each_start_index
- *                 while line_index_iter < self.log_len:
- *                     if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']) and "-1" == logprocessinglibrary.locate_thread(             # <<<<<<<<<<<<<<
- *                             self.full_log[line_index_iter]):
- *                         # beginning of line breaking logs
- */
-          goto __pyx_L31;
-        }
-
-        /* "emslifecycle.py":131
- *                             cur_poller_log = cur_poller_log + temp_log
- *                         line_index_iter = line_index_iter + temp_log.count(' | ') + 1
- *                     elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):             # <<<<<<<<<<<<<<
- *                         """
- *                         Fixing for UWP app have multiple threads logs in one app poller
- */
-        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 131, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_3, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_startswith); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 131, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_keyword_table); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_s_LOG_STARTING_STRING); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 131, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = NULL;
-        __pyx_t_6 = 0;
-        #if CYTHON_UNPACK_METHODS
-        if (likely(PyMethod_Check(__pyx_t_3))) {
-          __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
-          if (likely(__pyx_t_1)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-            __Pyx_INCREF(__pyx_t_1);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_3, function);
-            __pyx_t_6 = 1;
-          }
-        }
-        #endif
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_t_4};
-          __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-          __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 131, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        }
-        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 131, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        if (__pyx_t_7) {
-
-          /* "emslifecycle.py":135
+          /* "emslifecycle.py":109
  *                         Fixing for UWP app have multiple threads logs in one app poller
  *                         """
  *                         thread_id_exception_headers = self.log_keyword_table['LOG_MSFB_THREAD_ID_EXCEPTION_HEADERS']             # <<<<<<<<<<<<<<
  *                         is_msfb_second_thread = False
  *                         for each_header in thread_id_exception_headers:
  */
-          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_keyword_table); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 135, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_keyword_table); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 109, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_5 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_s_LOG_MSFB_THREAD_ID_EXCEPTION_HEA); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 109, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_t_5, __pyx_n_s_LOG_MSFB_THREAD_ID_EXCEPTION_HEA); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 135, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          __Pyx_XDECREF_SET(__pyx_v_thread_id_exception_headers, __pyx_t_3);
-          __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_XDECREF_SET(__pyx_v_thread_id_exception_headers, __pyx_t_5);
+          __pyx_t_5 = 0;
 
-          /* "emslifecycle.py":136
+          /* "emslifecycle.py":110
  *                         """
  *                         thread_id_exception_headers = self.log_keyword_table['LOG_MSFB_THREAD_ID_EXCEPTION_HEADERS']
  *                         is_msfb_second_thread = False             # <<<<<<<<<<<<<<
@@ -4825,7 +4259,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
           __pyx_v_is_msfb_second_thread = 0;
 
-          /* "emslifecycle.py":137
+          /* "emslifecycle.py":111
  *                         thread_id_exception_headers = self.log_keyword_table['LOG_MSFB_THREAD_ID_EXCEPTION_HEADERS']
  *                         is_msfb_second_thread = False
  *                         for each_header in thread_id_exception_headers:             # <<<<<<<<<<<<<<
@@ -4833,83 +4267,83 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  *                                 is_msfb_second_thread = True
  */
           if (likely(PyList_CheckExact(__pyx_v_thread_id_exception_headers)) || PyTuple_CheckExact(__pyx_v_thread_id_exception_headers)) {
-            __pyx_t_3 = __pyx_v_thread_id_exception_headers; __Pyx_INCREF(__pyx_t_3);
+            __pyx_t_5 = __pyx_v_thread_id_exception_headers; __Pyx_INCREF(__pyx_t_5);
             __pyx_t_8 = 0;
             __pyx_t_11 = NULL;
           } else {
-            __pyx_t_8 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_v_thread_id_exception_headers); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_11 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 137, __pyx_L1_error)
+            __pyx_t_8 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_v_thread_id_exception_headers); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 111, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_5);
+            __pyx_t_11 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_5); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 111, __pyx_L1_error)
           }
           for (;;) {
             if (likely(!__pyx_t_11)) {
-              if (likely(PyList_CheckExact(__pyx_t_3))) {
+              if (likely(PyList_CheckExact(__pyx_t_5))) {
                 {
-                  Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_3);
+                  Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_5);
                   #if !CYTHON_ASSUME_SAFE_MACROS
-                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
+                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 111, __pyx_L1_error)
                   #endif
                   if (__pyx_t_8 >= __pyx_temp) break;
                 }
                 #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-                __pyx_t_5 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_8); __Pyx_INCREF(__pyx_t_5); __pyx_t_8++; if (unlikely((0 < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
+                __pyx_t_1 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_8); __Pyx_INCREF(__pyx_t_1); __pyx_t_8++; if (unlikely((0 < 0))) __PYX_ERR(0, 111, __pyx_L1_error)
                 #else
-                __pyx_t_5 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 137, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_5);
+                __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_5, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 111, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
                 #endif
               } else {
                 {
-                  Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_3);
+                  Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_5);
                   #if !CYTHON_ASSUME_SAFE_MACROS
-                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
+                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 111, __pyx_L1_error)
                   #endif
                   if (__pyx_t_8 >= __pyx_temp) break;
                 }
                 #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-                __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_8); __Pyx_INCREF(__pyx_t_5); __pyx_t_8++; if (unlikely((0 < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
+                __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_8); __Pyx_INCREF(__pyx_t_1); __pyx_t_8++; if (unlikely((0 < 0))) __PYX_ERR(0, 111, __pyx_L1_error)
                 #else
-                __pyx_t_5 = __Pyx_PySequence_ITEM(__pyx_t_3, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 137, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_5);
+                __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_5, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 111, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
                 #endif
               }
             } else {
-              __pyx_t_5 = __pyx_t_11(__pyx_t_3);
-              if (unlikely(!__pyx_t_5)) {
+              __pyx_t_1 = __pyx_t_11(__pyx_t_5);
+              if (unlikely(!__pyx_t_1)) {
                 PyObject* exc_type = PyErr_Occurred();
                 if (exc_type) {
                   if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-                  else __PYX_ERR(0, 137, __pyx_L1_error)
+                  else __PYX_ERR(0, 111, __pyx_L1_error)
                 }
                 break;
               }
-              __Pyx_GOTREF(__pyx_t_5);
+              __Pyx_GOTREF(__pyx_t_1);
             }
-            __Pyx_XDECREF_SET(__pyx_v_each_header, __pyx_t_5);
-            __pyx_t_5 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_each_header, __pyx_t_1);
+            __pyx_t_1 = 0;
 
-            /* "emslifecycle.py":138
+            /* "emslifecycle.py":112
  *                         is_msfb_second_thread = False
  *                         for each_header in thread_id_exception_headers:
  *                             if self.full_log[line_index_iter].startswith(each_header):             # <<<<<<<<<<<<<<
  *                                 is_msfb_second_thread = True
  *                         if cur_poller_thread == logprocessinglibrary.locate_thread(
  */
-            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 138, __pyx_L1_error)
+            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 112, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_4);
-            __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 112, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_3);
             __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_startswith); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 138, __pyx_L1_error)
+            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_startswith); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 112, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_4);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __pyx_t_1 = NULL;
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __pyx_t_3 = NULL;
             __pyx_t_6 = 0;
             #if CYTHON_UNPACK_METHODS
             if (likely(PyMethod_Check(__pyx_t_4))) {
-              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_4);
-              if (likely(__pyx_t_1)) {
+              __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_4);
+              if (likely(__pyx_t_3)) {
                 PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-                __Pyx_INCREF(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_3);
                 __Pyx_INCREF(function);
                 __Pyx_DECREF_SET(__pyx_t_4, function);
                 __pyx_t_6 = 1;
@@ -4917,18 +4351,18 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
             }
             #endif
             {
-              PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_v_each_header};
-              __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-              __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-              if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 138, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_5);
+              PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_each_header};
+              __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
+              __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+              if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_1);
               __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
             }
-            __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 138, __pyx_L1_error)
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+            __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 112, __pyx_L1_error)
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
             if (__pyx_t_7) {
 
-              /* "emslifecycle.py":139
+              /* "emslifecycle.py":113
  *                         for each_header in thread_id_exception_headers:
  *                             if self.full_log[line_index_iter].startswith(each_header):
  *                                 is_msfb_second_thread = True             # <<<<<<<<<<<<<<
@@ -4937,7 +4371,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
               __pyx_v_is_msfb_second_thread = 1;
 
-              /* "emslifecycle.py":138
+              /* "emslifecycle.py":112
  *                         is_msfb_second_thread = False
  *                         for each_header in thread_id_exception_headers:
  *                             if self.full_log[line_index_iter].startswith(each_header):             # <<<<<<<<<<<<<<
@@ -4946,7 +4380,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
             }
 
-            /* "emslifecycle.py":137
+            /* "emslifecycle.py":111
  *                         thread_id_exception_headers = self.log_keyword_table['LOG_MSFB_THREAD_ID_EXCEPTION_HEADERS']
  *                         is_msfb_second_thread = False
  *                         for each_header in thread_id_exception_headers:             # <<<<<<<<<<<<<<
@@ -4954,41 +4388,41 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  *                                 is_msfb_second_thread = True
  */
           }
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-          /* "emslifecycle.py":140
+          /* "emslifecycle.py":114
  *                             if self.full_log[line_index_iter].startswith(each_header):
  *                                 is_msfb_second_thread = True
  *                         if cur_poller_thread == logprocessinglibrary.locate_thread(             # <<<<<<<<<<<<<<
  *                                 self.full_log[line_index_iter]) or is_msfb_second_thread:
  *                             # normal log line with same thread id
  */
-          __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 140, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 140, __pyx_L1_error)
+          __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_logprocessinglibrary); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_locate_thread); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 114, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-          /* "emslifecycle.py":141
+          /* "emslifecycle.py":115
  *                                 is_msfb_second_thread = True
  *                         if cur_poller_thread == logprocessinglibrary.locate_thread(
  *                                 self.full_log[line_index_iter]) or is_msfb_second_thread:             # <<<<<<<<<<<<<<
  *                             # normal log line with same thread id
  *                             cur_poller_log = cur_poller_log + self.full_log[line_index_iter]
  */
-          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 141, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_5, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          __pyx_t_5 = NULL;
+          __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 115, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __pyx_t_1 = NULL;
           __pyx_t_6 = 0;
           #if CYTHON_UNPACK_METHODS
           if (unlikely(PyMethod_Check(__pyx_t_4))) {
-            __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
-            if (likely(__pyx_t_5)) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_4);
+            if (likely(__pyx_t_1)) {
               PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-              __Pyx_INCREF(__pyx_t_5);
+              __Pyx_INCREF(__pyx_t_1);
               __Pyx_INCREF(function);
               __Pyx_DECREF_SET(__pyx_t_4, function);
               __pyx_t_6 = 1;
@@ -4996,33 +4430,33 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
           }
           #endif
           {
-            PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_t_1};
-            __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-            __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 140, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_3);
+            PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_t_3};
+            __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
+            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 114, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_5);
             __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           }
-          __pyx_t_4 = PyObject_RichCompare(__pyx_v_cur_poller_thread, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 140, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __pyx_t_4 = PyObject_RichCompare(__pyx_v_cur_poller_thread, __pyx_t_5, Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 114, __pyx_L1_error)
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-          /* "emslifecycle.py":140
+          /* "emslifecycle.py":114
  *                             if self.full_log[line_index_iter].startswith(each_header):
  *                                 is_msfb_second_thread = True
  *                         if cur_poller_thread == logprocessinglibrary.locate_thread(             # <<<<<<<<<<<<<<
  *                                 self.full_log[line_index_iter]) or is_msfb_second_thread:
  *                             # normal log line with same thread id
  */
-          __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 140, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 114, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           if (!__pyx_t_9) {
           } else {
             __pyx_t_7 = __pyx_t_9;
-            goto __pyx_L42_bool_binop_done;
+            goto __pyx_L32_bool_binop_done;
           }
 
-          /* "emslifecycle.py":141
+          /* "emslifecycle.py":115
  *                                 is_msfb_second_thread = True
  *                         if cur_poller_thread == logprocessinglibrary.locate_thread(
  *                                 self.full_log[line_index_iter]) or is_msfb_second_thread:             # <<<<<<<<<<<<<<
@@ -5030,9 +4464,9 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  *                             cur_poller_log = cur_poller_log + self.full_log[line_index_iter]
  */
           __pyx_t_7 = __pyx_v_is_msfb_second_thread;
-          __pyx_L42_bool_binop_done:;
+          __pyx_L32_bool_binop_done:;
 
-          /* "emslifecycle.py":140
+          /* "emslifecycle.py":114
  *                             if self.full_log[line_index_iter].startswith(each_header):
  *                                 is_msfb_second_thread = True
  *                         if cur_poller_thread == logprocessinglibrary.locate_thread(             # <<<<<<<<<<<<<<
@@ -5041,25 +4475,25 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
           if (__pyx_t_7) {
 
-            /* "emslifecycle.py":143
+            /* "emslifecycle.py":117
  *                                 self.full_log[line_index_iter]) or is_msfb_second_thread:
  *                             # normal log line with same thread id
  *                             cur_poller_log = cur_poller_log + self.full_log[line_index_iter]             # <<<<<<<<<<<<<<
  * 
  *                         line_index_iter = line_index_iter + 1
  */
-            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 143, __pyx_L1_error)
+            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_full_log); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 117, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_4);
-            __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 143, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_3);
+            __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_v_line_index_iter); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 117, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_5);
             __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-            __pyx_t_4 = PyNumber_Add(__pyx_v_cur_poller_log, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 143, __pyx_L1_error)
+            __pyx_t_4 = PyNumber_Add(__pyx_v_cur_poller_log, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 117, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_4);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
             __Pyx_DECREF_SET(__pyx_v_cur_poller_log, __pyx_t_4);
             __pyx_t_4 = 0;
 
-            /* "emslifecycle.py":140
+            /* "emslifecycle.py":114
  *                             if self.full_log[line_index_iter].startswith(each_header):
  *                                 is_msfb_second_thread = True
  *                         if cur_poller_thread == logprocessinglibrary.locate_thread(             # <<<<<<<<<<<<<<
@@ -5068,29 +4502,29 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
           }
 
-          /* "emslifecycle.py":145
+          /* "emslifecycle.py":119
  *                             cur_poller_log = cur_poller_log + self.full_log[line_index_iter]
  * 
  *                         line_index_iter = line_index_iter + 1             # <<<<<<<<<<<<<<
  *                     else:
  *                         line_index_iter = line_index_iter + 1
  */
-          __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 145, __pyx_L1_error)
+          __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 119, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF_SET(__pyx_v_line_index_iter, __pyx_t_4);
           __pyx_t_4 = 0;
 
-          /* "emslifecycle.py":131
- *                             cur_poller_log = cur_poller_log + temp_log
- *                         line_index_iter = line_index_iter + temp_log.count(' | ') + 1
- *                     elif self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):             # <<<<<<<<<<<<<<
+          /* "emslifecycle.py":105
+ *                 line_index_iter = each_start_index
+ *                 while line_index_iter < self.log_len:
+ *                     if self.full_log[line_index_iter].startswith(self.log_keyword_table['LOG_STARTING_STRING']):             # <<<<<<<<<<<<<<
  *                         """
  *                         Fixing for UWP app have multiple threads logs in one app poller
  */
-          goto __pyx_L31;
+          goto __pyx_L26;
         }
 
-        /* "emslifecycle.py":147
+        /* "emslifecycle.py":121
  *                         line_index_iter = line_index_iter + 1
  *                     else:
  *                         line_index_iter = line_index_iter + 1             # <<<<<<<<<<<<<<
@@ -5098,25 +4532,25 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  * 
  */
         /*else*/ {
-          __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 147, __pyx_L1_error)
+          __pyx_t_4 = __Pyx_PyInt_AddObjC(__pyx_v_line_index_iter, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 121, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF_SET(__pyx_v_line_index_iter, __pyx_t_4);
           __pyx_t_4 = 0;
         }
-        __pyx_L31:;
+        __pyx_L26:;
       }
 
-      /* "emslifecycle.py":148
+      /* "emslifecycle.py":122
  *                     else:
  *                         line_index_iter = line_index_iter + 1
  *                 application_poller_logs.append(cur_poller_log)             # <<<<<<<<<<<<<<
  * 
  *         return application_poller_logs, application_poller_threads
  */
-      __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_application_poller_logs, __pyx_v_cur_poller_log); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 148, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_application_poller_logs, __pyx_v_cur_poller_log); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 122, __pyx_L1_error)
     }
 
-    /* "emslifecycle.py":114
+    /* "emslifecycle.py":96
  *             line_index_stop_list.clear()
  * 
  *         if len(line_index_start_list) != 0:             # <<<<<<<<<<<<<<
@@ -5125,7 +4559,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  */
   }
 
-  /* "emslifecycle.py":150
+  /* "emslifecycle.py":124
  *                 application_poller_logs.append(cur_poller_log)
  * 
  *         return application_poller_logs, application_poller_threads             # <<<<<<<<<<<<<<
@@ -5133,14 +4567,14 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
  *     def initialize_app_poller_object_list(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_v_application_poller_logs);
   __Pyx_GIVEREF(__pyx_v_application_poller_logs);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_application_poller_logs)) __PYX_ERR(0, 150, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_application_poller_logs)) __PYX_ERR(0, 124, __pyx_L1_error);
   __Pyx_INCREF(__pyx_v_application_poller_threads);
   __Pyx_GIVEREF(__pyx_v_application_poller_threads);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_application_poller_threads)) __PYX_ERR(0, 150, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_application_poller_threads)) __PYX_ERR(0, 124, __pyx_L1_error);
   __pyx_r = __pyx_t_4;
   __pyx_t_4 = 0;
   goto __pyx_L0;
@@ -5171,7 +4605,6 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
   __Pyx_XDECREF(__pyx_v_cur_poller_thread);
   __Pyx_XDECREF(__pyx_v_cur_poller_log);
   __Pyx_XDECREF(__pyx_v_line_index_iter);
-  __Pyx_XDECREF(__pyx_v_temp_log);
   __Pyx_XDECREF(__pyx_v_thread_id_exception_headers);
   __Pyx_XDECREF(__pyx_v_each_header);
   __Pyx_XDECREF(__pyx_v_each_start_index);
@@ -5180,7 +4613,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_2initialize_app_poller_l
   return __pyx_r;
 }
 
-/* "emslifecycle.py":152
+/* "emslifecycle.py":126
  *         return application_poller_logs, application_poller_threads
  * 
  *     def initialize_app_poller_object_list(self):             # <<<<<<<<<<<<<<
@@ -5241,12 +4674,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 152, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 126, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "initialize_app_poller_object_list") < 0)) __PYX_ERR(0, 152, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "initialize_app_poller_object_list") < 0)) __PYX_ERR(0, 126, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
@@ -5257,7 +4690,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("initialize_app_poller_object_list", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 152, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("initialize_app_poller_object_list", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 126, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5307,14 +4740,14 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("initialize_app_poller_object_list", 1);
 
-  /* "emslifecycle.py":153
+  /* "emslifecycle.py":127
  * 
  *     def initialize_app_poller_object_list(self):
  *         app_poller_log_list, app_poller_thread_list = self.initialize_app_poller_list()             # <<<<<<<<<<<<<<
  *         self.poller_num = len(app_poller_log_list)
  *         for index_app_poller_log in range(self.poller_num):
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_initialize_app_poller_list); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_initialize_app_poller_list); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -5334,7 +4767,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
     PyObject *__pyx_callargs[2] = {__pyx_t_3, NULL};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
@@ -5344,7 +4777,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 153, __pyx_L1_error)
+      __PYX_ERR(0, 127, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -5357,15 +4790,15 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_t_3);
     #else
-    __pyx_t_2 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
+    __pyx_t_2 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 153, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 153, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 127, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_5);
@@ -5373,7 +4806,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
     __Pyx_GOTREF(__pyx_t_2);
     index = 1; __pyx_t_3 = __pyx_t_6(__pyx_t_5); if (unlikely(!__pyx_t_3)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_3);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_5), 2) < 0) __PYX_ERR(0, 153, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_5), 2) < 0) __PYX_ERR(0, 127, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     goto __pyx_L4_unpacking_done;
@@ -5381,7 +4814,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 153, __pyx_L1_error)
+    __PYX_ERR(0, 127, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
   __pyx_v_app_poller_log_list = __pyx_t_2;
@@ -5389,29 +4822,29 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
   __pyx_v_app_poller_thread_list = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "emslifecycle.py":154
+  /* "emslifecycle.py":128
  *     def initialize_app_poller_object_list(self):
  *         app_poller_log_list, app_poller_thread_list = self.initialize_app_poller_list()
  *         self.poller_num = len(app_poller_log_list)             # <<<<<<<<<<<<<<
  *         for index_app_poller_log in range(self.poller_num):
  *             self.app_poller_object_list.append(applicationpoller.ApplicationPoller(app_poller_log_list[index_app_poller_log],
  */
-  __pyx_t_7 = PyObject_Length(__pyx_v_app_poller_log_list); if (unlikely(__pyx_t_7 == ((Py_ssize_t)-1))) __PYX_ERR(0, 154, __pyx_L1_error)
-  __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 154, __pyx_L1_error)
+  __pyx_t_7 = PyObject_Length(__pyx_v_app_poller_log_list); if (unlikely(__pyx_t_7 == ((Py_ssize_t)-1))) __PYX_ERR(0, 128, __pyx_L1_error)
+  __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_poller_num, __pyx_t_1) < 0) __PYX_ERR(0, 154, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_poller_num, __pyx_t_1) < 0) __PYX_ERR(0, 128, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "emslifecycle.py":155
+  /* "emslifecycle.py":129
  *         app_poller_log_list, app_poller_thread_list = self.initialize_app_poller_list()
  *         self.poller_num = len(app_poller_log_list)
  *         for index_app_poller_log in range(self.poller_num):             # <<<<<<<<<<<<<<
  *             self.app_poller_object_list.append(applicationpoller.ApplicationPoller(app_poller_log_list[index_app_poller_log],
  *                                                                  app_poller_thread_list[index_app_poller_log]))
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_poller_num); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_poller_num); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 155, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 129, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
@@ -5419,9 +4852,9 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
     __pyx_t_7 = 0;
     __pyx_t_8 = NULL;
   } else {
-    __pyx_t_7 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
+    __pyx_t_7 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 155, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 129, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   for (;;) {
@@ -5430,28 +4863,28 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 155, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 129, __pyx_L1_error)
           #endif
           if (__pyx_t_7 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 155, __pyx_L1_error)
+        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 129, __pyx_L1_error)
         #else
-        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 155, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 129, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         #endif
       } else {
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 155, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 129, __pyx_L1_error)
           #endif
           if (__pyx_t_7 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 155, __pyx_L1_error)
+        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 129, __pyx_L1_error)
         #else
-        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 155, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 129, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         #endif
       }
@@ -5461,7 +4894,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 155, __pyx_L1_error)
+          else __PYX_ERR(0, 129, __pyx_L1_error)
         }
         break;
       }
@@ -5470,31 +4903,31 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
     __Pyx_XDECREF_SET(__pyx_v_index_app_poller_log, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "emslifecycle.py":156
+    /* "emslifecycle.py":130
  *         self.poller_num = len(app_poller_log_list)
  *         for index_app_poller_log in range(self.poller_num):
  *             self.app_poller_object_list.append(applicationpoller.ApplicationPoller(app_poller_log_list[index_app_poller_log],             # <<<<<<<<<<<<<<
  *                                                                  app_poller_thread_list[index_app_poller_log]))
  * 
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_app_poller_object_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_app_poller_object_list); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_applicationpoller); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_applicationpoller); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_ApplicationPoller); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_ApplicationPoller); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_app_poller_log_list, __pyx_v_index_app_poller_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 156, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_app_poller_log_list, __pyx_v_index_app_poller_log); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
 
-    /* "emslifecycle.py":157
+    /* "emslifecycle.py":131
  *         for index_app_poller_log in range(self.poller_num):
  *             self.app_poller_object_list.append(applicationpoller.ApplicationPoller(app_poller_log_list[index_app_poller_log],
  *                                                                  app_poller_thread_list[index_app_poller_log]))             # <<<<<<<<<<<<<<
  * 
  *     def generate_ems_lifecycle_log_output(self, show_not_expired_subgraph):
  */
-    __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_app_poller_thread_list, __pyx_v_index_app_poller_log); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_GetItem(__pyx_v_app_poller_thread_list, __pyx_v_index_app_poller_log); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 131, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __pyx_t_11 = NULL;
     __pyx_t_4 = 0;
@@ -5516,23 +4949,23 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
       __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 156, __pyx_L1_error)
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 130, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     }
 
-    /* "emslifecycle.py":156
+    /* "emslifecycle.py":130
  *         self.poller_num = len(app_poller_log_list)
  *         for index_app_poller_log in range(self.poller_num):
  *             self.app_poller_object_list.append(applicationpoller.ApplicationPoller(app_poller_log_list[index_app_poller_log],             # <<<<<<<<<<<<<<
  *                                                                  app_poller_thread_list[index_app_poller_log]))
  * 
  */
-    __pyx_t_12 = __Pyx_PyObject_Append(__pyx_t_3, __pyx_t_2); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 156, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_Append(__pyx_t_3, __pyx_t_2); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "emslifecycle.py":155
+    /* "emslifecycle.py":129
  *         app_poller_log_list, app_poller_thread_list = self.initialize_app_poller_list()
  *         self.poller_num = len(app_poller_log_list)
  *         for index_app_poller_log in range(self.poller_num):             # <<<<<<<<<<<<<<
@@ -5542,7 +4975,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "emslifecycle.py":152
+  /* "emslifecycle.py":126
  *         return application_poller_logs, application_poller_threads
  * 
  *     def initialize_app_poller_object_list(self):             # <<<<<<<<<<<<<<
@@ -5572,7 +5005,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_4initialize_app_poller_o
   return __pyx_r;
 }
 
-/* "emslifecycle.py":159
+/* "emslifecycle.py":133
  *                                                                  app_poller_thread_list[index_app_poller_log]))
  * 
  *     def generate_ems_lifecycle_log_output(self, show_not_expired_subgraph):             # <<<<<<<<<<<<<<
@@ -5636,7 +5069,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 159, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 133, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -5644,14 +5077,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 159, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 133, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("generate_ems_lifecycle_log_output", 1, 2, 2, 1); __PYX_ERR(0, 159, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("generate_ems_lifecycle_log_output", 1, 2, 2, 1); __PYX_ERR(0, 133, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_ems_lifecycle_log_output") < 0)) __PYX_ERR(0, 159, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "generate_ems_lifecycle_log_output") < 0)) __PYX_ERR(0, 133, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -5664,7 +5097,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("generate_ems_lifecycle_log_output", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 159, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("generate_ems_lifecycle_log_output", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 133, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5711,7 +5144,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_6generate_ems_lifecycle_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("generate_ems_lifecycle_log_output", 1);
 
-  /* "emslifecycle.py":160
+  /* "emslifecycle.py":134
  * 
  *     def generate_ems_lifecycle_log_output(self, show_not_expired_subgraph):
  *         interpreted_log_output = ""             # <<<<<<<<<<<<<<
@@ -5721,16 +5154,16 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_6generate_ems_lifecycle_
   __Pyx_INCREF(__pyx_kp_s_);
   __pyx_v_interpreted_log_output = __pyx_kp_s_;
 
-  /* "emslifecycle.py":161
+  /* "emslifecycle.py":135
  *     def generate_ems_lifecycle_log_output(self, show_not_expired_subgraph):
  *         interpreted_log_output = ""
  *         for cur_app_poller_log_index in range(self.poller_num):             # <<<<<<<<<<<<<<
  *             cur_app_poller_log = self.app_poller_object_list[cur_app_poller_log_index]
  *             ems_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_not_expired_subgraph)
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_poller_num); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_poller_num); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_range, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
@@ -5738,9 +5171,9 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_6generate_ems_lifecycle_
     __pyx_t_3 = 0;
     __pyx_t_4 = NULL;
   } else {
-    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 135, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 161, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 135, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   for (;;) {
@@ -5749,28 +5182,28 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_6generate_ems_lifecycle_
         {
           Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 161, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 135, __pyx_L1_error)
           #endif
           if (__pyx_t_3 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely((0 < 0))) __PYX_ERR(0, 161, __pyx_L1_error)
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely((0 < 0))) __PYX_ERR(0, 135, __pyx_L1_error)
         #else
-        __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         #endif
       } else {
         {
           Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_1);
           #if !CYTHON_ASSUME_SAFE_MACROS
-          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 161, __pyx_L1_error)
+          if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 135, __pyx_L1_error)
           #endif
           if (__pyx_t_3 >= __pyx_temp) break;
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely((0 < 0))) __PYX_ERR(0, 161, __pyx_L1_error)
+        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely((0 < 0))) __PYX_ERR(0, 135, __pyx_L1_error)
         #else
-        __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         #endif
       }
@@ -5780,7 +5213,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_6generate_ems_lifecycle_
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 161, __pyx_L1_error)
+          else __PYX_ERR(0, 135, __pyx_L1_error)
         }
         break;
       }
@@ -5789,29 +5222,29 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_6generate_ems_lifecycle_
     __Pyx_XDECREF_SET(__pyx_v_cur_app_poller_log_index, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "emslifecycle.py":162
+    /* "emslifecycle.py":136
  *         interpreted_log_output = ""
  *         for cur_app_poller_log_index in range(self.poller_num):
  *             cur_app_poller_log = self.app_poller_object_list[cur_app_poller_log_index]             # <<<<<<<<<<<<<<
  *             ems_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_not_expired_subgraph)
  *             if ems_lifecycle_log_output != "":
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_app_poller_object_list); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 162, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_app_poller_object_list); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_2, __pyx_v_cur_app_poller_log_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 162, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_t_2, __pyx_v_cur_app_poller_log_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_XDECREF_SET(__pyx_v_cur_app_poller_log, __pyx_t_5);
     __pyx_t_5 = 0;
 
-    /* "emslifecycle.py":163
+    /* "emslifecycle.py":137
  *         for cur_app_poller_log_index in range(self.poller_num):
  *             cur_app_poller_log = self.app_poller_object_list[cur_app_poller_log_index]
  *             ems_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_not_expired_subgraph)             # <<<<<<<<<<<<<<
  *             if ems_lifecycle_log_output != "":
  *                 interpreted_log_output += ems_lifecycle_log_output
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_cur_app_poller_log, __pyx_n_s_generate_application_poller_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 163, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_cur_app_poller_log, __pyx_n_s_generate_application_poller_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_6 = NULL;
     __pyx_t_7 = 0;
@@ -5831,47 +5264,47 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_6generate_ems_lifecycle_
       PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_v_show_not_expired_subgraph};
       __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_7, 1+__pyx_t_7);
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 163, __pyx_L1_error)
+      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 137, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     }
     __Pyx_XDECREF_SET(__pyx_v_ems_lifecycle_log_output, __pyx_t_5);
     __pyx_t_5 = 0;
 
-    /* "emslifecycle.py":164
+    /* "emslifecycle.py":138
  *             cur_app_poller_log = self.app_poller_object_list[cur_app_poller_log_index]
  *             ems_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_not_expired_subgraph)
  *             if ems_lifecycle_log_output != "":             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += ems_lifecycle_log_output
  *                 interpreted_log_output += '\n'
  */
-    __pyx_t_8 = (__Pyx_PyString_Equals(__pyx_v_ems_lifecycle_log_output, __pyx_kp_s_, Py_NE)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 164, __pyx_L1_error)
+    __pyx_t_8 = (__Pyx_PyString_Equals(__pyx_v_ems_lifecycle_log_output, __pyx_kp_s_, Py_NE)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 138, __pyx_L1_error)
     if (__pyx_t_8) {
 
-      /* "emslifecycle.py":165
+      /* "emslifecycle.py":139
  *             ems_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_not_expired_subgraph)
  *             if ems_lifecycle_log_output != "":
  *                 interpreted_log_output += ems_lifecycle_log_output             # <<<<<<<<<<<<<<
  *                 interpreted_log_output += '\n'
  *         return interpreted_log_output
  */
-      __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_v_ems_lifecycle_log_output); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 165, __pyx_L1_error)
+      __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_v_ems_lifecycle_log_output); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 139, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF_SET(__pyx_v_interpreted_log_output, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "emslifecycle.py":166
+      /* "emslifecycle.py":140
  *             if ems_lifecycle_log_output != "":
  *                 interpreted_log_output += ems_lifecycle_log_output
  *                 interpreted_log_output += '\n'             # <<<<<<<<<<<<<<
  *         return interpreted_log_output
  */
-      __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_kp_s__3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 166, __pyx_L1_error)
+      __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_v_interpreted_log_output, __pyx_kp_s__2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 140, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF_SET(__pyx_v_interpreted_log_output, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "emslifecycle.py":164
+      /* "emslifecycle.py":138
  *             cur_app_poller_log = self.app_poller_object_list[cur_app_poller_log_index]
  *             ems_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_not_expired_subgraph)
  *             if ems_lifecycle_log_output != "":             # <<<<<<<<<<<<<<
@@ -5880,7 +5313,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_6generate_ems_lifecycle_
  */
     }
 
-    /* "emslifecycle.py":161
+    /* "emslifecycle.py":135
  *     def generate_ems_lifecycle_log_output(self, show_not_expired_subgraph):
  *         interpreted_log_output = ""
  *         for cur_app_poller_log_index in range(self.poller_num):             # <<<<<<<<<<<<<<
@@ -5890,7 +5323,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_6generate_ems_lifecycle_
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "emslifecycle.py":167
+  /* "emslifecycle.py":141
  *                 interpreted_log_output += ems_lifecycle_log_output
  *                 interpreted_log_output += '\n'
  *         return interpreted_log_output             # <<<<<<<<<<<<<<
@@ -5900,7 +5333,7 @@ static PyObject *__pyx_pf_12emslifecycle_12EMSLifeCycle_6generate_ems_lifecycle_
   __pyx_r = __pyx_v_interpreted_log_output;
   goto __pyx_L0;
 
-  /* "emslifecycle.py":159
+  /* "emslifecycle.py":133
  *                                                                  app_poller_thread_list[index_app_poller_log]))
  * 
  *     def generate_ems_lifecycle_log_output(self, show_not_expired_subgraph):             # <<<<<<<<<<<<<<
@@ -5943,7 +5376,6 @@ static PyMethodDef __pyx_methods[] = {
 static int __Pyx_CreateStringTabAndInitStrings(void) {
   __Pyx_StringTabEntry __pyx_string_tab[] = {
     {&__pyx_kp_s_, __pyx_k_, sizeof(__pyx_k_), 0, 0, 1, 0},
-    {&__pyx_kp_s_1, __pyx_k_1, sizeof(__pyx_k_1), 0, 0, 1, 0},
     {&__pyx_n_s_ApplicationPoller, __pyx_k_ApplicationPoller, sizeof(__pyx_k_ApplicationPoller), 0, 0, 1, 1},
     {&__pyx_n_s_EMSLifeCycle, __pyx_k_EMSLifeCycle, sizeof(__pyx_k_EMSLifeCycle), 0, 0, 1, 1},
     {&__pyx_n_s_EMSLifeCycle___init, __pyx_k_EMSLifeCycle___init, sizeof(__pyx_k_EMSLifeCycle___init), 0, 0, 1, 1},
@@ -5955,10 +5387,9 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_LOG_APP_POLLER_STOP_STRING, __pyx_k_LOG_APP_POLLER_STOP_STRING, sizeof(__pyx_k_LOG_APP_POLLER_STOP_STRING), 0, 0, 1, 1},
     {&__pyx_n_s_LOG_MSFB_THREAD_ID_EXCEPTION_HEA, __pyx_k_LOG_MSFB_THREAD_ID_EXCEPTION_HEA, sizeof(__pyx_k_LOG_MSFB_THREAD_ID_EXCEPTION_HEA), 0, 0, 1, 1},
     {&__pyx_n_s_LOG_STARTING_STRING, __pyx_k_LOG_STARTING_STRING, sizeof(__pyx_k_LOG_STARTING_STRING), 0, 0, 1, 1},
-    {&__pyx_n_s__14, __pyx_k__14, sizeof(__pyx_k__14), 0, 0, 1, 1},
+    {&__pyx_n_s__13, __pyx_k__13, sizeof(__pyx_k__13), 0, 0, 1, 1},
     {&__pyx_kp_s__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 0, 1, 0},
-    {&__pyx_kp_s__3, __pyx_k__3, sizeof(__pyx_k__3), 0, 0, 1, 0},
-    {&__pyx_n_s__4, __pyx_k__4, sizeof(__pyx_k__4), 0, 0, 1, 1},
+    {&__pyx_n_s__3, __pyx_k__3, sizeof(__pyx_k__3), 0, 0, 1, 1},
     {&__pyx_n_s_app_poller_log_list, __pyx_k_app_poller_log_list, sizeof(__pyx_k_app_poller_log_list), 0, 0, 1, 1},
     {&__pyx_n_s_app_poller_object_list, __pyx_k_app_poller_object_list, sizeof(__pyx_k_app_poller_object_list), 0, 0, 1, 1},
     {&__pyx_n_s_app_poller_thread_list, __pyx_k_app_poller_thread_list, sizeof(__pyx_k_app_poller_thread_list), 0, 0, 1, 1},
@@ -5971,7 +5402,6 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_class_getitem, __pyx_k_class_getitem, sizeof(__pyx_k_class_getitem), 0, 0, 1, 1},
     {&__pyx_n_s_clear, __pyx_k_clear, sizeof(__pyx_k_clear), 0, 0, 1, 1},
     {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
-    {&__pyx_n_s_count, __pyx_k_count, sizeof(__pyx_k_count), 0, 0, 1, 1},
     {&__pyx_n_s_cur_app_poller_log, __pyx_k_cur_app_poller_log, sizeof(__pyx_k_cur_app_poller_log), 0, 0, 1, 1},
     {&__pyx_n_s_cur_app_poller_log_index, __pyx_k_cur_app_poller_log_index, sizeof(__pyx_k_cur_app_poller_log_index), 0, 0, 1, 1},
     {&__pyx_n_s_cur_poller_log, __pyx_k_cur_poller_log, sizeof(__pyx_k_cur_poller_log), 0, 0, 1, 1},
@@ -6013,7 +5443,6 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_poller_num, __pyx_k_poller_num, sizeof(__pyx_k_poller_num), 0, 0, 1, 1},
     {&__pyx_n_s_pop, __pyx_k_pop, sizeof(__pyx_k_pop), 0, 0, 1, 1},
     {&__pyx_n_s_prepare, __pyx_k_prepare, sizeof(__pyx_k_prepare), 0, 0, 1, 1},
-    {&__pyx_n_s_process_breaking_line_log, __pyx_k_process_breaking_line_log, sizeof(__pyx_k_process_breaking_line_log), 0, 0, 1, 1},
     {&__pyx_n_s_qualname, __pyx_k_qualname, sizeof(__pyx_k_qualname), 0, 0, 1, 1},
     {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
     {&__pyx_n_s_remove, __pyx_k_remove, sizeof(__pyx_k_remove), 0, 0, 1, 1},
@@ -6023,7 +5452,6 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_spec, __pyx_k_spec, sizeof(__pyx_k_spec), 0, 0, 1, 1},
     {&__pyx_n_s_startswith, __pyx_k_startswith, sizeof(__pyx_k_startswith), 0, 0, 1, 1},
     {&__pyx_n_s_super, __pyx_k_super, sizeof(__pyx_k_super), 0, 0, 1, 1},
-    {&__pyx_n_s_temp_log, __pyx_k_temp_log, sizeof(__pyx_k_temp_log), 0, 0, 1, 1},
     {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
     {&__pyx_n_s_thread_id_exception_headers, __pyx_k_thread_id_exception_headers, sizeof(__pyx_k_thread_id_exception_headers), 0, 0, 1, 1},
     {0, 0, 0, 0, 0, 0, 0}
@@ -6032,7 +5460,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
 }
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 155, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 129, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -6050,13 +5478,13 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         self.log_keyword_table = logprocessinglibrary.init_keyword_table()
  *         self.full_log = full_log
  */
-  __pyx_tuple__5 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_full_log, __pyx_n_s_boot_reason); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 21, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__5);
-  __Pyx_GIVEREF(__pyx_tuple__5);
-  __pyx_codeobj__6 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__5, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_emslifecycle_py, __pyx_n_s_init, 21, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__6)) __PYX_ERR(0, 21, __pyx_L1_error)
-  __pyx_tuple__7 = PyTuple_Pack(1, ((PyObject*)__pyx_kp_s_IME_Service_Starts)); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 21, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__7);
-  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_tuple__4 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_full_log, __pyx_n_s_boot_reason); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__4);
+  __Pyx_GIVEREF(__pyx_tuple__4);
+  __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_emslifecycle_py, __pyx_n_s_init, 21, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(1, ((PyObject*)__pyx_kp_s_IME_Service_Starts)); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__6);
+  __Pyx_GIVEREF(__pyx_tuple__6);
 
   /* "emslifecycle.py":31
  *         self.initialize_app_poller_object_list()
@@ -6065,34 +5493,34 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         # Input log Beginning from service starts, ending at service stop
  *         application_poller_logs = []
  */
-  __pyx_tuple__8 = PyTuple_Pack(14, __pyx_n_s_self, __pyx_n_s_application_poller_logs, __pyx_n_s_application_poller_threads, __pyx_n_s_line_index_start_list, __pyx_n_s_line_index_stop_list, __pyx_n_s_cur_start_index, __pyx_n_s_cur_poller_thread, __pyx_n_s_cur_poller_log, __pyx_n_s_line_index_iter, __pyx_n_s_temp_log, __pyx_n_s_thread_id_exception_headers, __pyx_n_s_is_msfb_second_thread, __pyx_n_s_each_header, __pyx_n_s_each_start_index); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 31, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__8);
-  __Pyx_GIVEREF(__pyx_tuple__8);
-  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 14, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_emslifecycle_py, __pyx_n_s_initialize_app_poller_list, 31, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_tuple__7 = PyTuple_Pack(13, __pyx_n_s_self, __pyx_n_s_application_poller_logs, __pyx_n_s_application_poller_threads, __pyx_n_s_line_index_start_list, __pyx_n_s_line_index_stop_list, __pyx_n_s_cur_start_index, __pyx_n_s_cur_poller_thread, __pyx_n_s_cur_poller_log, __pyx_n_s_line_index_iter, __pyx_n_s_thread_id_exception_headers, __pyx_n_s_is_msfb_second_thread, __pyx_n_s_each_header, __pyx_n_s_each_start_index); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 13, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_emslifecycle_py, __pyx_n_s_initialize_app_poller_list, 31, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 31, __pyx_L1_error)
 
-  /* "emslifecycle.py":152
+  /* "emslifecycle.py":126
  *         return application_poller_logs, application_poller_threads
  * 
  *     def initialize_app_poller_object_list(self):             # <<<<<<<<<<<<<<
  *         app_poller_log_list, app_poller_thread_list = self.initialize_app_poller_list()
  *         self.poller_num = len(app_poller_log_list)
  */
-  __pyx_tuple__10 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_app_poller_log_list, __pyx_n_s_app_poller_thread_list, __pyx_n_s_index_app_poller_log); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 152, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__10);
-  __Pyx_GIVEREF(__pyx_tuple__10);
-  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_emslifecycle_py, __pyx_n_s_initialize_app_poller_object_lis, 152, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_app_poller_log_list, __pyx_n_s_app_poller_thread_list, __pyx_n_s_index_app_poller_log); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 126, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_emslifecycle_py, __pyx_n_s_initialize_app_poller_object_lis, 126, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) __PYX_ERR(0, 126, __pyx_L1_error)
 
-  /* "emslifecycle.py":159
+  /* "emslifecycle.py":133
  *                                                                  app_poller_thread_list[index_app_poller_log]))
  * 
  *     def generate_ems_lifecycle_log_output(self, show_not_expired_subgraph):             # <<<<<<<<<<<<<<
  *         interpreted_log_output = ""
  *         for cur_app_poller_log_index in range(self.poller_num):
  */
-  __pyx_tuple__12 = PyTuple_Pack(6, __pyx_n_s_self, __pyx_n_s_show_not_expired_subgraph, __pyx_n_s_interpreted_log_output, __pyx_n_s_cur_app_poller_log_index, __pyx_n_s_cur_app_poller_log, __pyx_n_s_ems_lifecycle_log_output); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 159, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__12);
-  __Pyx_GIVEREF(__pyx_tuple__12);
-  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_emslifecycle_py, __pyx_n_s_generate_ems_lifecycle_log_outpu, 159, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_tuple__11 = PyTuple_Pack(6, __pyx_n_s_self, __pyx_n_s_show_not_expired_subgraph, __pyx_n_s_interpreted_log_output, __pyx_n_s_cur_app_poller_log_index, __pyx_n_s_cur_app_poller_log, __pyx_n_s_ems_lifecycle_log_output); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
+  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_emslifecycle_py, __pyx_n_s_generate_ems_lifecycle_log_outpu, 133, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -6502,9 +5930,9 @@ if (!__Pyx_RefNanny) {
  *         self.log_keyword_table = logprocessinglibrary.init_keyword_table()
  *         self.full_log = full_log
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_12emslifecycle_12EMSLifeCycle_1__init__, 0, __pyx_n_s_EMSLifeCycle___init, NULL, __pyx_n_s_emslifecycle, __pyx_d, ((PyObject *)__pyx_codeobj__6)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_12emslifecycle_12EMSLifeCycle_1__init__, 0, __pyx_n_s_EMSLifeCycle___init, NULL, __pyx_n_s_emslifecycle, __pyx_d, ((PyObject *)__pyx_codeobj__5)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__7);
+  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__6);
   if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_init, __pyx_t_3) < 0) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
@@ -6515,33 +5943,33 @@ if (!__Pyx_RefNanny) {
  *         # Input log Beginning from service starts, ending at service stop
  *         application_poller_logs = []
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_12emslifecycle_12EMSLifeCycle_3initialize_app_poller_list, 0, __pyx_n_s_EMSLifeCycle_initialize_app_poll, NULL, __pyx_n_s_emslifecycle, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_12emslifecycle_12EMSLifeCycle_3initialize_app_poller_list, 0, __pyx_n_s_EMSLifeCycle_initialize_app_poll, NULL, __pyx_n_s_emslifecycle, __pyx_d, ((PyObject *)__pyx_codeobj__8)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_initialize_app_poller_list, __pyx_t_3) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "emslifecycle.py":152
+  /* "emslifecycle.py":126
  *         return application_poller_logs, application_poller_threads
  * 
  *     def initialize_app_poller_object_list(self):             # <<<<<<<<<<<<<<
  *         app_poller_log_list, app_poller_thread_list = self.initialize_app_poller_list()
  *         self.poller_num = len(app_poller_log_list)
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_12emslifecycle_12EMSLifeCycle_5initialize_app_poller_object_list, 0, __pyx_n_s_EMSLifeCycle_initialize_app_poll_2, NULL, __pyx_n_s_emslifecycle, __pyx_d, ((PyObject *)__pyx_codeobj__11)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_12emslifecycle_12EMSLifeCycle_5initialize_app_poller_object_list, 0, __pyx_n_s_EMSLifeCycle_initialize_app_poll_2, NULL, __pyx_n_s_emslifecycle, __pyx_d, ((PyObject *)__pyx_codeobj__10)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_initialize_app_poller_object_lis, __pyx_t_3) < 0) __PYX_ERR(0, 152, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_initialize_app_poller_object_lis, __pyx_t_3) < 0) __PYX_ERR(0, 126, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "emslifecycle.py":159
+  /* "emslifecycle.py":133
  *                                                                  app_poller_thread_list[index_app_poller_log]))
  * 
  *     def generate_ems_lifecycle_log_output(self, show_not_expired_subgraph):             # <<<<<<<<<<<<<<
  *         interpreted_log_output = ""
  *         for cur_app_poller_log_index in range(self.poller_num):
  */
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_12emslifecycle_12EMSLifeCycle_7generate_ems_lifecycle_log_output, 0, __pyx_n_s_EMSLifeCycle_generate_ems_lifecy, NULL, __pyx_n_s_emslifecycle, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_12emslifecycle_12EMSLifeCycle_7generate_ems_lifecycle_log_output, 0, __pyx_n_s_EMSLifeCycle_generate_ems_lifecy, NULL, __pyx_n_s_emslifecycle, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_generate_ems_lifecycle_log_outpu, __pyx_t_3) < 0) __PYX_ERR(0, 159, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_2, __pyx_n_s_generate_ems_lifecycle_log_outpu, __pyx_t_3) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "emslifecycle.py":20
@@ -8028,110 +7456,6 @@ static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, long intval, 
 }
 #endif
 
-/* SliceObject */
-static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(PyObject* obj,
-        Py_ssize_t cstart, Py_ssize_t cstop,
-        PyObject** _py_start, PyObject** _py_stop, PyObject** _py_slice,
-        int has_cstart, int has_cstop, int wraparound) {
-    __Pyx_TypeName obj_type_name;
-#if CYTHON_USE_TYPE_SLOTS
-    PyMappingMethods* mp;
-#if PY_MAJOR_VERSION < 3
-    PySequenceMethods* ms = Py_TYPE(obj)->tp_as_sequence;
-    if (likely(ms && ms->sq_slice)) {
-        if (!has_cstart) {
-            if (_py_start && (*_py_start != Py_None)) {
-                cstart = __Pyx_PyIndex_AsSsize_t(*_py_start);
-                if ((cstart == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
-            } else
-                cstart = 0;
-        }
-        if (!has_cstop) {
-            if (_py_stop && (*_py_stop != Py_None)) {
-                cstop = __Pyx_PyIndex_AsSsize_t(*_py_stop);
-                if ((cstop == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
-            } else
-                cstop = PY_SSIZE_T_MAX;
-        }
-        if (wraparound && unlikely((cstart < 0) | (cstop < 0)) && likely(ms->sq_length)) {
-            Py_ssize_t l = ms->sq_length(obj);
-            if (likely(l >= 0)) {
-                if (cstop < 0) {
-                    cstop += l;
-                    if (cstop < 0) cstop = 0;
-                }
-                if (cstart < 0) {
-                    cstart += l;
-                    if (cstart < 0) cstart = 0;
-                }
-            } else {
-                if (!PyErr_ExceptionMatches(PyExc_OverflowError))
-                    goto bad;
-                PyErr_Clear();
-            }
-        }
-        return ms->sq_slice(obj, cstart, cstop);
-    }
-#else
-    CYTHON_UNUSED_VAR(wraparound);
-#endif
-    mp = Py_TYPE(obj)->tp_as_mapping;
-    if (likely(mp && mp->mp_subscript))
-#else
-    CYTHON_UNUSED_VAR(wraparound);
-#endif
-    {
-        PyObject* result;
-        PyObject *py_slice, *py_start, *py_stop;
-        if (_py_slice) {
-            py_slice = *_py_slice;
-        } else {
-            PyObject* owned_start = NULL;
-            PyObject* owned_stop = NULL;
-            if (_py_start) {
-                py_start = *_py_start;
-            } else {
-                if (has_cstart) {
-                    owned_start = py_start = PyInt_FromSsize_t(cstart);
-                    if (unlikely(!py_start)) goto bad;
-                } else
-                    py_start = Py_None;
-            }
-            if (_py_stop) {
-                py_stop = *_py_stop;
-            } else {
-                if (has_cstop) {
-                    owned_stop = py_stop = PyInt_FromSsize_t(cstop);
-                    if (unlikely(!py_stop)) {
-                        Py_XDECREF(owned_start);
-                        goto bad;
-                    }
-                } else
-                    py_stop = Py_None;
-            }
-            py_slice = PySlice_New(py_start, py_stop, Py_None);
-            Py_XDECREF(owned_start);
-            Py_XDECREF(owned_stop);
-            if (unlikely(!py_slice)) goto bad;
-        }
-#if CYTHON_USE_TYPE_SLOTS
-        result = mp->mp_subscript(obj, py_slice);
-#else
-        result = PyObject_GetItem(obj, py_slice);
-#endif
-        if (!_py_slice) {
-            Py_DECREF(py_slice);
-        }
-        return result;
-    }
-    obj_type_name = __Pyx_PyType_GetName(Py_TYPE(obj));
-    PyErr_Format(PyExc_TypeError,
-        "'" __Pyx_FMT_TYPENAME "' object is unsliceable", obj_type_name);
-    __Pyx_DECREF_TypeName(obj_type_name);
-bad:
-    return NULL;
-}
-
 /* PyObjectCallNoArg */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
     PyObject *arg[2] = {NULL, NULL};
@@ -8437,7 +7761,7 @@ static PyObject *__Pyx_ImportDottedModule_WalkParts(PyObject *module, PyObject *
 #endif
 static PyObject *__Pyx__ImportDottedModule(PyObject *name, PyObject *parts_tuple) {
 #if PY_MAJOR_VERSION < 3
-    PyObject *module, *from_list, *star = __pyx_n_s__4;
+    PyObject *module, *from_list, *star = __pyx_n_s__3;
     CYTHON_UNUSED_VAR(parts_tuple);
     from_list = PyList_New(1);
     if (unlikely(!from_list))
@@ -10345,7 +9669,7 @@ __Pyx_PyType_GetName(PyTypeObject* tp)
     if (unlikely(name == NULL) || unlikely(!PyUnicode_Check(name))) {
         PyErr_Clear();
         Py_XDECREF(name);
-        name = __Pyx_NewRef(__pyx_n_s__14);
+        name = __Pyx_NewRef(__pyx_n_s__13);
     }
     return name;
 }

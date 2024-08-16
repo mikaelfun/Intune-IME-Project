@@ -121,7 +121,7 @@ if __name__ == '__main__':
     # test_log_folder = r"D:\Kun\Downloads\IME test logs\mdmlogs-2023-10-17-13-53-48"
     from imeinterpreter import *
     # test_log_folder = r"C:\Users\kufang\Downloads\MDMDiagReport 1 Ulysse"
-    test_log_folder = r"C:\Users\kufang\Downloads\userdriven\userdriven"
+    test_log_folder = r"C:\Users\kufang\Downloads\IME log (1) bug installation error\Logs"
     a = ImeInterpreter(test_log_folder)
     print(a.generate_ime_interpreter_log_output(False))
 
