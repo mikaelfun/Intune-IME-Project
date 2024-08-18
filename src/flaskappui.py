@@ -1,5 +1,6 @@
 import sys
 import threading
+import webbrowser
 
 import requests
 from flask import Flask, render_template, request, jsonify
@@ -7,7 +8,6 @@ from imeinterpreter import *
 import configparser
 from selfupdate import update
 import update
-import webbrowser
 
 
 def update_selfupdater():
@@ -35,16 +35,20 @@ def thread_job():
         print("Unable to update update.exe!")
 
 
-app = Flask(__name__)
+ime_interpreter_app = Flask(__name__)
 
 
-@app.route('/')
+@ime_interpreter_app.route('/')
 def home():
     return render_template('index.html')
 
 
+def open_browser():
+    webbrowser.open_new('http://127.0.0.1:5000/')
+
+
 # New route for checking update availability
-@app.route('/check_update')
+@ime_interpreter_app.route('/check_update')
 def check_update():
     # Call your Python function (e.g., check_update_available())
     # Replace this with your actual logic
@@ -81,7 +85,7 @@ def check_update():
         return "Up to date"
 
 
-@app.route('/analyze', methods=['POST'])
+@ime_interpreter_app.route('/analyze', methods=['POST'])
 def analyze():
     folder_path = request.form.get('IMEFolderPath')
     logModeOn = request.form.get('logModeOn')
@@ -135,4 +139,9 @@ if __name__ == '__main__':
         print("Log output successful!")
         sys.exit("Log output successful!")
     else:
-        app.run()
+        # ime_interpreter_app.run(debug=True)
+        # ime_interpreter_app_ui = FlaskUI(ime_interpreter_app)
+        # ime_interpreter_app_ui.port = 5000
+        # ime_interpreter_app_ui.run()
+        open_browser()
+        ime_interpreter_app.run(port=5000)
