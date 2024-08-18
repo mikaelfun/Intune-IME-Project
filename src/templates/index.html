@@ -112,6 +112,8 @@
       </div>
     </section>
     <script>
+        // Initialize the toggle state (off initially)
+        let logModeOn = false;
         function handleAnalize() {
             // Prevent the default form submission behavior
             event.preventDefault();
@@ -172,8 +174,6 @@
                     });
             }, 2000); // 2000 milliseconds (2 seconds)
         }
-        // Initialize the toggle state (off initially)
-        let logModeOn = false;
 
         // Function to toggle the state and update button text
         function toggleLogMode() {

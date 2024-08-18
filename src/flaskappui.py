@@ -86,10 +86,11 @@ def analyze():
     folder_path = request.form.get('IMEFolderPath')
     logModeOn = request.form.get('logModeOn')
     full_log_mode = False
+    # print(logModeOn)
     if logModeOn == "false":
         full_log_mode = False
     elif logModeOn == "true":
-        full_log_mode = False
+        full_log_mode = True
     # print(full_log_mode)
     a = ImeInterpreter(folder_path)
     result = a.generate_ime_interpreter_log_output_webui(full_log_mode)
