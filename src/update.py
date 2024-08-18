@@ -11,7 +11,7 @@ thread_list = []
 def cold_update_github_links():
     url_list.clear()
     url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/IME%20Interpreter%20V5.0.exe')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/IME%20Interpreter%20V5.0%20debug.exe')
+    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/IME%20Interpreter%20V5.0%20Debug.exe')
     url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/applicationpoller.py')
     url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/config.ini')
     url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/constructinterpretedlog.py')
