@@ -31,7 +31,7 @@ class ApplicationPoller:
             print("Error self.log_len < 3! Exit 3101")
             return None
             # exit(3101)
-        self.poller_time = logprocessinglibrary.get_timestamp_by_line(self.log_content[0])
+        self.poller_time = logprocessinglibrary.get_timestamp_by_line(self.log_content[0])[:-4]
         self.thread_id = poller_thread_string
         self.start_time = logprocessinglibrary.get_timestamp_by_line(self.log_content[0])
         self.stop_time = logprocessinglibrary.get_timestamp_by_line(self.log_content[-1])
@@ -262,14 +262,12 @@ class ApplicationPoller:
                 self.log_keyword_table['LOG_APP_POLLER_START_STRING']):
             interpreted_log_output += constructinterpretedlog.write_application_poller_start_to_log_output(
                 "Application Poller Starts",
-                self.esp_phase, self.user_session,
-                self.comanagement_workload, self.app_type,
+                self.esp_phase, self.user_session, self.app_type,
                 self.poller_apps_got, self.poller_time)
         else:
             interpreted_log_output += constructinterpretedlog.write_application_poller_start_to_log_output(
                 "Application Poller Missing Start",
-                self.esp_phase, self.user_session,
-                self.comanagement_workload, self.app_type,
+                self.esp_phase, self.user_session, self.app_type,
                 self.poller_apps_got, self.poller_time)
 
         interpreted_log_output += "\n"

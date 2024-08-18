@@ -24,10 +24,11 @@ class ImeInterpreter:
     def __init__(self, log_folder_path):
         self.log_folder_path = log_folder_path
         self.life_cycle_list = []
-
+        self.ems_agent_sorted_start_times, self.ems_agent_sorted_stop_times = [], []
         self.full_log = self.load_full_logs()  # full log as line of string list
         self.initialize_life_cycle_list()
         self.life_cycle_num = len(self.life_cycle_list)
+
 
     def save_log_to_service(self):
         # saving uploaded log locally for further improvement
@@ -216,7 +217,6 @@ class ImeInterpreter:
 
         ems_agent_sorted_start_lines = []
         ems_agent_sorted_stop_lines = []
-
         start_line_index = 0
         stop_line_index = 0
 
@@ -235,6 +235,7 @@ class ImeInterpreter:
             cur_stop_line_top_index = ems_agent_stop_lines[stop_line_index]
             if cur_start_line_top_index < cur_stop_line_top_index:
                 ems_agent_sorted_start_lines.append(cur_start_line_top_index)
+                self.ems_agent_sorted_start_times.append(logprocessinglibrary.get_timestamp_by_line(self.full_log[cur_start_line_top_index])[:-4])
                 start_line_index += 1
                 if start_line_index < start_lines_len:
                     if ems_agent_start_lines[start_line_index] < ems_agent_stop_lines[stop_line_index]:
@@ -244,6 +245,8 @@ class ImeInterpreter:
                         stop
                         """
                         ems_agent_sorted_stop_lines.append(ems_agent_start_lines[start_line_index] - 1)
+                        self.ems_agent_sorted_stop_times.append(
+                            logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[-1]])[:-4])
                     else:
                         """
                         start
@@ -251,12 +254,19 @@ class ImeInterpreter:
                         start
                         """
                         ems_agent_sorted_stop_lines.append(ems_agent_stop_lines[stop_line_index])
+                        self.ems_agent_sorted_stop_times.append(
+                            logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[-1]])[:-4])
                         stop_line_index += 1
                 else:
                     ems_agent_sorted_stop_lines.append(ems_agent_stop_lines[stop_line_index])
+                    self.ems_agent_sorted_stop_times.append(
+                        logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[-1]])[:-4])
             else:
                 ems_agent_sorted_start_lines.append(0)
+                self.ems_agent_sorted_start_times.append(logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_start_lines[-1]])[:-4])
                 ems_agent_sorted_stop_lines.append(cur_stop_line_top_index)
+                self.ems_agent_sorted_stop_times.append(
+                    logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[-1]])[:-4])
                 stop_line_index += 1
 
         if start_line_index < start_lines_len:
@@ -266,16 +276,24 @@ class ImeInterpreter:
             """
             while start_line_index < start_lines_len:
                 ems_agent_sorted_start_lines.append(ems_agent_start_lines[start_line_index])
+                self.ems_agent_sorted_start_times.append(logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_start_lines[-1]])[:-4])
                 start_line_index += 1
                 if start_line_index < start_lines_len:
                     ems_agent_sorted_stop_lines.append(ems_agent_start_lines[start_line_index] - 1)
+                    self.ems_agent_sorted_stop_times.append(
+                        logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[-1]])[:-4])
                 else:
                     ems_agent_sorted_stop_lines.append(full_log_len-1)
+                    self.ems_agent_sorted_stop_times.append(
+                        logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[-1]])[:-4])
         elif stop_line_index < stop_lines_len:
             pass
         elif start_line_index == start_lines_len and stop_line_index == stop_lines_len:
             ems_agent_sorted_start_lines.append(0)
+            self.ems_agent_sorted_start_times.append(logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_start_lines[-1]])[:-4])
             ems_agent_sorted_stop_lines.append(full_log_len - 1)
+            self.ems_agent_sorted_stop_times.append(
+                logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[-1]])[:-4])
 
         ems_agent_lifecycle_log_list = []
         # Indicating whether the service is being restarted manually or restart by reboot
@@ -297,13 +315,15 @@ class ImeInterpreter:
                 else:
                     agent_life_ending_reason.append("Device Reboot")
 
+        #print(agent_life_ending_reason)
+        #print(self.ems_agent_sorted_start_times)
+        #print(self.ems_agent_sorted_stop_times)
         return ems_agent_lifecycle_log_list, agent_life_ending_reason
 
     def initialize_life_cycle_list(self):
         if self.full_log is None:
             return None
-        ems_agent_lifecycle_log_list, ems_agent_restart_reasons = \
-            self.separate_log_into_service_lifecycle()
+        ems_agent_lifecycle_log_list, ems_agent_restart_reasons = self.separate_log_into_service_lifecycle()
         if len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons):
             print("Error len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons)")
             return None
@@ -324,13 +344,35 @@ class ImeInterpreter:
             ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++IME Service Starts+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             """
-            interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log.boot_reason)
+            interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log)
             interpreted_log_output += '\n'
             interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
 
         return interpreted_log_output
 
+    def generate_ime_interpreter_log_output_webui(self, show_not_expired_subgraph=False):
+        interpreted_log_output = ""
+        # interpreted_log_output += constructinterpretedlog.write_empty_plus_to_log_output()
+        # return interpreted_log_output
 
+        if self.full_log is None:
+            interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
+            return interpreted_log_output
+        self.ems_agent_sorted_start_times.insert(0, '')
+        self.ems_agent_sorted_stop_times.insert(0, '')
+        for cur_lifecycle_log_index in range(self.life_cycle_num):
+            cur_lifecycle_log = self.life_cycle_list[cur_lifecycle_log_index]
+            """
+            +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++IME Service Starts+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            """
+            interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log,
+            self.ems_agent_sorted_stop_times[cur_lifecycle_log_index], self.ems_agent_sorted_start_times[cur_lifecycle_log_index + 1])
+            interpreted_log_output += '\n'
+            interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
+
+        return interpreted_log_output
 
 
 

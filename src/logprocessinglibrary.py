@@ -5,7 +5,7 @@ import json
 CONST_APP_ID_LEN = 36
 CONST_USER_ID_LEN = 36
 CONST_GRS_HASH_KEY_LEN = 44
-CONST_LOGGING_LENGTH = 190
+CONST_LOGGING_LENGTH = 134
 CONST_META_VALUE_INDEX = 30
 CONST_META_DEPENDENT_APP_VALUE_INDEX = 32
 
@@ -100,7 +100,6 @@ def process_breaking_line_log(full_log):
         line_index_iter = line_index_iter + 1
 
     return temp_log
-
 
 
 def find_app_id_with_starting_string(log_line, start_string):

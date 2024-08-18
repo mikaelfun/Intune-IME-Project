@@ -5,8 +5,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfc567d1-b6c4-44a0-8487-755a14a15d51" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/programentry.py" beforeDir="false" afterPath="$PROJECT_DIR$/programentry.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IME Interpreter V4.0 debug.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IME Interpreter V4.0.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IMEInterLauncher.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PYDsetup.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/applicationpoller.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/applicationpoller.cp311-win_amd64.pyd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/applicationpoller.py" beforeDir="false" afterPath="$PROJECT_DIR$/applicationpoller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructinterpretedlog.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructinterpretedlog.cp311-win_amd64.pyd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructinterpretedlog.py" beforeDir="false" afterPath="$PROJECT_DIR$/constructinterpretedlog.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/emslifecycle.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/emslifecycle.cp311-win_amd64.pyd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/imeinterpreter.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/imeinterpreter.cp311-win_amd64.pyd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/imeinterpreter.py" beforeDir="false" afterPath="$PROJECT_DIR$/imeinterpreter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logging keyword table.json" beforeDir="false" afterPath="$PROJECT_DIR$/logging keyword table.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logprocessinglibrary.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logprocessinglibrary.cp311-win_amd64.pyd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logprocessinglibrary.py" beforeDir="false" afterPath="$PROJECT_DIR$/logprocessinglibrary.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/programentry.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyd build command.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfupdater.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/selfupdater.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/subgraph.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/subgraph.cp311-win_amd64.pyd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tkinterui.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tkinterui.cp311-win_amd64.pyd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tkinterui.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/win32app.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/win32app.cp311-win_amd64.pyd" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +70,49 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.selfupdater">
+  <component name="RunManager" selected="Python.flaskappui">
+    <configuration name="flaskappui" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="IME Interpreter" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/flaskappui.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="programentry (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="IME Interpreter" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/programentry.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="programentry" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IME Interpreter" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -61,7 +134,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="selfupdater" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="update" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="IME Interpreter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -73,7 +146,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selfupdater.py" />
+      <option name="SCRIPT_NAME" value="D:\Kun\Documents\PyCharm\IME Interpreter\src\update.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -84,6 +157,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.flaskappui" />
+        <item itemvalue="Python.programentry (1)" />
         <item itemvalue="Python.selfupdater" />
         <item itemvalue="Python.programentry" />
       </list>
@@ -108,27 +183,27 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>609</line>
+          <line>616</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>921</line>
+          <line>931</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>916</line>
+          <line>926</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>918</line>
+          <line>928</line>
           <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/emslifecycle.py</url>
-          <line>107</line>
+          <line>89</line>
           <option name="timeStamp" value="31" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -138,7 +213,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>2103</line>
+          <line>2190</line>
           <option name="timeStamp" value="39" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -148,12 +223,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>2070</line>
+          <line>2157</line>
           <option name="timeStamp" value="54" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>1188</line>
+          <line>1200</line>
           <option name="timeStamp" value="58" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -168,7 +243,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/win32app.py</url>
-          <line>268</line>
+          <line>269</line>
           <option name="timeStamp" value="63" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -177,8 +252,8 @@
           <option name="timeStamp" value="64" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/selfupdater.py</url>
-          <line>68</line>
+          <url>file://$PROJECT_DIR$/update.py</url>
+          <line>51</line>
           <option name="timeStamp" value="67" />
         </line-breakpoint>
       </breakpoints>
