@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import *
 url_list = []
 thread_list = []
 download_progress = 0
+global appwindow
 appwindow = None
 
 
@@ -22,8 +23,10 @@ def cold_update_prepare_github_links():
     download_items = config_local.options('UPDATELINKS')
     # Update everything except update.exe
     download_items.remove('updateexe')
+    download_items.remove('updatepy')
     for each_update_item in download_items:
-        url_list.append(config_local['UPDATELINKS'][each_update_item])
+        each_url = config_local['UPDATELINKS'][each_update_item].replace(' ', '%20')
+        url_list.append(each_url)
 
 
 def hot_update_prepare_github_links():
@@ -34,14 +37,16 @@ def hot_update_prepare_github_links():
     # Update everything except update.py, mainexe,
     download_items.remove('updateexe')
     for each_update_item in download_items:
-        url_list.append(config_local['UPDATELINKS'][each_update_item])
+        each_url = config_local['UPDATELINKS'][each_update_item].replace(' ', '%20')
+        url_list.append(each_url)
 
 
 def download_file(i, total_sizes, downloaded_sizes, completed_downloads, lock):
     url = url_list[i]
-    filename = url.split("/")[-1].replace('%20',' ')
+    filename = url.split("/src/")[-1]
+    url = url.replace(' ', '%20')
     response = requests.get(url, stream=True)
-    total = response.headers.get('content-length')
+    total = int(response.headers.get('content-length'))
     overall_total = sum(total_sizes)
     # # print("a: " + total)
     # if total is not None:
@@ -122,7 +127,7 @@ def cold_update():
         thread_list.append(this_thread)
 
     for i in range(len(url_list)):
-        time.sleep(random.Random.randint(1, 2))
+        time.sleep(0.3)
         start_thread(i)
     for i in range(len(thread_list)):
         thread_list[i].join()
@@ -137,7 +142,7 @@ class MyWindow(QMainWindow):
 
         # Create a progress bar
         self.progress = QProgressBar(self)
-        self.progress.setGeometry(30, 20, 800, 35)
+        self.progress.setGeometry(30, 20, 750, 35)
         global download_progress
         download_progress = self.progress
 
@@ -159,7 +164,6 @@ class MyWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MyWindow()
-    global appwindow
     appwindow = window
     window.show()
     cold_update()
