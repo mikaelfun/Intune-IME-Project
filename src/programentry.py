@@ -43,16 +43,16 @@ def update_selfupdater():
                     for data in response.iter_content(chunk_size=max(int(total / 1000), 1024 * 1024)):
                         downloaded += len(data)
                         f.write(data)
+                print("Update update.exe Success!")
             else:
                 print("Unknown status code: " + response.status_code + " Not updating update.exe")
     else:
         print("No need to update update.exe since no new version found")
 
 
-def thread_job():
+def update_thread_job():
     try:
         update_selfupdater()
-        print("Update update.exe Success!")
     except:
         print("Unable to update update.exe!")
 
@@ -65,7 +65,7 @@ def cleanup():
 if __name__ == '__main__':
     args = sys.argv
     # update_selfupdater()
-    t = threading.Thread(target=thread_job)
+    t = threading.Thread(target=update_thread_job)
     t.start()
 
     if len(args) > 1:
@@ -110,9 +110,11 @@ if __name__ == '__main__':
                 debug_on = True
             else:
                 debug_on = False
+            open_browser()
             ime_interpreter_app.run(port=port_local, debug=debug_on)
             exit(0)
         except:
+            open_browser()
             ime_interpreter_app.run(port=5000)
             print("Error reading config.ini!! Run update.exe to fix!")
 
