@@ -19,7 +19,7 @@ def open_browser():
     try:
         config_local = configparser.ConfigParser()
         config_local.read('config.ini')
-        app_url_local = config_local['DEFAULT']['appurl']
+        app_url_local = config_local['APPMETA']['appurl']
     except:
         print("Error reading config.ini!! Run update.exe to fix!")
         return None
@@ -35,14 +35,14 @@ def check_update():
     try:
         config_local = configparser.ConfigParser()
         config_local.read('config.ini')
-        version_local = config_local['DEFAULT']['version']
+        version_local = config_local['APPMETA']['version']
 
         config_url = config_local['UPDATELINKS']['configini']
         response = requests.get(config_url)
         config_github = configparser.ConfigParser()
         config_as_string = response.content.decode('utf-8')
         config_github.read_string(config_as_string)
-        version_github = config_github['DEFAULT']['version']
+        version_github = config_github['APPMETA']['version']
 
         # print(version_local)
         # print(version_github)
@@ -89,7 +89,7 @@ def get_version():
     try:
         config_local = configparser.ConfigParser()
         config_local.read('config.ini')
-        version_local = config_local['DEFAULT']['version']
+        version_local = config_local['APPMETA']['version']
     except:
         print("Error reading config.ini!! Run update.exe to fix!")
         version_local = "v5.0.0"
