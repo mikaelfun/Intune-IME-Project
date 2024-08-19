@@ -55,7 +55,7 @@ def hot_update_prepare_github_links():
     # Update everything except update.py, mainexe,
     download_items.remove('updatepy')
     download_items.remove('mainexe')
-    download_items.remove('updateexe')
+    # download_items.remove('updateexe')
     for each_update_item in download_items:
         each_url = config_local['UPDATELINKS'][each_update_item].replace(' ', '%20')
         url_list.append(each_url)
