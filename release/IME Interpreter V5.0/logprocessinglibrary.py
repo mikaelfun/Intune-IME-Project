@@ -1,3 +1,4 @@
+import configparser
 import os
 import datetime
 import json
@@ -5,9 +6,17 @@ import json
 CONST_APP_ID_LEN = 36
 CONST_USER_ID_LEN = 36
 CONST_GRS_HASH_KEY_LEN = 44
-CONST_LOGGING_LENGTH = 134
+CONST_LOGGING_LENGTH = 0
 CONST_META_VALUE_INDEX = 30
 CONST_META_DEPENDENT_APP_VALUE_INDEX = 32
+
+try:
+    config_local = configparser.ConfigParser()
+    config_local.read('config.ini')
+    CONST_LOGGING_LENGTH = int(config_local['LOGGINGPRINT']['loglen'])
+except:
+    print("Error reading config.ini!! Run update.exe to fix!")
+    CONST_LOGGING_LENGTH = 134
 
 
 def init_keyword_table():

@@ -1,38 +1,10 @@
-import sys
-import threading
 import webbrowser
-
 import requests
 from flask import Flask, render_template, request, jsonify
 from imeinterpreter import *
 import configparser
 from selfupdate import update
 import update
-
-
-def update_selfupdater():
-    url = 'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/update.exe'
-    filename = url.split("/")[-1].replace('%20', ' ')
-    response = requests.get(url, stream=True)
-    total = response.headers.get('content-length')
-
-    with open(filename, 'wb') as f:
-        if total is None:
-            f.write(response.content)
-        else:
-            downloaded = 0
-            total = int(total)
-            for data in response.iter_content(chunk_size=max(int(total / 1000), 1024 * 1024)):
-                downloaded += len(data)
-                f.write(data)
-
-
-def thread_job():
-    try:
-        update_selfupdater()
-        print("Update update.exe Success!")
-    except:
-        print("Unable to update update.exe!")
 
 
 ime_interpreter_app = Flask(__name__)
@@ -44,7 +16,14 @@ def home():
 
 
 def open_browser():
-    webbrowser.open_new('http://127.0.0.1:5000/')
+    try:
+        config_local = configparser.ConfigParser()
+        config_local.read('config.ini')
+        app_url_local = config_local['APPMETA']['appurl']
+    except:
+        print("Error reading config.ini!! Run update.exe to fix!")
+        return None
+    webbrowser.open_new(app_url_local)
 
 
 # New route for checking update availability
@@ -56,14 +35,14 @@ def check_update():
     try:
         config_local = configparser.ConfigParser()
         config_local.read('config.ini')
-        version_local = config_local['DEFAULT']['version']
+        version_local = config_local['APPMETA']['version']
 
-        url = 'https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/config.ini'
-        response = requests.get(url)
+        config_url = config_local['UPDATELINKS']['configini']
+        response = requests.get(config_url)
         config_github = configparser.ConfigParser()
         config_as_string = response.content.decode('utf-8')
         config_github.read_string(config_as_string)
-        version_github = config_github['DEFAULT']['version']
+        version_github = config_github['APPMETA']['version']
 
         # print(version_local)
         # print(version_github)
@@ -76,7 +55,7 @@ def check_update():
     # Return the result as JSON
     if update_available:
         # call update
-        result = update.hot_update()
+        result = update.hot_update_singlethread()
         if result:
             return "Updated"
         else:
@@ -96,52 +75,23 @@ def analyze():
     elif logModeOn == "true":
         full_log_mode = True
     # print(full_log_mode)
-    a = ImeInterpreter(folder_path)
-    result = a.generate_ime_interpreter_log_output_webui(full_log_mode)
+    if (os.path.isdir(folder_path)):
+        a = ImeInterpreter(folder_path)
+        result = a.generate_ime_interpreter_log_output_webui(full_log_mode)
 
-    return result
-
-
-if __name__ == '__main__':
-    args = sys.argv
-    # t = threading.Thread(target=thread_job)
-    # t.start()
-
-    if len(args) > 1:
-        path_to_ime_log_folder = args[1]
-        if not os.path.exists(path_to_ime_log_folder):
-            print('''Invalid argument! "path_to_ime_log_folder" does not exist!''')
-            sys.exit('''Invalid argument! "path_to_ime_log_folder" does not exist!''')
-
-        if len(args) <= 2 or len(args) >= 5:
-            print(
-                '''Invalid argument! Please follow "IME_Interpreter_UI 5.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
-            sys.exit(
-                '''Invalid argument! Please follow "IME_Interpreter_UI 5.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
-
-        path_to_output_file = args[2]
-        full_log_switch = False
-        if len(args) == 4:
-            if args[3] == "FULL":
-                full_log_switch = True
-            else:
-                print(
-                    '''Invalid argument! Please follow "IME_Interpreter_UI 5.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
-                sys.exit(
-                    '''Invalid argument! Please follow "IME_Interpreter_UI 5.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL(optional)''')
-
-        from imeinterpreter import *
-
-        a = ImeInterpreter(path_to_ime_log_folder)
-        with open(path_to_output_file, 'w') as outfile:
-            # Write some text to the file
-            outfile.write(a.generate_ime_interpreter_log_output_webui(full_log_switch))
-        print("Log output successful!")
-        sys.exit("Log output successful!")
+        return result
     else:
-        # ime_interpreter_app.run(debug=True)
-        # ime_interpreter_app_ui = FlaskUI(ime_interpreter_app)
-        # ime_interpreter_app_ui.port = 5000
-        # ime_interpreter_app_ui.run()
-        open_browser()
-        ime_interpreter_app.run(port=5000)
+        return "Folder Not Found! Please check the folder path is valid."
+
+
+@ime_interpreter_app.route('/getversion')
+def get_version():
+    try:
+        config_local = configparser.ConfigParser()
+        config_local.read('config.ini')
+        version_local = config_local['APPMETA']['version']
+    except:
+        print("Error reading config.ini!! Run update.exe to fix!")
+        version_local = "v5.0.0"
+    return version_local
+

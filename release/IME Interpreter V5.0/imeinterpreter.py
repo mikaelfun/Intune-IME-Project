@@ -29,7 +29,6 @@ class ImeInterpreter:
         self.initialize_life_cycle_list()
         self.life_cycle_num = len(self.life_cycle_list)
 
-
     def save_log_to_service(self):
         # saving uploaded log locally for further improvement
         pass
