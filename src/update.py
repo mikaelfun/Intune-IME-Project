@@ -1,45 +1,40 @@
+import random
+
 import requests
 import tkinter as tk
 from tkinter import ttk
 from threading import Thread
 from threading import Lock
+import configparser
 import time
+import sys
+from PyQt5.QtWidgets import *
 url_list = []
 thread_list = []
+download_progress = 0
+appwindow = None
 
 
-def cold_update_github_links():
+def cold_update_prepare_github_links():
     url_list.clear()
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/IME%20Interpreter%20V5.0.exe')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/IME%20Interpreter%20V5.0%20Debug.exe')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/applicationpoller.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/config.ini')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/constructinterpretedlog.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/emslifecycle.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/flaskappui.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/imeinterpreter.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/logprocessinglibrary.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/update.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/subgraph.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/win32app.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/logging keyword table.json')
-    # url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/update.exe')
+    config_local = configparser.ConfigParser()
+    config_local.read('config.ini')
+    download_items = config_local.options('UPDATELINKS')
+    # Update everything except update.exe
+    download_items.remove('updateexe')
+    for each_update_item in download_items:
+        url_list.append(config_local['UPDATELINKS'][each_update_item])
 
 
-def hot_update_github_links():
+def hot_update_prepare_github_links():
     url_list.clear()
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/applicationpoller.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/config.ini')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/constructinterpretedlog.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/emslifecycle.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/flaskappui.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/imeinterpreter.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/logprocessinglibrary.py')
-    # url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/update.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/subgraph.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/win32app.py')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/logging keyword table.json')
-    url_list.append('https://raw.githubusercontent.com/mikaelfun/Intune-IME-Project/main/src/update.exe')
+    config_local = configparser.ConfigParser()
+    config_local.read('config.ini')
+    download_items = config_local.options('UPDATELINKS')
+    # Update everything except update.py, mainexe,
+    download_items.remove('updateexe')
+    for each_update_item in download_items:
+        url_list.append(config_local['UPDATELINKS'][each_update_item])
 
 
 def download_file(i, total_sizes, downloaded_sizes, completed_downloads, lock):
@@ -47,37 +42,35 @@ def download_file(i, total_sizes, downloaded_sizes, completed_downloads, lock):
     filename = url.split("/")[-1].replace('%20',' ')
     response = requests.get(url, stream=True)
     total = response.headers.get('content-length')
-    # print("a: " + total)
-    if total is not None:
-        total = int(total)
-        total_sizes[i] = total
+    overall_total = sum(total_sizes)
+    # # print("a: " + total)
+    # if total is not None:
+    #     total = int(total)
+    #     total_sizes[i] = total
         # print(total_sizes)
     downloaded = 0
 
     # print(completed_downloads)
-
-    # time.sleep(3)
-    with open(filename, 'wb') as f:
-        for data in response.iter_content(chunk_size=max(int(total/1000), 1024*1024)):
-            f.write(data)
-            downloaded += len(data)
-            downloaded_sizes[i] = downloaded
-            if total is not None:
+    if total is not None:
+        # time.sleep(3)
+        with open(filename, 'wb') as f:
+            for data in response.iter_content(chunk_size=max(int(total/1000), 1024*1024)):
+                f.write(data)
+                downloaded += len(data)
+                downloaded_sizes[i] = downloaded
                 overall_downloaded = sum(downloaded_sizes)
-                overall_total = sum(total_sizes)
-                progress_percent = 100 * overall_downloaded / overall_total
-                download_progress.set(progress_percent)
-                set_title(f"Download Progress: {progress_percent:.2f}%")
+                progress_percent = 100 * overall_downloaded // overall_total
+                with lock:
+                    download_progress.setValue(progress_percent)
     if downloaded >= total:
         with lock:  # make the increment operation thread-safe
             completed_downloads[0] += 1
             #print(str(i))
             #print(completed_downloads)
         if completed_downloads[0] == len(url_list):  # all downloads complete
-            set_title(f"Download Progress: 100%")
-            time.sleep(1.5)
-            set_title(f"Update Success! You can close the window!")
-            time.sleep(10)
+            download_progress.setValue(100)
+            time.sleep(3)
+
             # root.destroy()  # close the application
 
 
@@ -92,7 +85,7 @@ def get_total_size(total_sizes):
 
 
 def hot_update():
-    hot_update_github_links()
+    hot_update_prepare_github_links()
     total_sizes = [0] * len(url_list)
     get_total_size(total_sizes)
     downloaded_sizes = [0] * len(url_list)
@@ -114,8 +107,8 @@ def hot_update():
 
 
 def cold_update():
-    cold_update_github_links()
-    download_progress.set(0)
+    cold_update_prepare_github_links()
+    download_progress.setValue(0)
 
     total_sizes = [0]*len(url_list)
     get_total_size(total_sizes)
@@ -129,31 +122,47 @@ def cold_update():
         thread_list.append(this_thread)
 
     for i in range(len(url_list)):
-        root.after(400+100*i, start_thread, i)
+        time.sleep(random.Random.randint(1, 2))
+        start_thread(i)
+    for i in range(len(thread_list)):
+        thread_list[i].join()
+    return True
 
 
-def set_title(text=""):
-    root.title(f"{text}")
+class MyWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Updating IME Interpreter V5.0")
+        self.setGeometry(800, 600, 800, 250)
+
+        # Create a progress bar
+        self.progress = QProgressBar(self)
+        self.progress.setGeometry(30, 20, 800, 35)
+        global download_progress
+        download_progress = self.progress
+
+        # Create a button to start the progress
+        self.textlabel = QLabel(self)
+        self.textlabel.setText("Updating.....")
+        self.textlabel.setGeometry(30, 60, 800, 35)
+        # self.btn = QPushButton("Start Progress", self)
+        # self.btn.setGeometry(30, 80, 100, 30)
+        # self.btn.clicked.connect(self.start_progress)
+
+    def start_progress(self):
+        # Simulate progress (you can replace this with your actual logic)
+        for i in range(101):
+            self.progress.setValue(i)
+            QApplication.processEvents()  # Update the UI
 
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    root.title(f"Download Progress: 0%")
-    download_progress = tk.DoubleVar()
-    percent = tk.StringVar()
-
-    frame = tk.Frame(root)
-    frame.pack()
-
-    progress_bar = ttk.Progressbar(frame, length=500, mode='determinate', variable=download_progress, maximum=100)
-    progress_bar.grid(row=0, column=0)
-
-    # Commented out to remove percentage inside the progress bar
-    # percent_label = tk.Label(frame, textvariable=percent)
-    # percent_label.grid(row=0, column=0)
-
-    ttk.Label(root, text="Updating Program").pack()
-
-    root.after(100, cold_update)  # Delay start
-
-    root.mainloop()
+    app = QApplication(sys.argv)
+    window = MyWindow()
+    global appwindow
+    appwindow = window
+    window.show()
+    cold_update()
+    window.textlabel.setText("Update Completed. You can close the window.")
+    time.sleep(10)
+    sys.exit(app.exec_())

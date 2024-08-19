@@ -112,17 +112,19 @@
   padding: 14px 27px;
 }
 
+/* Toggle button styles when in the "off" state  */
+.u-section-1 .u-btn-4 {
+    color: #111111;
+    background-color: #c0c0c0;
+}
+
 /* Toggle button styles when in the "on" state */
 .u-section-1 .u-btn-4.on {
     background-color: #2cccc4; 
     color: white; /* White font color */
 }
-/* Toggle button styles when in the "off" state 
-.u-section-1 .u-btn-4.off {
-    color: #111111;
-    background-color: #c0c0c0;
-}
-*/
+
+
 
 @media (max-width: 1199px) {
   .u-section-1 .u-sheet-1 {
