@@ -2,11 +2,10 @@
 IME tool to analyze IntuneManagementExtension.log
 
 # How to use:
-Download and unzip IME Interpreter V4.0.zip from release/
+Download and unzip IME Interpreter V5.0.zip from release/
 There are 3 programs:
-1. IME Interpreter V4.0.exe: Main program for general use.
-2. IME Interpreter V4.0 debug.exe: Debug version program with console window. Used when some logs return empty output or has any exceptions that can be printed in the console to help debugging.
-3. selfupdater.exe: Updater program which is used to update *.pyd and *.json files from GitHub src folder. Whenever there is a hotpatch, run this program and it can be updated right away.
+1. IME Interpreter V5.0.exe: Main program with debug window for general use.
+2. update.exe: Updater program which is used to update *.py and *.json files from GitHub src folder. Whenever there is a hotpatch, run this program and it can be updated right away.
 
 
 
@@ -14,22 +13,15 @@ There are 3 programs:
 
 Normal log output(igonoring non expired Subgraphs):
 
-"IME Interpreter V4.0.exe" "path_to_ime_log_folder" "path_to_output_file"
+"IME Interpreter V5.0.exe" "path_to_ime_log_folder" "path_to_output_file"
 
 Full log output:
 
-"IME Interpreter V4.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL
+"IME Interpreter V5.0.exe" "path_to_ime_log_folder" "path_to_output_file" FULL
 
 
 ## Tool screenshots:
-![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/826850da-7507-42d1-a576-05a58f6adb1f)
-![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/89a29853-390e-41b3-be97-7aee58e0dfba)
-![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/53940387-ff2f-47ac-bd5a-4004b5e37100)
-![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/3a608a15-8ff7-4bd1-87cc-ee982b7cc24d)
-![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/50c72966-7f3e-4221-96e0-a7e5d37cfcb7)
-![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/7c639896-bc13-4711-a857-4d69814b985a)
-![image](https://github.com/mikaelfun/Intune-IME-Project/assets/31831389/16a290ec-f22b-457a-ad3b-adaa96ce16b3)
-
+![alt text](image.png)
 
 
 
