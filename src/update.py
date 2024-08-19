@@ -14,6 +14,11 @@ thread_list = []
 download_progress = 0
 global appwindow
 appwindow = None
+global overall_downloaded
+overall_downloaded = 0
+global total_sizes
+total_sizes = 0
+
 
 
 def cold_update_prepare_github_links():
@@ -43,8 +48,8 @@ def hot_update_prepare_github_links():
 
 def download_file(i, total_sizes, downloaded_sizes, completed_downloads, lock):
     url = url_list[i]
-    filename = url.split("/src/")[-1]
-    url = url.replace(' ', '%20')
+    filename = url.split("/src/")[-1].replace('%20', ' ')
+
     response = requests.get(url, stream=True)
     total = int(response.headers.get('content-length'))
     overall_total = sum(total_sizes)
@@ -79,6 +84,18 @@ def download_file(i, total_sizes, downloaded_sizes, completed_downloads, lock):
             # root.destroy()  # close the application
 
 
+def download_file_via_url(url):
+    filename = url.split("/src/")[-1].replace('%20', ' ')
+    response = requests.get(url, stream=True)
+    total = int(response.headers.get('content-length'))
+    with open(filename, 'wb') as f:
+        for data in response.iter_content(chunk_size=max(int(total/1000), 1024*1024)):
+            f.write(data)
+            overall_downloaded += len(data)
+            progress_percent = 100 * overall_downloaded // total_sizes
+            appwindow.progress.setValue(progress_percent)
+
+
 def get_total_size(total_sizes):
     for i in range(len(url_list)):
         url = url_list[i]
@@ -89,16 +106,16 @@ def get_total_size(total_sizes):
             total_sizes[i] = total
 
 
-def hot_update():
+def hot_update_multithread():
     hot_update_prepare_github_links()
-    total_sizes = [0] * len(url_list)
-    get_total_size(total_sizes)
+    total_sizes_list = [0] * len(url_list)
+    get_total_size(total_sizes_list)
     downloaded_sizes = [0] * len(url_list)
     completed_downloads = [0]  # list used to make this variable mutable inside the threads
     lock = Lock()  # a lock for thread-safe operation on completed_downloads
 
     def start_thread(i):
-        this_thread = Thread(target=download_file, args=(i, total_sizes, downloaded_sizes, completed_downloads, lock))
+        this_thread = Thread(target=download_file, args=(i, total_sizes_list, downloaded_sizes, completed_downloads, lock))
         this_thread.start()
         thread_list.append(this_thread)
 
@@ -111,7 +128,44 @@ def hot_update():
     return True
 
 
-def cold_update():
+def hot_update_singlethread():
+    hot_update_prepare_github_links()
+    download_progress.setValue(0)
+    for i in range(len(url_list)):
+        url = url_list[i]
+        response = requests.get(url, stream=True)
+        current_total = response.headers.get('content-length')
+        if current_total is not None:
+            current_total = int(current_total)
+            total_sizes = total_sizes + current_total
+
+    for i in range(len(url_list)):
+        url = url_list[i]
+        download_file_via_url(url)
+
+    return True
+
+
+def cold_update_singlethread():
+    cold_update_prepare_github_links()
+    download_progress.setValue(0)
+
+    for i in range(len(url_list)):
+        url = url_list[i]
+        response = requests.get(url, stream=True)
+        current_total = response.headers.get('content-length')
+        if current_total is not None:
+            current_total = int(current_total)
+            total_sizes = total_sizes + current_total
+
+    for i in range(len(url_list)):
+        url = url_list[i]
+        download_file_via_url(url)
+
+    return True
+
+
+def cold_update_multithread():
     cold_update_prepare_github_links()
     download_progress.setValue(0)
 
@@ -137,7 +191,7 @@ def cold_update():
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Updating IME Interpreter V5.0")
+        self.setWindowTitle("IME Interpreter V5.0 Updater")
         self.setGeometry(800, 600, 800, 250)
 
         # Create a progress bar
@@ -150,15 +204,15 @@ class MyWindow(QMainWindow):
         self.textlabel = QLabel(self)
         self.textlabel.setText("Updating.....")
         self.textlabel.setGeometry(30, 60, 800, 35)
-        # self.btn = QPushButton("Start Progress", self)
-        # self.btn.setGeometry(30, 80, 100, 30)
-        # self.btn.clicked.connect(self.start_progress)
+        self.updatelabel = QLabel(self)
+        self.updatelabel.setText("")
+        self.updatelabel.setGeometry(30, 110, 800, 35)
+        self.btn = QPushButton("CLOSE", self)
+        self.btn.setGeometry(380, 140, 80, 30)
+        self.btn.clicked.connect(self.close_app)
 
-    def start_progress(self):
-        # Simulate progress (you can replace this with your actual logic)
-        for i in range(101):
-            self.progress.setValue(i)
-            QApplication.processEvents()  # Update the UI
+    def close_app(self):
+        sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
@@ -166,7 +220,12 @@ if __name__ == '__main__':
     window = MyWindow()
     appwindow = window
     window.show()
-    cold_update()
+    update_thread = Thread(target=cold_update_singlethread)
+    update_thread.start()
+    while window.progress.value() < 100:
+        time.sleep(0.05)
+        continue
     window.textlabel.setText("Update Completed. You can close the window.")
+    update_thread.join()
     time.sleep(10)
     sys.exit(app.exec_())

@@ -55,7 +55,7 @@ def check_update():
     # Return the result as JSON
     if update_available:
         # call update
-        result = update.hot_update()
+        result = update.hot_update_singlethread()
         if result:
             return "Updated"
         else:
