@@ -61,14 +61,6 @@ def check_update():
             print("Aborting since update in progress")
             return "Update In Progress"
         else:
-            config_local.set('APPMETA', 'isupdating', 'True')
-            # Save the changes
-            print("Saving config.ini to isupdating True")
-            with open('config.ini', 'w') as config_file:
-                config_local.write(config_file)
-                config_file.flush()  # Flush the changes
-                config_file.close()  # Close the file
-            print("Saved config.ini to isupdating True")
             result = update.hot_update_singlethread()
         if result:
             return "Updated"

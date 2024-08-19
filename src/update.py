@@ -61,7 +61,7 @@ def hot_update_prepare_github_links():
         url_list.append(each_url)
 
 
-def download_file_via_url(url, timeout=120):
+def download_file_via_url(url, timeout=180):
     try:
         filename = url.split("/src/")[-1].replace('%20', ' ')
         temp_download_file = "temp" + "\\" + filename
@@ -90,18 +90,21 @@ def download_file_via_url(url, timeout=120):
         return False
 
 
-
-def get_total_size(total_sizes_list):
-    for i in range(len(url_list)):
-        url = url_list[i]
-        response = requests.get(url, stream=True)
-        total = response.headers.get('content-length')
-        if total is not None:
-            total = int(total)
-            total_sizes_list[i] = total
-
-
 def hot_update_singlethread():
+    try:
+        config_local = configparser.ConfigParser()
+        config_local.read('config.ini')
+        config_local.set('APPMETA', 'isupdating', 'True')
+        # Save the changes
+        print("Saving config.ini to isupdating True")
+        with open('config.ini', 'w') as config_file:
+            config_local.write(config_file)
+            config_file.flush()  # Flush the changes
+            config_file.close()  # Close the file
+        print("Saved config.ini to isupdating True")
+    except:
+        print("Unable to read local version from config.ini!")
+        return False
     logging.info("Hot - Update prepare update links..")
     hot_update_prepare_github_links()
     logging.info("Hot - Update started")
@@ -111,11 +114,21 @@ def hot_update_singlethread():
         os.makedirs(temp_download_path)
     for i in range(len(url_list)):
         url = url_list[i]
-        result = download_file_via_url(url, timeout=120)
+        update_timeout = int(config_local['APPMETA']['updatetimeout'])
+        result = download_file_via_url(url, timeout=update_timeout)
         if not result:
             os.removedirs(temp_download_path)
             print("Hot Update failed")
             logging.error("Hot - Update failed.")
+
+            config_local.set('APPMETA', 'isupdating', 'False')
+            # Save the changes
+            print("Saving config.ini to isupdating False")
+            with open('config.ini', 'w') as config_file:
+                config_local.write(config_file)
+                config_file.flush()  # Flush the changes
+                config_file.close()  # Close the file
+            print("Saved config.ini to isupdating False")
             return False
     try:
         shutil.copytree(temp_download_path, '.\\', symlinks=False, ignore=None, ignore_dangling_symlinks=False, dirs_exist_ok=True)
