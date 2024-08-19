@@ -20,7 +20,6 @@ global total_sizes
 total_sizes = 0
 
 
-
 def cold_update_prepare_github_links():
     url_list.clear()
     config_local = configparser.ConfigParser()
@@ -46,18 +45,18 @@ def hot_update_prepare_github_links():
         url_list.append(each_url)
 
 
-def download_file(i, total_sizes, downloaded_sizes, completed_downloads, lock):
+def download_file_multithread(i, total_sizes_list, downloaded_sizes, completed_downloads, lock):
     url = url_list[i]
     filename = url.split("/src/")[-1].replace('%20', ' ')
 
     response = requests.get(url, stream=True)
     total = int(response.headers.get('content-length'))
-    overall_total = sum(total_sizes)
+    overall_total = sum(total_sizes_list)
     # # print("a: " + total)
     # if total is not None:
     #     total = int(total)
-    #     total_sizes[i] = total
-        # print(total_sizes)
+    #     total_sizes_list[i] = total
+        # print(total_sizes_list)
     downloaded = 0
 
     # print(completed_downloads)
@@ -91,19 +90,20 @@ def download_file_via_url(url):
     with open(filename, 'wb') as f:
         for data in response.iter_content(chunk_size=max(int(total/1000), 1024*1024)):
             f.write(data)
+            global overall_downloaded, total_sizes
             overall_downloaded += len(data)
             progress_percent = 100 * overall_downloaded // total_sizes
             appwindow.progress.setValue(progress_percent)
 
 
-def get_total_size(total_sizes):
+def get_total_size(total_sizes_list):
     for i in range(len(url_list)):
         url = url_list[i]
         response = requests.get(url, stream=True)
         total = response.headers.get('content-length')
         if total is not None:
             total = int(total)
-            total_sizes[i] = total
+            total_sizes_list[i] = total
 
 
 def hot_update_multithread():
@@ -115,7 +115,7 @@ def hot_update_multithread():
     lock = Lock()  # a lock for thread-safe operation on completed_downloads
 
     def start_thread(i):
-        this_thread = Thread(target=download_file, args=(i, total_sizes_list, downloaded_sizes, completed_downloads, lock))
+        this_thread = Thread(target=download_file_multithread, args=(i, total_sizes_list, downloaded_sizes, completed_downloads, lock))
         this_thread.start()
         thread_list.append(this_thread)
 
@@ -137,6 +137,7 @@ def hot_update_singlethread():
         current_total = response.headers.get('content-length')
         if current_total is not None:
             current_total = int(current_total)
+            global total_sizes
             total_sizes = total_sizes + current_total
 
     for i in range(len(url_list)):
@@ -156,6 +157,7 @@ def cold_update_singlethread():
         current_total = response.headers.get('content-length')
         if current_total is not None:
             current_total = int(current_total)
+            global total_sizes
             total_sizes = total_sizes + current_total
 
     for i in range(len(url_list)):
@@ -169,14 +171,14 @@ def cold_update_multithread():
     cold_update_prepare_github_links()
     download_progress.setValue(0)
 
-    total_sizes = [0]*len(url_list)
-    get_total_size(total_sizes)
+    total_sizes_list = [0]*len(url_list)
+    get_total_size(total_sizes_list)
     downloaded_sizes = [0]*len(url_list)
     completed_downloads = [0]  # list used to make this variable mutable inside the threads
     lock = Lock() # a lock for thread-safe operation on completed_downloads
 
     def start_thread(i):
-        this_thread = Thread(target=download_file, args=(i, total_sizes, downloaded_sizes, completed_downloads, lock))
+        this_thread = Thread(target=download_file_multithread, args=(i, total_sizes_list, downloaded_sizes, completed_downloads, lock))
         this_thread.start()
         thread_list.append(this_thread)
 
