@@ -26,28 +26,28 @@ def update_selfupdater():
         print("Error reading config.ini!! Run update.exe to fix!")
         return None
 
-    if version_github != version_local:
-        filename = update_url_local.split("/")[-1].replace('%20', ' ')
-        response = requests.get(update_url_local, stream=True)
-        total = response.headers.get('content-length')
-        print("Updating update.exe in GitHub")
-        if total is None:
-            print("Unknown file size of update.exe in GitHub")
-        else:
-            if response.status_code == 404:
-                print("Download link for update.exe not found in GitHub")
-            elif response.status_code == 200:
-                with open(filename, 'wb') as f:
-                    downloaded = 0
-                    total = int(total)
-                    for data in response.iter_content(chunk_size=max(int(total / 1000), 1024 * 1024)):
-                        downloaded += len(data)
-                        f.write(data)
-                print("Update update.exe Success!")
-            else:
-                print("Unknown status code: " + response.status_code + " Not updating update.exe")
+    # if version_github != version_local:
+    filename = update_url_local.split("/")[-1].replace('%20', ' ')
+    response = requests.get(update_url_local, stream=True)
+    total = response.headers.get('content-length')
+    print("Updating update.exe in GitHub")
+    if total is None:
+        print("Unknown file size of update.exe in GitHub")
     else:
-        print("No need to update update.exe since no new version found")
+        if response.status_code == 404:
+            print("Download link for update.exe not found in GitHub")
+        elif response.status_code == 200:
+            with open(filename, 'wb') as f:
+                downloaded = 0
+                total = int(total)
+                for data in response.iter_content(chunk_size=max(int(total / 1000), 1024 * 1024)):
+                    downloaded += len(data)
+                    f.write(data)
+            print("Update update.exe Success!")
+        else:
+            print("Unknown status code: " + response.status_code + " Not updating update.exe")
+    # else:
+    #     print("No need to update update.exe since no new version found")
 
 
 def update_thread_job():
