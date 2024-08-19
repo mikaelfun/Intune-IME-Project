@@ -59,6 +59,7 @@ def check_update():
         if result:
             return "Updated"
         else:
+            print("Update failed! Check update_logs")
             return "Update Failed"
     else:
         return "Up to date"

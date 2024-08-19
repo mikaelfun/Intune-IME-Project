@@ -147,23 +147,15 @@ def hot_update_multithread():
 
 
 def hot_update_singlethread():
+    logging.info("Hot - Update prepare update links..")
     hot_update_prepare_github_links()
-    appwindow.progress.setValue(0)
-    logging.info("Hot - Calculating file size to download..")
-    for i in range(len(url_list)):
-        url = url_list[i]
-        response = requests.get(url, stream=True)
-        current_total = response.headers.get('content-length')
-        if current_total is not None:
-            current_total = int(current_total)
-            global total_sizes
-            total_sizes = total_sizes + current_total
-    logging.info("Hot - Calculated file size to download..")
-
+    logging.info("Hot - Update started")
+    print("Hot Update begins")
     for i in range(len(url_list)):
         url = url_list[i]
         download_file_via_url(url)
-
+    print("Hot Update finishes")
+    logging.info("Hot - Update finished.")
     return True
 
 
