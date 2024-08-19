@@ -189,32 +189,32 @@ class ColdUpdateThread(QThread):
         cold_update_prepare_github_links()
         # appwindow.progress.setValue(0)
         self.update_progress_signal.emit(0)
+        total_progress_bars = len(url_list) # * 2
         # appwindow.firstline.setText("Calculating file size to download..")
-        self.update_firstline_signal.emit("Calculating file size to download..")
-        time.sleep(2)
-        total_progress_bars = len(url_list) * 2
-        logging.info("Cold - Calculating file size to download..")
-        for i in range(len(url_list)):
-            url = url_list[i]
-            filename = url.split("/src/")[-1].replace('%20', ' ')
-            # appwindow.secondline.setText("Fetching size for: " + filename)
-            self.update_secondline_signal.emit("Fetching size for: " + filename)
-            self.update_progress_signal.emit((i+1)*100//total_progress_bars)
-            response = requests.get(url, stream=True)
-            current_total = response.headers.get('content-length')
-            if current_total is not None:
-                current_total = int(current_total)
-                global total_sizes
-                total_sizes = total_sizes + current_total
-
-        logging.info("Cold - Calculated file size to download..")
+        # self.update_firstline_signal.emit("Calculating file size to download..")
+        # time.sleep(2)
+        # logging.info("Cold - Calculating file size to download..")
+        # for i in range(len(url_list)):
+        #     url = url_list[i]
+        #     filename = url.split("/src/")[-1].replace('%20', ' ')
+        #     # appwindow.secondline.setText("Fetching size for: " + filename)
+        #     self.update_secondline_signal.emit("Fetching size for: " + filename)
+        #     self.update_progress_signal.emit((i+1)*100//total_progress_bars)
+        #     response = requests.get(url, stream=True)
+        #     current_total = response.headers.get('content-length')
+        #     if current_total is not None:
+        #         current_total = int(current_total)
+        #         global total_sizes
+        #         total_sizes = total_sizes + current_total
+        #
+        # logging.info("Cold - Calculated file size to download..")
         # appwindow.secondline.setText("Total file size: \n" + "0/" + str(total_sizes))
-        self.update_secondline_signal.emit("Total file size: \n" + "0/" + str(total_sizes))
+        # self.update_secondline_signal.emit("Total file size: \n" + "0/" + str(total_sizes))
 
         # Grey out button to prevent incomplete update download
         self.update_button_signal.emit(False)
         for i in range(len(url_list)):
-            self.update_progress_signal.emit((len(url_list) + (i+1))*100//total_progress_bars)
+            self.update_progress_signal.emit(((i+1))*100//total_progress_bars)
             url = url_list[i]
             self.download_file_via_url(url)
 
