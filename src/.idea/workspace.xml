@@ -7,11 +7,7 @@
     <list default="true" id="bfc567d1-b6c4-44a0-8487-755a14a15d51" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../release/IME Interpreter V5.0.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../release/IME Interpreter V5.0.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../release/IME Interpreter V5.0/IME Interpreter V5.0.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../release/IME Interpreter V5.0/IME Interpreter V5.0.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../release/IME Interpreter V5.0/config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/../release/IME Interpreter V5.0/config.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../release/IME Interpreter V5.0/flaskappui.py" beforeDir="false" afterPath="$PROJECT_DIR$/../release/IME Interpreter V5.0/flaskappui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../release/IME Interpreter V5.0/static/build guide/update build.json" beforeDir="false" afterPath="$PROJECT_DIR$/../release/IME Interpreter V5.0/static/build guide/update build.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../release/IME Interpreter V5.0/update.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../release/IME Interpreter V5.0/update.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../release/IME Interpreter V5.0/update.py" beforeDir="false" afterPath="$PROJECT_DIR$/../release/IME Interpreter V5.0/update.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../release/IME Interpreter V5.0/logs/update_log_2024-08-19.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../release/IME Interpreter V5.0/logs/update_log_2024-08-19.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flaskappui.py" beforeDir="false" afterPath="$PROJECT_DIR$/flaskappui.py" afterDir="false" />
     </list>
@@ -174,6 +170,17 @@
       <updated>1680091775749</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

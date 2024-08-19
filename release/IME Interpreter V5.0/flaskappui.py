@@ -3,7 +3,6 @@ import requests
 from flask import Flask, render_template, request, jsonify
 from imeinterpreter import *
 import configparser
-from selfupdate import update
 import update
 
 
