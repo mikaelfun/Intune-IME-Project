@@ -1,4 +1,5 @@
 import os
+import shutil
 from datetime import datetime
 import logging
 import requests
@@ -54,64 +55,40 @@ def hot_update_prepare_github_links():
     # Update everything except update.py, mainexe,
     download_items.remove('updatepy')
     download_items.remove('mainexe')
+    # download_items.remove('updateexe')
     for each_update_item in download_items:
         each_url = config_local['UPDATELINKS'][each_update_item].replace(' ', '%20')
         url_list.append(each_url)
 
 
-def download_file_multithread(i, total_sizes_list, downloaded_sizes, completed_downloads, lock):
-    url = url_list[i]
-    filename = url.split("/src/")[-1].replace('%20', ' ')
+def download_file_via_url(url, timeout=120):
+    try:
+        filename = url.split("/src/")[-1].replace('%20', ' ')
+        temp_download_file = "temp" + "\\" + filename
+        parent_directory = os.path.dirname(temp_download_file)
+        if not os.path.exists(parent_directory):
+            os.makedirs(parent_directory)
+        logging.info("Downloading..." + filename)
+        start_time = time.time()
+        response = requests.get(url, stream=True, timeout=timeout)
+        if response.status_code == 200:
+            total = int(response.headers.get('content-length'))
+            with open(temp_download_file, 'wb') as f:
+                for data in response.iter_content(chunk_size=max(int(total / 1000), 1024 * 1024)):
+                    f.write(data)
+            if time.time() - start_time > timeout:
+                raise requests.Timeout("Timeout exceeded!")
+            logging.info("Downloaded..." + filename)
+            return True
+        else:
+            print(f"Failed to download: {url} (Status code: {response.status_code})")
+            logging.error(f"Failed to download: {url} (Status code: {response.status_code})")
+            return False
+    except requests.Timeout:
+        print(f"Timeout while downloading: {url}")
+        logging.error(f"Timeout while downloading: {url}")
+        return False
 
-    response = requests.get(url, stream=True)
-    total = int(response.headers.get('content-length'))
-    overall_total = sum(total_sizes_list)
-    # # print("a: " + total)
-    # if total is not None:
-    #     total = int(total)
-    #     total_sizes_list[i] = total
-        # print(total_sizes_list)
-    downloaded = 0
-
-    # print(completed_downloads)
-    if total is not None:
-        # time.sleep(3)
-        with open(filename, 'wb') as f:
-            for data in response.iter_content(chunk_size=max(int(total/1000), 1024*1024)):
-                f.write(data)
-                downloaded += len(data)
-                downloaded_sizes[i] = downloaded
-                overall_downloaded = sum(downloaded_sizes)
-                progress_percent = 100 * overall_downloaded // overall_total
-                with lock:
-                    appwindow.progress.setValue(progress_percent)
-    if downloaded >= total:
-        with lock:  # make the increment operation thread-safe
-            completed_downloads[0] += 1
-            #print(str(i))
-            #print(completed_downloads)
-        if completed_downloads[0] == len(url_list):  # all downloads complete
-            appwindow.progress.setValue(100)
-            time.sleep(3)
-
-            # root.destroy()  # close the application
-
-
-def download_file_via_url(url):
-    filename = url.split("/src/")[-1].replace('%20', ' ')
-    appwindow.firstline.setText("Downloading..." + filename)
-    logging.info("Downloading..." + filename)
-    response = requests.get(url, stream=True)
-    total = int(response.headers.get('content-length'))
-    with open(filename, 'wb') as f:
-        for data in response.iter_content(chunk_size=max(int(total/1000), 1024*1024)):
-            f.write(data)
-            global overall_downloaded, total_sizes
-            overall_downloaded += len(data)
-            progress_percent = 100 * overall_downloaded // total_sizes
-            appwindow.progress.setValue(progress_percent)
-            appwindow.secondline.setText("Total file size: \n" + str(overall_downloaded) + "/" + str(total_sizes))
-    logging.info("Downloaded..." + filename)
 
 
 def get_total_size(total_sizes_list):
@@ -124,91 +101,30 @@ def get_total_size(total_sizes_list):
             total_sizes_list[i] = total
 
 
-def hot_update_multithread():
-    hot_update_prepare_github_links()
-    total_sizes_list = [0] * len(url_list)
-    get_total_size(total_sizes_list)
-    downloaded_sizes = [0] * len(url_list)
-    completed_downloads = [0]  # list used to make this variable mutable inside the threads
-    lock = Lock()  # a lock for thread-safe operation on completed_downloads
-
-    def start_thread(i):
-        this_thread = Thread(target=download_file_multithread, args=(i, total_sizes_list, downloaded_sizes, completed_downloads, lock))
-        this_thread.start()
-        thread_list.append(this_thread)
-
-    for i in range(len(url_list)):
-        start_thread(i)
-
-    for i in range(len(thread_list)):
-        thread_list[i].join()
-
-    return True
-
-
 def hot_update_singlethread():
     logging.info("Hot - Update prepare update links..")
     hot_update_prepare_github_links()
     logging.info("Hot - Update started")
     print("Hot Update begins")
+    temp_download_path = "temp"
+    if not os.path.exists(temp_download_path):
+        os.makedirs(temp_download_path)
     for i in range(len(url_list)):
         url = url_list[i]
-        download_file_via_url(url)
+        result = download_file_via_url(url, timeout=120)
+        if not result:
+            os.removedirs(temp_download_path)
+            print("Hot Update failed")
+            logging.error("Hot - Update failed.")
+            return False
+    try:
+        shutil.copytree(temp_download_path, '.\\', symlinks=False, ignore=None, ignore_dangling_symlinks=False, dirs_exist_ok=True)
+        print(f"Successfully copied {temp_download_path} to root")
+        shutil.rmtree(temp_download_path, ignore_errors=True)
+    except Exception as e:
+        print(f"Error copying {temp_download_path}: {e}")
     print("Hot Update finishes")
     logging.info("Hot - Update finished.")
-    return True
-
-
-def cold_update_singlethread():
-    appwindow.firstline.setText("Initializing update links..")
-    cold_update_prepare_github_links()
-    appwindow.progress.setValue(0)
-    appwindow.firstline.setText("Calculating file size to download..")
-
-    logging.info("Cold - Calculating file size to download..")
-    for i in range(len(url_list)):
-        url = url_list[i]
-        filename = url.split("/src/")[-1].replace('%20', ' ')
-        appwindow.secondline.setText("Fetching size for: " + filename)
-        response = requests.get(url, stream=True)
-        current_total = response.headers.get('content-length')
-        if current_total is not None:
-            current_total = int(current_total)
-            global total_sizes
-            total_sizes = total_sizes + current_total
-
-    logging.info("Cold - Calculated file size to download..")
-    appwindow.secondline.setText("Total file size: \n" + "0/" + str(total_sizes))
-
-    for i in range(len(url_list)):
-        url = url_list[i]
-        download_file_via_url(url)
-
-    appwindow.progress.setValue(100)
-    appwindow.secondline.setText("Total file size: \n" + str(total_sizes) + "/" + str(total_sizes))
-    appwindow.firstline.setText("Update Completed. You can close the window.")
-    return True
-
-
-def cold_update_multithread():
-    cold_update_prepare_github_links()
-    appwindow.progress.setValue(0)
-    total_sizes_list = [0]*len(url_list)
-    get_total_size(total_sizes_list)
-    downloaded_sizes = [0]*len(url_list)
-    completed_downloads = [0]  # list used to make this variable mutable inside the threads
-    lock = Lock() # a lock for thread-safe operation on completed_downloads
-
-    def start_thread(i):
-        this_thread = Thread(target=download_file_multithread, args=(i, total_sizes_list, downloaded_sizes, completed_downloads, lock))
-        this_thread.start()
-        thread_list.append(this_thread)
-
-    for i in range(len(url_list)):
-        time.sleep(0.3)
-        start_thread(i)
-    for i in range(len(thread_list)):
-        thread_list[i].join()
     return True
 
 
@@ -342,8 +258,6 @@ if __name__ == '__main__':
     update_thread.update_firstline_signal.connect(appwindow.handle_firstline_update)
     update_thread.update_secondline_signal.connect(appwindow.handle_secondline_update)
     update_thread.update_button_signal.connect(appwindow.handle_close_button_status)
-    update_thread.start()  # Start the thread
+    update_thread.start()
 
-    # update_thread = Thread(target=cold_update_singlethread)
-    # update_thread.start()
     updateapp.exec_()
