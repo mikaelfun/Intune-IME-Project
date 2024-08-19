@@ -35,6 +35,9 @@ def check_update():
     try:
         config_local = configparser.ConfigParser()
         config_local.read('config.ini')
+
+        is_updating_local_str = config_local['APPMETA']['isupdating']
+
         version_local = config_local['APPMETA']['version']
 
         config_url = config_local['UPDATELINKS']['configini']
@@ -54,12 +57,23 @@ def check_update():
 
     # Return the result as JSON
     if update_available:
-        # call update
-        result = update.hot_update_singlethread()
+        if is_updating_local_str == "True":
+            print("Aborting since update in progress")
+            return "Update In Progress"
+        else:
+            config_local.set('APPMETA', 'isupdating', 'True')
+            # Save the changes
+            with open('config.ini', 'w') as config_file:
+                config_local.write(config_file)
+            result = update.hot_update_singlethread()
         if result:
             return "Updated"
         else:
             print("Update failed! Check update_logs")
+            config_local.set('APPMETA', 'isupdating', 'False')
+            # Save the changes
+            with open('config.ini', 'w') as config_file:
+                config_local.write(config_file)
             return "Update Failed"
     else:
         return "Up to date"
