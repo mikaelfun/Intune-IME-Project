@@ -5,7 +5,6 @@ import requests
 import os
 from flaskappui import *
 import configparser
-os.environ["GIT_PYTHON_REFRESH"] = "quiet"
 
 
 def update_selfupdater():
