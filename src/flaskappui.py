@@ -37,7 +37,7 @@ def check_update():
         config_local.read('config.ini')
 
         is_updating_local_str = config_local['APPMETA']['isupdating']
-
+        print("is_updating_local_str: " + is_updating_local_str)
         version_local = config_local['APPMETA']['version']
 
         config_url = config_local['UPDATELINKS']['configini']
@@ -65,6 +65,8 @@ def check_update():
             # Save the changes
             with open('config.ini', 'w') as config_file:
                 config_local.write(config_file)
+                config_file.flush()  # Flush the changes
+                config_file.close()  # Close the file
             result = update.hot_update_singlethread()
         if result:
             return "Updated"
@@ -74,6 +76,8 @@ def check_update():
             # Save the changes
             with open('config.ini', 'w') as config_file:
                 config_local.write(config_file)
+                config_file.flush()  # Flush the changes
+                config_file.close()  # Close the file
             return "Update Failed"
     else:
         return "Up to date"
