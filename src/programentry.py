@@ -101,5 +101,18 @@ if __name__ == '__main__':
         sys.exit("Log output successful!")
     else:
         # ime_interpreter_app.run(debug=True)
-        ime_interpreter_app.run(port=5000)
-        exit(0)
+        try:
+            config_local = configparser.ConfigParser()
+            config_local.read('config.ini')
+            port_local = int((config_local['APPMETA']['appurl']).split(':')[-1].replace('/', ''))
+            debug_str_local = (config_local['APPMETA']['debug'])
+            if debug_str_local == 'True':
+                debug_on = True
+            else:
+                debug_on = False
+            ime_interpreter_app.run(port=port_local, debug=debug_on)
+            exit(0)
+        except:
+            ime_interpreter_app.run(port=5000)
+            print("Error reading config.ini!! Run update.exe to fix!")
+
