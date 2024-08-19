@@ -11,7 +11,7 @@
   },
   {
    "optionDest": "onefile",
-   "value": true
+   "value": false
   },
   {
    "optionDest": "console",
@@ -24,6 +24,10 @@
   {
    "optionDest": "name",
    "value": "update.exe"
+  },
+  {
+   "optionDest": "contents_directory",
+   "value": "."
   },
   {
    "optionDest": "clean_build",

@@ -61,7 +61,7 @@ def hot_update_prepare_github_links():
         url_list.append(each_url)
 
 
-def download_file_via_url(url, timeout=120):
+def download_file_via_url(url, timeout=180):
     try:
         filename = url.split("/src/")[-1].replace('%20', ' ')
         temp_download_file = "temp" + "\\" + filename
@@ -90,18 +90,21 @@ def download_file_via_url(url, timeout=120):
         return False
 
 
-
-def get_total_size(total_sizes_list):
-    for i in range(len(url_list)):
-        url = url_list[i]
-        response = requests.get(url, stream=True)
-        total = response.headers.get('content-length')
-        if total is not None:
-            total = int(total)
-            total_sizes_list[i] = total
-
-
 def hot_update_singlethread():
+    try:
+        config_local = configparser.ConfigParser()
+        config_local.read('config.ini')
+        config_local.set('APPMETA', 'isupdating', 'True')
+        # Save the changes
+        print("Saving config.ini to isupdating True")
+        with open('config.ini', 'w') as config_file:
+            config_local.write(config_file)
+            config_file.flush()  # Flush the changes
+            config_file.close()  # Close the file
+        print("Saved config.ini to isupdating True")
+    except:
+        print("Unable to read local version from config.ini!")
+        return False
     logging.info("Hot - Update prepare update links..")
     hot_update_prepare_github_links()
     logging.info("Hot - Update started")
@@ -111,11 +114,21 @@ def hot_update_singlethread():
         os.makedirs(temp_download_path)
     for i in range(len(url_list)):
         url = url_list[i]
-        result = download_file_via_url(url, timeout=120)
+        update_timeout = int(config_local['APPMETA']['updatetimeout'])
+        result = download_file_via_url(url, timeout=update_timeout)
         if not result:
             os.removedirs(temp_download_path)
             print("Hot Update failed")
             logging.error("Hot - Update failed.")
+
+            config_local.set('APPMETA', 'isupdating', 'False')
+            # Save the changes
+            print("Saving config.ini to isupdating False")
+            with open('config.ini', 'w') as config_file:
+                config_local.write(config_file)
+                config_file.flush()  # Flush the changes
+                config_file.close()  # Close the file
+            print("Saved config.ini to isupdating False")
             return False
     try:
         shutil.copytree(temp_download_path, '.\\', symlinks=False, ignore=None, ignore_dangling_symlinks=False, dirs_exist_ok=True)
@@ -189,62 +202,53 @@ class ColdUpdateThread(QThread):
         cold_update_prepare_github_links()
         # appwindow.progress.setValue(0)
         self.update_progress_signal.emit(0)
-        # appwindow.firstline.setText("Calculating file size to download..")
-        self.update_firstline_signal.emit("Calculating file size to download..")
-        time.sleep(2)
-        total_progress_bars = len(url_list) * 2
-        logging.info("Cold - Calculating file size to download..")
-        for i in range(len(url_list)):
-            url = url_list[i]
-            filename = url.split("/src/")[-1].replace('%20', ' ')
-            # appwindow.secondline.setText("Fetching size for: " + filename)
-            self.update_secondline_signal.emit("Fetching size for: " + filename)
-            self.update_progress_signal.emit((i+1)*100//total_progress_bars)
-            response = requests.get(url, stream=True)
-            current_total = response.headers.get('content-length')
-            if current_total is not None:
-                current_total = int(current_total)
-                global total_sizes
-                total_sizes = total_sizes + current_total
-
-        logging.info("Cold - Calculated file size to download..")
-        # appwindow.secondline.setText("Total file size: \n" + "0/" + str(total_sizes))
-        self.update_secondline_signal.emit("Total file size: \n" + "0/" + str(total_sizes))
-
+        total_progress_bars = len(url_list)
         # Grey out button to prevent incomplete update download
         self.update_button_signal.emit(False)
+
+        temp_download_path = "temp"
+        if not os.path.exists(temp_download_path):
+            os.makedirs(temp_download_path)
+
         for i in range(len(url_list)):
-            self.update_progress_signal.emit((len(url_list) + (i+1))*100//total_progress_bars)
+            self.update_progress_signal.emit(((i+1))*100//total_progress_bars)
             url = url_list[i]
             self.download_file_via_url(url)
+
+        try:
+            shutil.copytree(temp_download_path, '.\\', symlinks=False, ignore=None, ignore_dangling_symlinks=False,
+                            dirs_exist_ok=True)
+            print(f"Successfully copied {temp_download_path} to root")
+            shutil.rmtree(temp_download_path, ignore_errors=True)
+        except Exception as e:
+            print(f"Error copying {temp_download_path}: {e}")
+        print("Cold Update finishes")
+        logging.info("Cold - Update finished.")
 
         # UnGrey out button to prevent incomplete update download
         self.update_button_signal.emit(True)
         # appwindow.progress.setValue(100)
         self.update_progress_signal.emit(100)
-        # appwindow.secondline.setText("Total file size: \n" + str(total_sizes) + "/" + str(total_sizes))
-        # self.update_secondline_signal.emit("Total file size: \n" + str(total_sizes) + "/" + str(total_sizes))
-        # appwindow.firstline.setText("Update Completed. You can close the window.")
         self.update_firstline_signal.emit("Update Completed. You can close the window.")
         self.update_secondline_signal.emit("")
 
     def download_file_via_url(self, url):
         filename = url.split("/src/")[-1].replace('%20', ' ')
+
+        temp_download_file = "temp" + "\\" + filename
+        parent_directory = os.path.dirname(temp_download_file)
+        if not os.path.exists(parent_directory):
+            os.makedirs(parent_directory)
+
         # appwindow.firstline.setText("Downloading..." + filename)
         self.update_firstline_signal.emit("Downloading...")
         self.update_secondline_signal.emit(filename)
         logging.info("Downloading..." + filename)
         response = requests.get(url, stream=True)
         total = int(response.headers.get('content-length'))
-        with open(filename, 'wb') as f:
+        with open(temp_download_file, 'wb') as f:
             for data in response.iter_content(chunk_size=max(int(total / 1000), 1024 * 1024)):
                 f.write(data)
-                global overall_downloaded, total_sizes
-                overall_downloaded += len(data)
-                # progress_percent = 100 * overall_downloaded // total_sizes
-                # appwindow.progress.setValue(progress_percent)
-                # appwindow.secondline.setText("Total file size: \n" + str(overall_downloaded) + "/" + str(total_sizes))
-                # self.update_secondline_signal.emit("Total file size: \n" + str(overall_downloaded) + "/" + str(total_sizes))
         logging.info("Downloaded..." + filename)
 
 

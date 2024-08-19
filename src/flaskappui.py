@@ -37,7 +37,7 @@ def check_update():
         config_local.read('config.ini')
 
         is_updating_local_str = config_local['APPMETA']['isupdating']
-        print("is_updating_local_str: " + is_updating_local_str)
+        # print("is_updating_local_str: " + is_updating_local_str)
         version_local = config_local['APPMETA']['version']
 
         config_url = config_local['UPDATELINKS']['configini']
