@@ -12,14 +12,14 @@ def update_selfupdater():
         config_local = configparser.ConfigParser()
         config_local.read('config.ini')
 
-        version_local = config_local['DEFAULT']['version']
+        version_local = config_local['APPMETA']['version']
 
         config_url = config_local['UPDATELINKS']['configini']
         response = requests.get(config_url)
         config_github = configparser.ConfigParser()
         config_as_string = response.content.decode('utf-8')
         config_github.read_string(config_as_string)
-        version_github = config_github['DEFAULT']['version']
+        version_github = config_github['APPMETA']['version']
 
         update_url_local = config_local['UPDATELINKS']['updateexe']
     except:
