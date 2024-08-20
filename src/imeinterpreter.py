@@ -26,6 +26,7 @@ class ImeInterpreter:
         self.life_cycle_list = []
         self.ems_agent_sorted_start_times, self.ems_agent_sorted_stop_times = [], []
         self.full_log = self.load_full_logs()  # full log as line of string list
+        self.agent_executor_full_log = self.load_all_agent_executor_logs()  # full agentexecutor log as line of string list
         self.initialize_life_cycle_list()
         self.life_cycle_num = len(self.life_cycle_list)
 
@@ -91,6 +92,46 @@ class ImeInterpreter:
             made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
             most_recent_log_file_as_lines.insert(0, made_up_line)
         full_log = full_log + most_recent_log_file_as_lines
+        return full_log
+
+    def load_all_agent_executor_logs(self):
+        # Listing older AgentExecutor logs
+        dir_list = os.listdir(self.log_folder_path)
+        # filtering AgentExecutor logs only
+        dir_list = [i for i in dir_list if i.lower().startswith('agentexecutor') and i.endswith('.log')]
+        # Remove Current AgentExecutor log, which is most recent
+        if 'agentexecutor.log' in dir_list:
+            dir_list.remove('agentexecutor.log')
+        elif 'AgentExecutor.log' in dir_list:
+            dir_list.remove('AgentExecutor.log')
+        else:
+            print("Error! Path does not contain AgentExecutor.log! Exit 1.1")
+            return None
+        # print(dir_list)
+        # Sorting based on date in file name, first log should be the oldest log
+        sorted(dir_list)
+        # print(dir_list)
+        full_log = []
+        for each_log in dir_list:
+            current_log_file_path = self.log_folder_path + '\\' + each_log
+            current_agent_executor_log_as_lines = self.open_log_file(current_log_file_path)
+            full_log = full_log + current_agent_executor_log_as_lines
+            '''
+            There is an issue that sometimes after concatenating 2 log files, the EMS Agent stop will be missing.
+            Force adding at the beginning.
+            '''
+        agent_executor_log_file_path = self.log_folder_path + '\\AgentExecutor.log'
+        agent_executor_log_file_lower_path = self.log_folder_path + '\\agentexecutor.log'
+
+        if not (os.path.isfile(agent_executor_log_file_path)):
+            agent_executor_log_file_path = agent_executor_log_file_lower_path
+            if not (os.path.isfile(agent_executor_log_file_lower_path)):
+                print("Error! Path does not contain AgentExecutor.log! Exit 1.0")
+                return None
+            # exit(1100)
+        most_recent_log_file_as_lines = self.open_log_file(agent_executor_log_file_path)
+        full_log = full_log + most_recent_log_file_as_lines
+        # full_log = logprocessinglibrary.process_breaking_line_log(full_log)
         return full_log
 
     def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):
@@ -192,6 +233,29 @@ class ImeInterpreter:
             app_workload_logs = logprocessinglibrary.process_breaking_line_log(app_workload_log)
             full_log = self.merge_ime_and_app_workload_logs(ime_logs, app_workload_logs)
             return full_log
+
+    def get_agent_executor_log_by_start_end(self, cur_start_time, cur_stop_time):
+        start_line_index = 0
+        stop_line_index = len(self.agent_executor_full_log) - 1
+        for cur_line_index in range(len(self.agent_executor_full_log)):
+            cur_line = self.agent_executor_full_log[cur_line_index]
+            cur_line_time = logprocessinglibrary.get_timestamp_by_line(cur_line)
+            if cur_line_time == "-1":
+                continue
+            elif cur_line_time < cur_start_time:
+                start_line_index = cur_line_index + 1
+            else:
+                if cur_line_time < cur_stop_time:
+                    stop_line_index = cur_line_index + 1
+                else:
+                    break
+        # This means the agent executor log ends with breaking lines
+        if cur_line_index == len(self.agent_executor_full_log) and cur_line_time == "-1":
+            stop_line_index = len(self.agent_executor_full_log) - 1
+        if start_line_index >= len(self.agent_executor_full_log) or stop_line_index <= start_line_index:
+            return []
+        else:
+            return self.agent_executor_full_log[start_line_index: stop_line_index]
 
     def separate_log_into_service_lifecycle(self):
         ems_agent_start_lines = []
@@ -297,11 +361,21 @@ class ImeInterpreter:
         ems_agent_lifecycle_log_list = []
         # Indicating whether the service is being restarted manually or restart by reboot
         agent_life_ending_reason = ["IME Service Starts"]  # first one is always IME service Starts
+        # agent executor log that are contained within this ems lifecycle
+        ems_agent_lifecycle_agent_executor_log_list = []
 
         for agent_lifecycle_log_index in range(len(ems_agent_sorted_start_lines)):
             ems_agent_lifecycle_log_list.append(
                 self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]:
                               ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
+
+            # EMS agent start line time
+            cur_start_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_start_lines[agent_lifecycle_log_index]])
+            # EMS agent stop line time
+            cur_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
+
+            cur_lifecycle_agent_executor_log_list = self.get_agent_executor_log_by_start_end(cur_start_time, cur_stop_time)
+            ems_agent_lifecycle_agent_executor_log_list.append(cur_lifecycle_agent_executor_log_list)
             if agent_lifecycle_log_index < len(ems_agent_sorted_start_lines) - 1:
                 agent_stop_time = logprocessinglibrary.get_timestamp_by_line(self.full_log[ems_agent_sorted_stop_lines[agent_lifecycle_log_index]])
                 agent_stop_time_datetime = datetime.datetime.strptime(agent_stop_time[:-4], '%m-%d-%Y %H:%M:%S')
@@ -317,37 +391,21 @@ class ImeInterpreter:
         #print(agent_life_ending_reason)
         #print(self.ems_agent_sorted_start_times)
         #print(self.ems_agent_sorted_stop_times)
-        return ems_agent_lifecycle_log_list, agent_life_ending_reason
+        return ems_agent_lifecycle_log_list, agent_life_ending_reason, ems_agent_lifecycle_agent_executor_log_list
 
     def initialize_life_cycle_list(self):
         if self.full_log is None:
             return None
-        ems_agent_lifecycle_log_list, ems_agent_restart_reasons = self.separate_log_into_service_lifecycle()
+        ems_agent_lifecycle_log_list, ems_agent_restart_reasons, ems_agent_lifecycle_agent_executor_log_list = self.separate_log_into_service_lifecycle()
         if len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons):
             print("Error len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons)")
             return None
             # exit(1000)
         for index_lifecycle_log in range(len(ems_agent_lifecycle_log_list)):
             self.life_cycle_list.append(emslifecycle.EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],
-                                        ems_agent_restart_reasons[index_lifecycle_log]))
-
-    def generate_ime_interpreter_log_output(self, show_not_expired_subgraph=False):
-        interpreted_log_output = ""
-        if self.full_log is None:
-            interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
-            return interpreted_log_output
-        for cur_lifecycle_log_index in range(self.life_cycle_num):
-            cur_lifecycle_log = self.life_cycle_list[cur_lifecycle_log_index]
-            """
-            +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++IME Service Starts+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            """
-            interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log)
-            interpreted_log_output += '\n'
-            interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
-
-        return interpreted_log_output
+                                                                  ems_agent_lifecycle_agent_executor_log_list[
+                                                                      index_lifecycle_log],
+                                                                  ems_agent_restart_reasons[index_lifecycle_log]))
 
     def generate_ime_interpreter_log_output_webui(self, show_not_expired_subgraph=False):
         interpreted_log_output = ""
