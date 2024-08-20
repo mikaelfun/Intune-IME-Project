@@ -66,16 +66,16 @@ class ScriptPoller:
             print("Info. Cannot find PowerShell processing line.")
             return None
 
-        script_process_start_index_list = logprocessinglibrary.locate_line_startswith_keyword(self.log_keyword_table['LOG_PS_SCRIPT_PROCESS_START_INDICATOR'])
-        script_process_stop_index_list = logprocessinglibrary.locate_line_startswith_keyword(
+        script_process_start_index_list = logprocessinglibrary.locate_line_startswith_keyword(self.log_content, self.log_keyword_table['LOG_PS_SCRIPT_PROCESS_START_INDICATOR'])
+        script_process_stop_index_list = logprocessinglibrary.locate_line_startswith_keyword(self.log_content,
             self.log_keyword_table['LOG_PS_SCRIPT_PROCESS_STOP1_INDICATOR'])
         self.script_num_actual = len(script_process_start_index_list)
         if len(script_process_stop_index_list) != len(script_process_start_index_list):
             print("Warning! LOG_PS_SCRIPT_PROCESS_START_INDICATOR number and LOG_PS_SCRIPT_PROCESS_STOP1_INDICATOR number do not match!")
 
-        for script_index in range(len(self.script_process_start_index_list)):
-            cur_script_start_line_index = self.script_process_start_index_list[script_index]
-            cur_script_stop_line_index = self.script_process_stop_index_list[script_index] + 1
+        for script_index in range(len(script_process_start_index_list)):
+            cur_script_start_line_index = script_process_start_index_list[script_index]
+            cur_script_stop_line_index = script_process_stop_index_list[script_index] + 1
             cur_script_agent_executor_log = self.get_cur_script_agent_executor_log(cur_script_start_line_index, cur_script_stop_line_index)
             cur_script = powershell.PowerShellObject(
                 self.log_content[cur_script_start_line_index:cur_script_stop_line_index],
