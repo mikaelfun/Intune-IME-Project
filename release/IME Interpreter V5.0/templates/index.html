@@ -16,7 +16,6 @@
     
     
     
-    
     <script type="application/ld+json">{
 		"@context": "http://schema.org",
 		"@type": "Organization",
@@ -56,55 +55,44 @@
     <section class="u-align-left u-clearfix u-section-1" id="carousel_0115">
       <div class="u-clearfix u-sheet u-sheet-1">
         <h2 class="u-align-left u-text u-text-default u-text-1">IME Interpreter</h2>
-        <p class="u-align-right u-text u-text-default u-text-2">Version</p>
-        <p class="u-align-right u-custom-font u-font-ubuntu u-text u-text-default u-text-3">V5.0.0</p>
-        <a href="#" class="u-active-palette-3-base u-align-right u-border-none u-border-radius-50 u-btn u-btn-round u-button-style u-hover-palette-1-dark-1 u-palette-2-base u-radius-50 u-text-active-white u-text-hover-white u-btn-1" onclick="checkUpdate()" >Check for Update</a>
+        <div class="u-clearfix u-group-elements u-group-elements-1">
+          <p class="u-align-right u-text u-text-default u-text-2">Version</p>
+          <p class="u-align-right u-custom-font u-font-ubuntu u-text u-text-default u-text-3">V5.0.0</p>
+          <a href="#" class="u-active-palette-4-dark-1 u-align-right u-border-none u-border-radius-50 u-btn u-btn-round u-button-style u-hover-palette-1-dark-1 u-palette-2-base u-radius-50 u-text-active-white u-text-hover-white u-btn-1" onclick="checkUpdate()" >Check for Update</a>
+        </div>
         <h6 class="u-align-left u-custom-font u-font-titillium-web u-text u-text-4">Use the tool to decode IME log folder, and analyze Win32/Store app/PowerShell/Remediation logs</h6>
         <div class="custom-expanded u-form u-form-1">
-          <form action="https://forms.nicepagesrv.com/v2/form/process" class="u-clearfix u-form-horizontal u-form-spacing-10 u-inner-form" source="text" name="form" style="padding: 10px;" >
+          <form action="https://forms.nicepagesrv.com/v2/form/process" class="u-clearfix u-form-horizontal u-form-spacing-10 u-inner-form" source="text" name="form" style="padding: 10px;">
             <div class="u-form-group">
-                <label for="email-ba2b" class="u-label u-text-palette-1-base u-label-1">Folder Path</label>
-                <input type="text" placeholder="Enter a valid IME log folder path" id="email-ba2b" name="IMEFolderPath" class="u-input u-input-rectangle u-palette-5-light-3 u-text-body-color" required="required">
+              <label for="email-ba2b" class="u-label u-text-palette-1-base u-label-1">Folder Path</label>
+              <input type="text" placeholder="Enter a valid IME log folder path" id="email-ba2b" name="IMEFolderPath" class="u-input u-input-rectangle u-palette-5-light-3 u-text-body-color" required="required">
             </div>
             <div class="u-align-left u-form-group u-form-submit">
-                <button type="submit" class="u-border-hover-grey-75 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-2-base u-palette-1-light-1 u-radius u-btn-2" onclick="handleAnalize()">ANALYZE</button>
+              <a href="#" class="u-active-palette-4-dark-1 u-border-hover-grey-75 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-dark-1 u-palette-2-base u-radius u-btn-2" onclick="handleAnalize()">ANALYZE</a>
+              <input type="submit" value="submit" class="u-form-control-hidden">
             </div>
-        </form>
+          </form>
         </div>
-        <div class="data-layout-selected u-clearfix u-layout-wrap u-layout-wrap-1">
+        <div class="data-layout-selected u-clearfix u-expanded-width u-layout-wrap u-layout-wrap-1">
           <div class="u-gutter-0 u-layout">
             <div class="u-layout-row">
-              <div class="Object]-md u-align-justify u-container-align-left u-container-style u-layout-cell u-size-49 u-size-[object u-layout-cell-1">
+              <div class="Object]-md u-align-justify u-container-style u-layout-cell u-size-49 u-size-[object u-layout-cell-1">
                 <div class="u-container-layout u-container-layout-1">
+                  <div class="u-clearfix u-group-elements u-group-elements-2">
+                    <a href="#" class="u-align-center u-border-none u-border-radius-50 u-btn u-btn-round u-button-style u-radius-50 u-btn-3" id="powerShell" onclick="togglePowerShellMode()">Powershell</a>
+                    <a href="#" class="u-align-center u-border-none u-border-radius-50 u-btn u-btn-round u-button-style u-radius-50 u-btn-4" id="appView" onclick="toggleWin32Mode()" >Apps view</a>
+                    <a href="#" class="u-align-center u-border-none u-border-radius-50 u-btn u-btn-round u-button-style u-radius-50 u-btn-5" id="remediation" onclick="toggleRemediationMode()">Remediation</a>
+                  </div>
                   <h5 class="u-align-left u-custom-font u-font-titillium-web u-text u-text-5">Win32 &amp; Store App log</h5>
-                  <p class="u-align-left u-text u-text-6" style="font-family: Consolas, monospace; font-size: 12px;">App Log Result Here</p>
+                  <p class="u-align-left u-text u-text-6" style="font-family: Consolas, monospace; font-size: 13px;">App Log Result Here </p>
                 </div>
               </div>
               <div class="u-align-left u-container-style u-layout-cell u-size-11 u-layout-cell-2">
-                <div class="u-container-layout u-valign-top u-container-layout-2">
-                  <a href="#" class="u-active-palette-3-base u-align-center u-border-none u-border-radius-50 u-btn u-btn-round u-button-style u-grey-25 u-hover-palette-4-dark-1 u-radius-50 u-text-active-white u-text-hover-white u-btn-3" onclick="clearResult()">Clear Result<br>
+                <div class="u-container-layout u-container-layout-2">
+                  <a href="#" class="u-active-palette-2-base u-align-center u-border-none u-border-radius-50 u-btn u-btn-round u-button-style u-grey-10 u-hover-palette-2-base u-radius-50 u-text-active-white u-text-hover-white u-btn-6" onclick="clearResult()">Clear Result<br>
                   </a>
-                  <a href="#" class="u-active-palette-3-base u-align-center u-border-none u-border-radius-50 u-btn u-btn-round u-button-style u-radius-50 u-btn-4" id="logModeButton" onclick="toggleLogMode()">Full log: OFF</a>
+                  <a href="#" class="u-align-center u-border-none u-border-radius-50 u-btn u-btn-round u-button-style u-radius-50 u-btn-7" id="logModeButton" onclick="toggleLogMode()">Full log: OFF</a>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="u-clearfix u-section-2" id="sec-9754">
-      <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
-        <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-0 u-layout-wrap u-layout-wrap-1">
-          <div class="u-layout">
-            <div class="u-layout-row">
-              <div class="u-container-style u-layout-cell u-size-49 u-layout-cell-1">
-                <div class="u-container-layout u-container-layout-1">
-                  <h5 class="u-align-left u-custom-font u-font-titillium-web u-text u-text-1">PowerShell &amp; remediation</h5>
-                  <p class="u-align-left u-text u-text-2" style="font-family: Consolas, monospace; font-size: 12px;" >Script Log Result Here </p>
-                </div>
-              </div>
-              <div class="u-container-style u-layout-cell u-size-11 u-layout-cell-2">
-                <div class="u-container-layout u-container-layout-2"></div>
               </div>
             </div>
           </div>
@@ -114,7 +102,11 @@
     <script>
         // Initialize the toggle state (off initially)
         let logModeOn = false;
+        let Win32ModeOn = false;
+        let PowerShellModeOn = false;
+        let RemediationModeOn = false;
         updateVersionString();
+        toggleWin32Mode();
         function updateVersionString() {
             const versionLabel = document.querySelector('.u-text-3');
             // Make an AJAX request to the /getversion route
@@ -139,12 +131,23 @@
             // Now you can use the 'folderPath' variable as needed
             console.log('Folder path entered:', folderPath);
             // You can also send this value to your server or perform other actions
+            logType = ""
+            if (Win32ModeOn) {
+                logType = "Win32"
+            }
+            if (PowerShellModeOn) {
+                logType = "PowerShell"
+            }
+            if (RemediationModeOn) {
+                logType = "Remediation"
+            }
 
             // Make an AJAX request to the /analyze route
             fetch('/analyze', {
                 method: 'POST',
                 body: new URLSearchParams({
                     'IMEFolderPath': folderPath,
+                    'logType' : logType,
                     'logModeOn' : logModeOn
                 }),
                 headers: {
@@ -167,9 +170,6 @@
         function clearResult() {
             const win32Element = document.querySelector('.u-align-left.u-text.u-text-6');
             win32Element.textContent = 'App Log Result Here';
-            
-            const scriptElement = document.querySelector('.u-align-left.u-text.u-text-2');
-            scriptElement.textContent = 'Script Log Result Here';
         }
         function checkUpdate() {
             const updateButton = document.querySelector('.u-btn-1');
@@ -189,20 +189,57 @@
             }, 2000); // 2000 milliseconds (2 seconds)
             updateVersionString();
         }
-
-        // Function to toggle the state and update button text
-        function toggleLogMode() {
-            logModeOn = !logModeOn; // Toggle the state
-
-            // Get a reference to the button
-            const logModeButton = document.getElementById('logModeButton');
-
-            // Update button text based on the state
-            logModeButton.textContent = `Full log: (${logModeOn ? 'On' : 'Off'})`;
-             
-            logModeButton.classList.toggle('on', logModeOn); // Add or remove the 'on' class
+        // Function to turn off other buttons except the clicked one
+        function turnOffOtherButtons(clickedButtonId) {
+            const buttons = ['appView', 'powerShell', 'remediation'];
+            buttons.forEach(buttonId => {
+                if (buttonId !== clickedButtonId) {
+                    const button = document.getElementById(buttonId);
+                    button.classList.remove('on');
+                }
+            });
         }
-    </script>          
+        function toggleWin32Mode() {
+            if (!Win32ModeOn) {
+                Win32ModeOn = true;
+                PowerShellModeOn = false;
+                RemediationModeOn = false;
+                const appView = document.getElementById('appView');
+                appView.classList.toggle('on', Win32ModeOn);
+                turnOffOtherButtons('appView');
+                const logLabel = document.querySelector('.u-text-5');
+                logLabel.textContent = "Win32 & Store App log"; 
+            }
+        }
+
+        function togglePowerShellMode() {
+            if (!PowerShellModeOn) {
+                PowerShellModeOn = true;
+                Win32ModeOn = false;
+                RemediationModeOn = false;
+                const powerShell = document.getElementById('powerShell');
+                powerShell.classList.toggle('on', PowerShellModeOn);
+                turnOffOtherButtons('powerShell');
+                const logLabel = document.querySelector('.u-text-5');
+                logLabel.textContent = "PowerShell log"; 
+            }
+        }
+
+        function toggleRemediationMode() {
+            if (!RemediationModeOn) {
+                RemediationModeOn = true;
+                PowerShellModeOn = false;
+                Win32ModeOn = false;
+                const remediation = document.getElementById('remediation');
+                remediation.classList.toggle('on', RemediationModeOn);
+                turnOffOtherButtons('remediation');
+                const logLabel = document.querySelector('.u-text-5');
+                logLabel.textContent = "Remediation log"; 
+            }
+        }
+    </script> 
+    
     
     <footer class="u-align-center u-clearfix u-footer u-palette-1-light-1 u-footer" id="sec-0754"><div class="u-clearfix u-sheet u-sheet-1"></div></footer>
+  
 </body></html>

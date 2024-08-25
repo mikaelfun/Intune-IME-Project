@@ -239,12 +239,22 @@ class EMSLifeCycle:
         for index_ps_poller_log in range(self.ps_poller_num):
             self.ps_poller_object_list.append(scriptpoller.ScriptPoller(ps_poller_log_list[index_ps_poller_log], agent_executor_log_list))
 
-    def generate_ems_lifecycle_log_output(self, show_not_expired_subgraph):
+    def generate_ems_win32_lifecycle_log_output(self, show_not_expired_subgraph):
         interpreted_log_output = ""
         for cur_app_poller_log_index in range(self.poller_num):
             cur_app_poller_log = self.app_poller_object_list[cur_app_poller_log_index]
-            ems_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_not_expired_subgraph)
-            if ems_lifecycle_log_output != "":
-                interpreted_log_output += ems_lifecycle_log_output
+            ems_win32_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_not_expired_subgraph)
+            if ems_win32_lifecycle_log_output != "":
+                interpreted_log_output += ems_win32_lifecycle_log_output
+                interpreted_log_output += '\n'
+        return interpreted_log_output
+
+    def generate_ems_powershell_lifecycle_log_output(self):
+        interpreted_log_output = ""
+        for cur_ps_poller_log_index in range(self.ps_poller_num):
+            cur_ps_poller_log = self.ps_poller_object_list[cur_ps_poller_log_index]
+            ems_ps_lifecycle_log_output = cur_ps_poller_log.generate_powershell_poller_log_output()
+            if ems_ps_lifecycle_log_output != "":
+                interpreted_log_output += ems_ps_lifecycle_log_output
                 interpreted_log_output += '\n'
         return interpreted_log_output

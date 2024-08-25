@@ -2,6 +2,7 @@ import json
 
 import logprocessinglibrary
 import powershell
+import constructinterpretedlog
 
 
 class ScriptPoller:
@@ -76,12 +77,90 @@ class ScriptPoller:
         for script_index in range(len(script_process_start_index_list)):
             cur_script_start_line_index = script_process_start_index_list[script_index]
             cur_script_stop_line_index = script_process_stop_index_list[script_index] + 1
-            cur_script_agent_executor_log = self.get_cur_script_agent_executor_log(cur_script_start_line_index, cur_script_stop_line_index)
-            cur_script = powershell.PowerShellObject(
+            cur_script_id = logprocessinglibrary.find_app_id_with_starting_string(self.log_content[cur_script_start_line_index], self.log_keyword_table['LOG_PS_SCRIPT_PROCESS_START_INDICATOR'])
+            cur_script_agent_executor_log_list = self.get_cur_script_agent_executor_log(cur_script_id, cur_script_start_line_index, cur_script_stop_line_index)
+            cur_script = powershell.PowerShellObject(cur_script_id,
                 self.log_content[cur_script_start_line_index:cur_script_stop_line_index],
-                self.get_policy_json, cur_script_agent_executor_log)
+                self.get_policy_json, cur_script_agent_executor_log_list)
 
             self.powershell_object_list.append(cur_script)
 
-    def get_cur_script_agent_executor_log(self, cur_script_start_line_index, cur_script_stop_line_index):
-        return ""
+    def get_cur_script_agent_executor_log(self, cur_script_id, cur_script_start_line_index, cur_script_stop_line_index):
+        cur_start_time = logprocessinglibrary.get_timestamp_by_line(self.log_content[cur_script_start_line_index])
+        cur_stop_time = logprocessinglibrary.get_timestamp_by_line(self.log_content[cur_script_stop_line_index])
+        for cur_line_index in range(len(self.agent_executor_log_list)):
+            cur_log_lines = self.agent_executor_log_list[cur_line_index]
+            cur_log_lines_as_list = list(cur_log_lines.split("\n"))
+            for agent_ps_processing_log_each_line in cur_log_lines_as_list:
+                if agent_ps_processing_log_each_line.startswith(self.log_keyword_table['LOG_AGENTEXE_PS_SCRIPT_ID_INDICATOR']):
+                    start_index = len(self.log_keyword_table['LOG_AGENTEXE_PS_SCRIPT_ID_INDICATOR']) + logprocessinglibrary.CONST_USER_ID_LEN + 1
+                    script_id_in_log = agent_ps_processing_log_each_line[start_index: start_index + logprocessinglibrary.CONST_APP_ID_LEN]
+                    if script_id_in_log == cur_script_id:
+                        cur_line_time = logprocessinglibrary.get_timestamp_by_line(agent_ps_processing_log_each_line)
+                        if cur_start_time < cur_line_time < cur_stop_time:
+                            return cur_log_lines_as_list
+                        else:
+                            break
+                    else:
+                        break
+        return []
+
+    def generate_powershell_poller_log_output(self):
+        interpreted_log_output = ""
+        if self.script_num_actual == 0 or self.poller_scripts_got == '0':
+            # skipped because this is available app check in, not useful
+            return interpreted_log_output
+
+        first_line = self.log_content[0]
+        if first_line.startswith(
+                self.log_keyword_table['LOG_PS_POLLER_START']):
+            interpreted_log_output += constructinterpretedlog.write_powershell_poller_start_to_log_output(
+                "PowerShell Poller Starts",
+                self.esp_phase, self.user_session,
+                self.poller_scripts_got, self.poller_time)
+        else:
+            interpreted_log_output += constructinterpretedlog.write_powershell_poller_start_to_log_output(
+                "PowerShell Poller Missing Start",
+                self.esp_phase, self.user_session,
+                self.poller_scripts_got, self.poller_time)
+
+        interpreted_log_output += "\n"
+
+        if self.script_num_actual == '0':
+            interpreted_log_output += "No Scripts to be processed. Poller stops.\n"
+            # return interpreted_log_output
+        else:
+            if self.script_num_actual < self.script_num_expected:
+                interpreted_log_output += (
+                            "Expected " + str(self.script_num_expected) + " PowerShell to read, found only "
+                            + str(self.script_num_actual) + " from this log.\n\n")
+            else:
+                interpreted_log_output += ("Processing " + str(self.script_num_expected) + " PowerShell Script(s)\n")
+
+            interpreted_log_output += '\n'
+            for cur_script_log_index in range(self.script_num_actual):
+                cur_script_log = self.powershell_object_list[cur_script_log_index]
+
+                mid_string = ("Script " + str(cur_script_log_index + 1))
+                interpreted_log_output += constructinterpretedlog.write_empty_plus_to_log_output()
+                interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_plus_to_log_output(
+                    mid_string)
+                interpreted_log_output += constructinterpretedlog.write_empty_plus_to_log_output()
+                interpreted_log_output += '\n'
+
+                interpreted_log_output += cur_script_log.generate_powershell_log_output()
+                interpreted_log_output += '\n'
+
+        interpreted_log_output += "\n"
+        last_line = self.log_content[-1]
+        if last_line.startswith(self.log_keyword_table['LOG_PS_POLLER_STOP']):
+            interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_dash_to_log_output(
+                'PowerShell Poller Stops')
+            interpreted_log_output += constructinterpretedlog.write_empty_dash_to_log_output()
+        else:
+            interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_dash_to_log_output(
+                'PowerShell Poller Missing Stop')
+            interpreted_log_output += constructinterpretedlog.write_string_in_middle_with_dash_to_log_output(
+                'log may be incomplete')
+
+        return interpreted_log_output

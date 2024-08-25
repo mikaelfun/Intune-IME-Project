@@ -407,7 +407,7 @@ class ImeInterpreter:
                                                                       index_lifecycle_log],
                                                                   ems_agent_restart_reasons[index_lifecycle_log]))
 
-    def generate_ime_interpreter_log_output_webui(self, show_not_expired_subgraph=False):
+    def generate_win32_interpreter_log_output_webui(self, show_not_expired_subgraph=False):
         interpreted_log_output = ""
         # interpreted_log_output += constructinterpretedlog.write_empty_plus_to_log_output()
         # return interpreted_log_output
@@ -427,9 +427,29 @@ class ImeInterpreter:
             interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log,
             self.ems_agent_sorted_stop_times[cur_lifecycle_log_index], self.ems_agent_sorted_start_times[cur_lifecycle_log_index + 1])
             interpreted_log_output += '\n'
-            interpreted_log_output += cur_lifecycle_log.generate_ems_lifecycle_log_output(show_not_expired_subgraph)
+            interpreted_log_output += cur_lifecycle_log.generate_ems_win32_lifecycle_log_output(show_not_expired_subgraph)
 
         return interpreted_log_output
 
+    def generate_powershell_interpreter_log_output_webui(self):
+        interpreted_log_output = ""
 
+        if self.full_log is None:
+            interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
+            return interpreted_log_output
+        self.ems_agent_sorted_start_times.insert(0, '')
+        self.ems_agent_sorted_stop_times.insert(0, '')
+        for cur_lifecycle_log_index in range(self.life_cycle_num):
+            cur_lifecycle_log = self.life_cycle_list[cur_lifecycle_log_index]
+            """
+            +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++IME Service Starts+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            """
+            interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log,
+            self.ems_agent_sorted_stop_times[cur_lifecycle_log_index], self.ems_agent_sorted_start_times[cur_lifecycle_log_index + 1])
+            interpreted_log_output += '\n'
+            interpreted_log_output += cur_lifecycle_log.generate_ems_powershell_lifecycle_log_output()
+
+        return interpreted_log_output
 

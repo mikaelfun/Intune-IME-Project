@@ -1921,10 +1921,10 @@ class Win32App:
                 self.download_start_time + ' DO Download priority is: ' + self.download_do_mode + '\n', depth)
         if self.proxy_url != "":
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-                self.download_start_time + ' Current Proxy is: ' + self.proxy_url + '\n', depth)
+                self.download_start_time + ' Current Proxy is: ' + '\n' + self.proxy_url + '\n', depth)
         if self.download_url != "":
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
-                self.download_start_time + ' Current Download URL is: ' + self.download_url + '\n', depth)
+                self.download_start_time + ' Current Download URL is: ' + '\n' + self.download_url + '\n', depth)
         if self.download_success:
             interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
                 self.download_finish_time + ' DO mode download completed.\n', depth)

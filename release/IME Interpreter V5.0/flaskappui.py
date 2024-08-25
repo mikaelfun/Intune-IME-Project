@@ -79,6 +79,7 @@ def check_update():
 @ime_interpreter_app.route('/analyze', methods=['POST'])
 def analyze():
     folder_path = request.form.get('IMEFolderPath')
+    log_type = request.form.get('logType')
     logModeOn = request.form.get('logModeOn')
     full_log_mode = False
     # print(logModeOn)
@@ -89,7 +90,12 @@ def analyze():
     # print(full_log_mode)
     if (os.path.isdir(folder_path)):
         a = ImeInterpreter(folder_path)
-        result = a.generate_ime_interpreter_log_output_webui(full_log_mode)
+        if log_type == "Win32":
+            result = a.generate_win32_interpreter_log_output_webui(full_log_mode)
+        elif log_type == "PowerShell":
+            result = a.generate_powershell_interpreter_log_output_webui()
+        elif log_type == "Remediation":
+            result = "In development"
 
         return result
     else:

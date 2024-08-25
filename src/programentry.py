@@ -1,4 +1,4 @@
-
+import shutil
 import sys
 import threading
 import requests
@@ -27,7 +27,8 @@ def update_selfupdater():
         return None
 
     # if version_github != version_local:
-    filename = update_url_local.split("/")[-1].replace('%20', ' ')
+    dest_filename = update_url_local.split("/")[-1].replace('%20', ' ')
+    filename = dest_filename.replace('.', '_tmp.')
     response = requests.get(update_url_local, stream=True)
     total = response.headers.get('content-length')
     print("Updating update.exe in GitHub")
@@ -43,6 +44,7 @@ def update_selfupdater():
                 for data in response.iter_content(chunk_size=max(int(total / 1000), 1024 * 1024)):
                     downloaded += len(data)
                     f.write(data)
+            shutil.move(filename, dest_filename)
             print("Update update.exe Success!")
         else:
             print("Unknown status code: " + response.status_code + " Not updating update.exe")
@@ -64,7 +66,6 @@ def cleanup():
 
 if __name__ == '__main__':
     args = sys.argv
-    # update_selfupdater()
     t = threading.Thread(target=update_thread_job)
     t.start()
 
@@ -96,11 +97,10 @@ if __name__ == '__main__':
         a = ImeInterpreter(path_to_ime_log_folder)
         with open(path_to_output_file, 'w') as outfile:
             # Write some text to the file
-            outfile.write(a.generate_ime_interpreter_log_output_webui(full_log_switch))
+            outfile.write(a.generate_win32_interpreter_log_output_webui(full_log_switch))
         print("Log output successful!")
         sys.exit("Log output successful!")
     else:
-        # ime_interpreter_app.run(debug=True)
         try:
             config_local = configparser.ConfigParser()
             config_local.read('config.ini')
@@ -110,11 +110,17 @@ if __name__ == '__main__':
                 debug_on = True
             else:
                 debug_on = False
+
+            # debug_on = True
             open_browser()
             ime_interpreter_app.run(port=port_local, debug=debug_on)
             exit(0)
         except:
             open_browser()
-            ime_interpreter_app.run(port=5000)
+            ime_interpreter_app.run(port=5000, debug=True)
             print("Error reading config.ini!! Run update.exe to fix!")
-
+    # from imeinterpreter import *
+    #
+    # path_to_ime_log_folder = r"D:\Kun\Documents\PyCharm\IME Interpreter 5.0 - Test cases\Eddid 2407 win32"
+    # a = ImeInterpreter(path_to_ime_log_folder)
+    # print(a.generate_powershell_interpreter_log_output_webui())

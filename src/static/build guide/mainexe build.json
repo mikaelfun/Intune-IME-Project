@@ -120,6 +120,14 @@
   {
    "optionDest": "datas",
    "value": "D:/Kun/Documents/PyCharm/IME Interpreter/src/update.exe;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Kun/Documents/PyCharm/IME Interpreter/src/powershell.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Kun/Documents/PyCharm/IME Interpreter/src/scriptpoller.py;."
   }
  ],
  "nonPyinstallerOptions": {

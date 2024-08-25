@@ -45,8 +45,20 @@ ESP: NotInEsp    Active User: AzureAD\IMEtester        CoMgmt: Intune  App Type:
 """
 
 
+def write_log_output_line_without_indent_depth(log_line):
+    output_line = log_line
+    # num_of_breaks = len(output_line) // CONST_LOGGING_LENGTH
+    # for i in range(num_of_breaks):
+    #     output_line = output_line[:CONST_LOGGING_LENGTH * (i+1)] + '\n' + output_line[CONST_LOGGING_LENGTH * (i+1):]
+    return output_line
+
+
 def write_log_output_line_with_indent_depth(log_line, depth=0):
-    return '-' * (depth+1) * 2 + log_line
+    output_line = '-' * (depth+1) * 2 + log_line
+    # num_of_breaks = len(output_line) // CONST_LOGGING_LENGTH
+    # for i in range(num_of_breaks):
+    #     output_line = output_line[:CONST_LOGGING_LENGTH * (i+1)] + '\n' + output_line[CONST_LOGGING_LENGTH * (i+1):]
+    return output_line
 
 
 def write_ime_service_start_by_reason(cur_lifecycle_log, previous_stop_time, current_start_time):
@@ -117,6 +129,35 @@ def write_application_poller_start_to_log_output(mid_string, esp, user, app_type
     interpreted_log_output += app_type
     interpreted_log_output += ' ' * interval_len
     interpreted_log_output += app_num
+    interpreted_log_output += ' ' * last_len
+    interpreted_log_output += start_time
+    interpreted_log_output += '\n'
+    return interpreted_log_output
+
+
+def write_powershell_poller_start_to_log_output(mid_string, esp, user, script_num, start_time):
+    esp = ('ESP: ' + esp)
+    user = ('Active User: ' + user)
+    scriptnum = ('Script Number: ' + script_num)
+    start_time = ('Time: ' + start_time)
+
+    esp_len = len(esp)
+    user_len = len(user)
+    scriptnum_len = len(scriptnum)
+    start_time_len = len(start_time)
+
+    interval_len = (CONST_LOGGING_LENGTH - esp_len - user_len - scriptnum_len - start_time_len) // 3
+    last_len = CONST_LOGGING_LENGTH - esp_len - user_len - scriptnum_len - start_time_len - interval_len * 2
+    interpreted_log_output = write_string_in_middle_with_dash_to_log_output(mid_string)
+    if mid_string == "PowerShell Poller Missing Start":
+        interpreted_log_output += write_string_in_middle_with_dash_to_log_output("log may be incomplete")
+    else:
+        interpreted_log_output += write_empty_dash_to_log_output()
+    interpreted_log_output += esp
+    interpreted_log_output += ' ' * interval_len
+    interpreted_log_output += user
+    interpreted_log_output += ' ' * interval_len
+    interpreted_log_output += scriptnum
     interpreted_log_output += ' ' * last_len
     interpreted_log_output += start_time
     interpreted_log_output += '\n'

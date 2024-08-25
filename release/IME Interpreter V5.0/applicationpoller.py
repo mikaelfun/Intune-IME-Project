@@ -87,15 +87,16 @@ class ApplicationPoller:
                 else:
                     self.comanagement_workload = "Unknown"
             elif not self.app_type and each_line.startswith(self.log_keyword_table['LOG_APP_MODE_INDICATOR']) and (
-                    'available apps only]' in each_line or 'required apps]' in each_line or 'for ESP]' in each_line):
+                    'available apps only' in each_line or 'required apps' in each_line or 'selected apps' in each_line):
                 start_place = len(self.log_keyword_table['LOG_APP_MODE_INDICATOR'])
-                if each_line.find("available apps only]LOG]!") > 0:
-                    end_place = each_line.find(" apps only]LOG]!")
-                elif each_line.find("required apps]LOG]!") > 0:
-                    end_place = each_line.find(" apps]LOG]!")
-                elif each_line.find(" for ESP]") > 0:
-                    end_place = each_line.find(" for ESP]")
+                if each_line.find("available apps") > 0:
+                    end_place = each_line.find(" apps only")
+                elif each_line.find("required apps") > 0:
+                    end_place = each_line.find(" apps")
+                elif each_line.find("selected apps") > 0:
+                    end_place = each_line.find(" apps")
                 self.app_type = each_line[start_place:end_place]
+                # print(self.app_type)
             elif self.poller_apps_got == '0' and each_line.startswith(
                     self.log_keyword_table['LOG_POLLER_APPS_1_INDICATOR']) and self.log_keyword_table['LOG_POLLER_APPS_2_INDICATOR'] in each_line:
                 end_place = each_line.find(self.log_keyword_table['LOG_POLLER_APPS_2_INDICATOR'])
