@@ -1,5 +1,5 @@
 # Intune-IME-Project
-IME tool to analyze IntuneManagementExtension.log
+IME tool to analyze IntuneManagementExtension.log, AgentExecutor.log and AppWorkload.log
 
 # How to use:
 Download and unzip IME Interpreter V5.0.zip from release/
@@ -21,7 +21,9 @@ Full log output:
 
 
 ## Tool screenshots:
-![alt text](image.png)
+![readmeimage](https://github.com/user-attachments/assets/e5d7192e-b9c8-4ffe-8c2d-12de54591b3a)
+
+![readmeimage1](https://github.com/user-attachments/assets/0ac360c3-56d1-4105-9306-d5e04ee55595)
 
 
 
@@ -39,9 +41,9 @@ Full log output:
 8. GRS skip flow
 9. Incomplete Application Poller/Win32 app processing flow
 10. MSFB UWP app flow
+11. PowerShell diagnosis
 
 ## Roadmap
 
-1. PowerShell script diagnosis
-2. Proactive remediation diagnosis
-3. Win32 supersedence flow
+1. Proactive remediation diagnosis
+2. Win32 supersedence flow
