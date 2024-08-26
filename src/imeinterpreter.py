@@ -37,7 +37,8 @@ class ImeInterpreter:
         dir_list = os.listdir(self.log_folder_path)
         # filtering IME logs only
         for each_file in dir_list:
-            if '_' in each_file:
+            if '_' in each_file and ('intunemanagementextension' in each_file.lower() or 'agentexecutor'
+                                     in each_file.lower() or 'appworkload' in each_file.lower()):
                 new_name = each_file.split('_')[1]
                 shutil.copy(os.path.join(self.log_folder_path, each_file), os.path.join(self.log_folder_path, new_name))
 
@@ -138,7 +139,6 @@ class ImeInterpreter:
             # exit(1100)
         most_recent_log_file_as_lines = self.open_log_file(agent_executor_log_file_path)
         full_log = full_log + most_recent_log_file_as_lines
-        # full_log = logprocessinglibrary.process_breaking_line_log(full_log)
         return full_log
 
     def merge_ime_and_app_workload_logs(self, ime_logs, app_workload_logs):
@@ -166,9 +166,6 @@ class ImeInterpreter:
         while right < app_workload_log_len:
             full_log.append(app_workload_logs[right])
             right = right + 1
-        # with open('C:\\temp\\temp\\imeout.log', 'w') as outfile:
-        #     for i in range(len(full_log)):
-        #         outfile.writelines(full_log[i])
         return full_log
 
     def load_all_app_workload_logs(self):
@@ -403,13 +400,13 @@ class ImeInterpreter:
     def initialize_life_cycle_list(self):
         if self.full_log is None:
             return None
-        ems_agent_lifecycle_log_list, ems_agent_restart_reasons, ems_agent_lifecycle_agent_executor_log_list = self.separate_log_into_service_lifecycle()
-        if len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons):
-            print("Error len(ems_agent_lifecycle_log_list) != len(ems_agent_restart_reasons)")
+        ems_agent_lifecycle_ime_log_list, ems_agent_restart_reasons, ems_agent_lifecycle_agent_executor_log_list = self.separate_log_into_service_lifecycle()
+        if len(ems_agent_lifecycle_ime_log_list) != len(ems_agent_restart_reasons):
+            print("Error len(ems_agent_lifecycle_ime_log_list) != len(ems_agent_restart_reasons)")
             return None
             # exit(1000)
-        for index_lifecycle_log in range(len(ems_agent_lifecycle_log_list)):
-            self.life_cycle_list.append(emslifecycle.EMSLifeCycle(ems_agent_lifecycle_log_list[index_lifecycle_log],
+        for index_lifecycle_log in range(len(ems_agent_lifecycle_ime_log_list)):
+            self.life_cycle_list.append(emslifecycle.EMSLifeCycle(ems_agent_lifecycle_ime_log_list[index_lifecycle_log],
                                                                   ems_agent_lifecycle_agent_executor_log_list[
                                                                       index_lifecycle_log],
                                                                   ems_agent_restart_reasons[index_lifecycle_log]))
@@ -460,3 +457,27 @@ class ImeInterpreter:
 
         return interpreted_log_output
 
+    def generate_remediation_interpreter_log_output_webui(self):
+        interpreted_log_output = ""
+
+        if self.full_log is None:
+            interpreted_log_output += "Error! Path does not contain IntuneManagementExtension.log!"
+            return interpreted_log_output
+        self.ems_agent_sorted_start_times.insert(0, '')
+        self.ems_agent_sorted_stop_times.insert(0, '')
+        for cur_lifecycle_log_index in range(self.life_cycle_num):
+            cur_lifecycle_log = self.life_cycle_list[cur_lifecycle_log_index]
+            """
+            +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++IME Service Starts+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            """
+            interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log,
+                                                                                                self.ems_agent_sorted_stop_times[
+                                                                                                    cur_lifecycle_log_index],
+                                                                                                self.ems_agent_sorted_start_times[
+                                                                                                    cur_lifecycle_log_index + 1])
+            interpreted_log_output += '\n'
+            interpreted_log_output += cur_lifecycle_log.generate_ems_remediation_lifecycle_log_output()
+
+        return interpreted_log_output

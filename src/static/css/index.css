@@ -240,13 +240,13 @@
 
 /* Toggle button styles when in the "on" state */
 .u-section-1 .u-btn-7.on {
-    background-color: #77aad9; /* red button */
+    background-color: #db545a; 
     color: white; /* White font color */
 }
 
 /* Add press effect */
 .u-section-1 .u-btn-7.on:active {
-    background-color: #808080; /* Change to a different color for hover state */
+    background-color: #77aad9; 
     color: white; /* White font color */
 }
 
