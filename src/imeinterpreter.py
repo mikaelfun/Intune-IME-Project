@@ -15,6 +15,8 @@ Class hierarchy:
 """
 import os
 import datetime
+import shutil
+
 import logprocessinglibrary
 import emslifecycle
 import constructinterpretedlog
@@ -25,14 +27,19 @@ class ImeInterpreter:
         self.log_folder_path = log_folder_path
         self.life_cycle_list = []
         self.ems_agent_sorted_start_times, self.ems_agent_sorted_stop_times = [], []
+        self.initialize_odc_folder()
         self.full_log = self.load_full_logs()  # full log as line of string list
         self.agent_executor_full_log = self.load_all_agent_executor_logs()  # full agentexecutor log as line of string list
         self.initialize_life_cycle_list()
         self.life_cycle_num = len(self.life_cycle_list)
 
-    def save_log_to_service(self):
-        # saving uploaded log locally for further improvement
-        pass
+    def initialize_odc_folder(self):
+        dir_list = os.listdir(self.log_folder_path)
+        # filtering IME logs only
+        for each_file in dir_list:
+            if '_' in each_file:
+                new_name = each_file.split('_')[1]
+                shutil.copy(os.path.join(self.log_folder_path, each_file), os.path.join(self.log_folder_path, new_name))
 
     def open_log_file(self, log_path):
         try:
