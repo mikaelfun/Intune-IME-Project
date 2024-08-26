@@ -237,6 +237,16 @@
                 logLabel.textContent = "Remediation log"; 
             }
         }
+
+        // Function to toggle the state and update button text
+        function toggleLogMode() {
+            logModeOn = !logModeOn; // Toggle the state
+            // Get a reference to the button
+            const logModeButton = document.getElementById('logModeButton');
+            // Update button text based on the state
+            logModeButton.textContent = `Full log: (${logModeOn ? 'On' : 'Off'})`;
+            logModeButton.classList.toggle('on', logModeOn);
+        }
     </script> 
     
     

@@ -78,6 +78,8 @@ class PowerShellObject:
                         break
                     self.error_message = self.error_message + self.agent_executor_log_list[line_index] + "\n"
                     line_index = line_index + 1
+                while self.error_message.endswith("\n"):
+                    self.error_message = self.error_message[:-1]
                 continue
             elif cur_ae_log_line.startswith(self.log_keyword_table['LOG_AGENTEXE_PS_SCRIPT_OUTPUT_INDICATOR']):
                 self.output = self.output + cur_ae_log_line[len(self.log_keyword_table['LOG_AGENTEXE_PS_SCRIPT_OUTPUT_INDICATOR']):] + "\n"
@@ -87,6 +89,8 @@ class PowerShellObject:
                         break
                     self.output = self.output + self.agent_executor_log_list[line_index] + "\n"
                     line_index = line_index + 1
+                while self.output.endswith("\n"):
+                    self.output = self.output[:-1]
                 continue
 
             line_index = line_index + 1
@@ -115,10 +119,7 @@ class PowerShellObject:
         interpreted_log_output += constructinterpretedlog.write_log_output_line_without_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('Exit Code:',
                                                                                                          str(self.exit_code)))
-        interpreted_log_output += constructinterpretedlog.write_log_output_line_without_indent_depth(
-            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(
-                'Error Message:',
-                self.error_message))
+
         interpreted_log_output += constructinterpretedlog.write_log_output_line_without_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(
                 'Execution Start Time:',
@@ -127,6 +128,14 @@ class PowerShellObject:
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(
                 'Execution Stop Time:',
                 self.script_stop_time))
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_without_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(
+                'Error Message:',
+                self.error_message))
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_without_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(
+                'Script Output:',
+                self.output))
 
         interpreted_log_output += constructinterpretedlog.write_log_output_line_without_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('Script Body:',

@@ -95,7 +95,7 @@ def analyze():
         elif log_type == "PowerShell":
             result = a.generate_powershell_interpreter_log_output_webui()
         elif log_type == "Remediation":
-            result = "In development"
+            result = a.generate_remediation_interpreter_log_output_webui()
 
         return result
     else:
