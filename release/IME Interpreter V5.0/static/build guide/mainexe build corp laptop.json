@@ -1,0 +1,141 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/programentry.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": true
+  },
+  {
+   "optionDest": "icon_file",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/static/images/icon.ico"
+  },
+  {
+   "optionDest": "name",
+   "value": "IME Interpreter V5.0"
+  },
+  {
+   "optionDest": "contents_directory",
+   "value": "."
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "argv_emulation",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/templates;templates/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/static;static/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/applicationpoller.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/constructinterpretedlog.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/emslifecycle.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/flaskappui.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/imeinterpreter.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/logprocessinglibrary.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/programentry.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/subgraph.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/update.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/win32app.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/logging keyword table.json;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/config.ini;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/update.exe;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/powershell.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/scriptpoller.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/kufang/Documents/GitHub/Intune-IME-Project/src/remediation.py;."
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}

@@ -207,7 +207,7 @@ class ApplicationPoller:
                 self.index_list_subgraph_processing_stop.append(log_line_index)
 
         if self.subgraph_num_expected <= 0:
-            print("Info. Cannot find V3Processor subgraph number line.")
+            # print("Info. Cannot find V3Processor subgraph number line.")
             return None
 
         if len(self.index_list_subgraph_processing_start) != len(self.index_list_subgraph_processing_stop):

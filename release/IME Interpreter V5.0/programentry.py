@@ -119,11 +119,11 @@ if __name__ == '__main__':
             open_browser()
             ime_interpreter_app.run(port=5000, debug=True)
             print("Error reading config.ini!! Run update.exe to fix!")
-#
+
 # if __name__ == '__main__':
 #     from imeinterpreter import *
 #
-#     path_to_ime_log_folder = r"D:\Kun\Documents\PyCharm\IME Interpreter 5.0 - Test cases\Eddid 2407 win32"
+#     path_to_ime_log_folder = r"C:\Users\kufang\Downloads\Error device A8DD684F-B210-4207-BDBD-7A5791A07656\temp\WINAUTOP2GBFXW3_userdriven"
 #     a = ImeInterpreter(path_to_ime_log_folder)
 #     #print(a.generate_powershell_interpreter_log_output_webui())
 #     #print(a.generate_win32_interpreter_log_output_webui())
