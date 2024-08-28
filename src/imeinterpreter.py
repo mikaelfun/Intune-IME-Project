@@ -241,6 +241,8 @@ class ImeInterpreter:
     def get_agent_executor_log_by_start_end(self, cur_start_time, cur_stop_time):
         start_line_index = 0
         stop_line_index = len(self.agent_executor_full_log) - 1
+        cur_line_index = 0
+        cur_line_time = ""
         for cur_line_index in range(len(self.agent_executor_full_log)):
             cur_line = self.agent_executor_full_log[cur_line_index]
             cur_line_time = logprocessinglibrary.get_timestamp_by_line(cur_line)
