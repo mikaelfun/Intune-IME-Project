@@ -13,6 +13,8 @@ Class hierarchy:
                 - Win32App
 
 """
+import json
+
 import logprocessinglibrary
 import applicationpoller
 import powershell
@@ -64,7 +66,7 @@ class EMSLifeCycle:
                     """
                     Fixing for Powershell have multiple threads logs in one app poller
                     """
-                    thread_id_exception_headers = self.log_keyword_table['LOG_PS_THREAD_ID_EXCEPTION_HEADERS']
+                    thread_id_exception_headers = json.loads(self.log_keyword_table['LOG_PS_THREAD_ID_EXCEPTION_HEADERS'])
                     is_powershell_second_thread = False
                     for each_header in thread_id_exception_headers:
                         if self.ime_log[line_index_iter].startswith(each_header):
