@@ -194,7 +194,7 @@ class ApplicationPoller:
                 
                 Manual add subgraph ending if does not find ending keywords Done processing subgraph
                 """
-                if self.index_list_subgraph_processing_stop and self.index_list_subgraph_processing_stop[-1] < log_line_index - 1:
+                if self.index_list_subgraph_processing_stop and len(self.index_list_subgraph_processing_stop) < len(self.index_list_subgraph_processing_start):
                     self.index_list_subgraph_processing_stop.append(log_line_index - 1)
                 self.index_list_subgraph_processing_start.append(log_line_index)
 
@@ -234,8 +234,9 @@ class ApplicationPoller:
         for subgraph_index in range(len(self.index_list_subgraph_processing_start)):
             cur_subgraph_start_line_index = self.index_list_subgraph_processing_start[subgraph_index]
             cur_subgraph_stop_line_index = self.index_list_subgraph_processing_stop[subgraph_index] + 1
-            cur_subgraph = subgraph.SubGraph(self.log_content[cur_subgraph_start_line_index:cur_subgraph_stop_line_index],
-                                    self.get_policy_json, self.last_enforcement_json_dict)
+            subgraph_processing_logs = self.log_content[cur_subgraph_start_line_index:cur_subgraph_stop_line_index]
+
+            cur_subgraph = subgraph.SubGraph(subgraph_processing_logs, self.get_policy_json, self.last_enforcement_json_dict)
 
             # Overwrite from poller to Subgraph object
             if cur_subgraph.hash_key in self.sub_graph_reevaluation_time_list.keys():

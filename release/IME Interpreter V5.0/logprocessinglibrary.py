@@ -44,12 +44,13 @@ def convert_date_string_to_date_time(date_string):
 
 
 def locate_thread(line):
-    thread_index = line.find('thread="') + 8
-    thread_index_end = line.find('" file=')
+    thread_index = line.find('" thread="') + len('" thread="')
+    thread_index_end = line.find('" file="">')
     if thread_index > thread_index_end or thread_index_end == -1:
         return "-1"
     else:
-        return line[thread_index:thread_index_end]
+        thread_id = line[thread_index:thread_index_end]
+        return thread_id
 
 
 def locate_line_startswith_keyword(full_log, keyword):
@@ -87,27 +88,29 @@ def process_breaking_line_log(full_log):
     temp_log = []
     while line_index_iter < log_len:
         # Normal line with start and thread
-        if full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):
-            temp_log.append(full_log[line_index_iter])
-        elif full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):
+        cur_line = full_log[line_index_iter]
+        cur_thread = locate_thread(cur_line)
+        if cur_line.startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != cur_thread:
+            temp_log.append(cur_line)
+        elif cur_line.startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(cur_line):
             """
             start of broken log
             <![LOG[AAD User check is failed, exception is System.ComponentModel.Win32Exception (0x80004005):
             """
 
-            temp_log.append(full_log[line_index_iter].replace('\n', ' | '))
-        elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(full_log[line_index_iter]):
+            temp_log.append(cur_line.replace('\n', ' | '))
+        elif not cur_line.startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == cur_thread:
             """
             middle of broken log, no start, no thread.
             Append to last line string end.
             """
-            temp_log[-1] = temp_log[-1] + full_log[line_index_iter].replace('\n', ' | ')
-        elif not full_log[line_index_iter].startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != locate_thread(full_log[line_index_iter]):
+            temp_log[-1] = temp_log[-1] + cur_line.replace('\n', ' | ')
+        elif not cur_line.startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != cur_thread:
             """
             end of broken log, no start, got thread.
             Append to last line string end.
             """
-            temp_log[-1] = temp_log[-1] + full_log[line_index_iter]
+            temp_log[-1] = temp_log[-1] + cur_line
 
         line_index_iter = line_index_iter + 1
 

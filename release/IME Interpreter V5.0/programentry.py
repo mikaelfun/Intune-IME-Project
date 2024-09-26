@@ -123,8 +123,8 @@ if __name__ == '__main__':
 # if __name__ == '__main__':
 #     from imeinterpreter import *
 #
-#     path_to_ime_log_folder = r"C:\Users\kufang\Downloads\Error device A8DD684F-B210-4207-BDBD-7A5791A07656\temp\WINAUTOP2GBFXW3_userdriven"
+#     path_to_ime_log_folder = r"C:\Users\kufang\Downloads\0902autopilot"
 #     a = ImeInterpreter(path_to_ime_log_folder)
 #     #print(a.generate_powershell_interpreter_log_output_webui())
-#     #print(a.generate_win32_interpreter_log_output_webui())
-#     print(a.generate_remediation_interpreter_log_output_webui())
+#     print(a.generate_win32_interpreter_log_output_webui())
+#     #print(a.generate_remediation_interpreter_log_output_webui())

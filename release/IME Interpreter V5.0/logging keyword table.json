@@ -1,6 +1,6 @@
 {
   "LOG_STARTING_STRING" : "<![LOG",
-  "LOG_ENDING_STRING" : "]LOG]!",
+  "LOG_ENDING_STRING" : "]LOG]!><time=",
   "LOG_APP_POLLER_START_STRING" : "<![LOG[[Win32App] ----------------------------------------------------- application poller starts.",
   "LOG_APP_POLLER_STOP_STRING" : "<![LOG[[Win32App] ----------------------------------------------------- application poller stopped.",
   "LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR" : "<![LOG[[Win32App][V3Processor] Processing ",
