@@ -1717,7 +1717,14 @@ class Win32App:
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                                          right_string),
             depth)
+        # Adding feature for Betty to include store app package identifier
+        left_string = 'Package Identifier:'
+        right_string = self.package_identifier
 
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
         left_string = 'Last Enforcement State:'
         right_string = self.last_enforcement_state
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
