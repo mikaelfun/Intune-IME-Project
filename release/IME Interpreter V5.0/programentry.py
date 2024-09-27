@@ -15,7 +15,12 @@ def update_selfupdater():
         version_local = config_local['APPMETA']['version']
 
         config_url = config_local['UPDATELINKS']['configini']
-        response = requests.get(config_url)
+        try:
+            response = requests.get(config_url)
+        except:
+            # without VPN, cannot get github link. Expected
+            print("Failing to connect to GitHub repo. Check your VPN connection. Skipping self update.")
+            return None
         config_github = configparser.ConfigParser()
         config_as_string = response.content.decode('utf-8')
         config_github.read_string(config_as_string)
@@ -23,7 +28,7 @@ def update_selfupdater():
 
         update_url_local = config_local['UPDATELINKS']['updateexe']
     except:
-        print("Error reading config.ini!! Run update.exe to fix!")
+        print("E1. Error reading config.ini!! Run update.exe to fix!")
         return None
 
     # if version_github != version_local:
@@ -34,6 +39,7 @@ def update_selfupdater():
     print("Updating update.exe in GitHub")
     if total is None:
         print("Unknown file size of update.exe in GitHub")
+        return None
     else:
         if response.status_code == 404:
             print("Download link for update.exe not found in GitHub")
@@ -46,16 +52,18 @@ def update_selfupdater():
                     f.write(data)
             shutil.move(filename, dest_filename)
             print("Update update.exe Success!")
+            return True
         else:
             print("Unknown status code: " + response.status_code + " Not updating update.exe")
+            return None
     # else:
     #     print("No need to update update.exe since no new version found")
 
 
 def update_thread_job():
-    try:
-        update_selfupdater()
-    except:
+    if update_selfupdater():
+        pass
+    else:
         print("Unable to update update.exe!")
 
 
@@ -118,7 +126,7 @@ if __name__ == '__main__':
         except:
             open_browser()
             ime_interpreter_app.run(port=5000, debug=True)
-            print("Error reading config.ini!! Run update.exe to fix!")
+            print("E2. Error reading config.ini!! Run update.exe to fix!")
 
 # if __name__ == '__main__':
 #     from imeinterpreter import *
