@@ -71,7 +71,7 @@ def cleanup():
     print("Cleaning up before exit...")
     os._exit(0)
 
-
+#
 if __name__ == '__main__':
     args = sys.argv
     t = threading.Thread(target=update_thread_job)
@@ -131,7 +131,8 @@ if __name__ == '__main__':
 # if __name__ == '__main__':
 #     from imeinterpreter import *
 #
-#     path_to_ime_log_folder = r"C:\Users\kufang\Downloads\0902autopilot"
+#     # path_to_ime_log_folder = r"C:\Users\kufang\Downloads\Logs 3\Logs"
+#     path_to_ime_log_folder = r"C:\Users\kufang\Downloads\Logs (2) (1)\Logs"
 #     a = ImeInterpreter(path_to_ime_log_folder)
 #     #print(a.generate_powershell_interpreter_log_output_webui())
 #     print(a.generate_win32_interpreter_log_output_webui())

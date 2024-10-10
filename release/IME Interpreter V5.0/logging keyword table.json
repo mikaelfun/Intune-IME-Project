@@ -25,6 +25,7 @@
   "LOG_WIN32_GRS_INDICATOR" : "<![LOG[[Win32App][GRSManager] Found GRS value: ",
   "LOG_WIN32_NO_GRS_1_INDICATOR" : "<![LOG[[Win32App][GRSManager] App with id: ",
   "LOG_WIN32_NO_GRS_2_INDICATOR" : "has no recorded GRS value",
+  "LOG_WIN32_REPORTING_STATE_START_INDICATOR" : "<![LOG[[Win32App][ReportingManager] Sending status to company portal based on report: ",
   "LOG_WIN32_REPORTING_STATE_INDICATOR" : "<![LOG[[Win32App][ReportingManager] Sending status to company portal based on report: {\"ApplicationId\":\"",
   "LOG_WIN32_DETECTION_OLD_INDICATOR" : "<![LOG[[Win32App][DetectionActionHandler] Detection for policy with id: ",
   "LOG_WIN32_DETECTION_OLD_RESULT_INDICATOR" : "<![LOG[[Win32App][DetectionActionHandler] Detection for policy with id: 21a0906e-6f47-4c41-b33e-7f65655dcb8f resulted in action status: Success and detection state: ",

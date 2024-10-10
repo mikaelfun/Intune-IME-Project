@@ -157,6 +157,7 @@ class Win32App:
         self.applicability_state_json = ""
         self.detection_state_json = ""
         self.execution_state_json = ""
+        self.reporting_state_json = ""
 
         self.msfb_detected_version = ""
         self.msfb_installed_version = ""
@@ -1331,6 +1332,28 @@ class Win32App:
                     else:
                         self.applicability = False
                     self.applicability_time = cur_time
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_REPORTING_STATE_INDICATOR']):
+                """
+                Fix bug where pre detection time is empty.
+                A user context Store app could be retrieved in poller session without logged on user. App will be shown as "NotComputed" in predetection and applicailablity. And app is not processed.
+                <![LOG[[Win32App][ReportingManager] Sending status to company portal based on report: {"ApplicationId":"a6c180ce-e38d-425a-b44a-afeb56287ba0","ResultantAppState":-1,"ReportingImpact":{"DesiredState":1,"Classification":2,"ConflictReason":0,"ImpactingApps":[]},"WriteableToStorage":true,"CanGenerateComplianceState":true,"CanGenerateEnforcementState":false,"IsAppReportable":true,"IsAppAggregatable":true,"AvailableAppEnforcementFlag":0,"DesiredState":0,"DetectionState":3,"DetectionErrorOccurred":false,"DetectionErrorCode":null,"ApplicabilityState":1011,"ApplicabilityErrorOccurred":false,"ApplicabilityErrorCode":null,"EnforcementState":null,"EnforcementErrorCode":null,"TargetingMethod":0,"TargetingType":2,"InstallContext":1,"Intent":3,"InternalVersion":1,"DetectedIdentityVersion":null,"RemovalReason":null}]LOG]!><time="01:15:18.4595340" date="9-27-2024" component="AppWorkload" context="" type="1" thread="10" file="">
+                "ApplicabilityState":1011 means user context app in system context poller session.
+                """
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_REPORTING_STATE_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                reporting_state_json_start_index = len(
+                    self.log_keyword_table['LOG_WIN32_REPORTING_STATE_START_INDICATOR'])
+                reporting_state_json_stop_index = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
+                self.reporting_state_json = json.loads(
+                    cur_line[reporting_state_json_start_index: reporting_state_json_stop_index])
+                if self.reporting_state_json['ApplicabilityState'] == 1011:
+                    self.pre_install_detection_time = cur_time
+                    self.pre_install_detection = False
+                    self.applicability = False
+                    self.applicability_time = cur_time
+                    self.applicability_reason = "User Context app will be processed after user logon"
             elif cur_line.startswith(self.log_keyword_table['LOG_MSFB_TRANSITION_DOWNLOAD_STATE_INDICATOR']):
                 self.download_start_time = cur_time
                 self.has_enforcement = True
