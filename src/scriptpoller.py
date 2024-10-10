@@ -50,8 +50,15 @@ class ScriptPoller:
                 json_start_index = len(self.log_keyword_table['LOG_PS_POLICY_JSON_INDICATOR'])
                 json_end_index = each_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
                 json_string = each_line[json_start_index:json_end_index]
-
-                self.get_policy_json = json.loads(json_string)
+                # print(each_line)
+                # print("break")
+                # fix a bug where this step may fail
+                try:
+                    self.get_policy_json = json.loads(json_string)
+                except:
+                    print(f"Failed to parse Script policy json string! Json sring is: ")
+                    print(json_string)
+                    continue
             elif self.poller_scripts_after_filter == '-1' and each_line.startswith(self.log_keyword_table['LOG_PS_POLLER_SCRIPT_AFTER_FILTER_INDICATOR']):
                 end_place = each_line.find(self.log_keyword_table['LOG_PS_POLLER_SCRIPT_2_INDICATOR'])
                 self.poller_scripts_after_filter = each_line[
