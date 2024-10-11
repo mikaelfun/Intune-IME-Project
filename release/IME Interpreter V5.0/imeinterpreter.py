@@ -184,8 +184,9 @@ class ImeInterpreter:
         app_workload_log_lower_file_path = self.log_folder_path + '\\appworkload.log'
 
         dir_list = os.listdir(self.log_folder_path)
+
         # filtering AppWorkload logs only
-        dir_list = [i for i in dir_list if i.lower().startswith('AppWorkload') and i.endswith('.log')]
+        dir_list = [i for i in dir_list if i.lower().startswith('appworkload') and i.endswith('.log')]
         # Remove Current IME log, which is most recent
         if 'appworkload.log' in dir_list:
             dir_list.remove('appworkload.log')
