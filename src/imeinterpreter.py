@@ -29,10 +29,10 @@ class ImeInterpreter:
         self.initialize_odc_folder()
         self.full_log = self.load_full_logs()  # full log as line of string list
 
-        # with open("combinedIME.txt", 'w', encoding='utf-8') as f:
-        #     for item in self.full_log:
-        #         # print(item)
-        #         f.writelines(item)
+        with open("combinedIME.txt", 'w', encoding='utf-8') as f:
+            for item in self.full_log:
+                # print(item)
+                f.writelines(item)
         self.agent_executor_full_log = self.load_all_agent_executor_logs()  # full agentexecutor log as line of string list
         self.initialize_life_cycle_list()
         self.life_cycle_num = len(self.life_cycle_list)
