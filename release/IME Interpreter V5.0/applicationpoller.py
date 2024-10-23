@@ -75,6 +75,31 @@ class ApplicationPoller:
                 <![LOG[[Win32App] The EspPhase: DeviceSetup.]LOG]!
                 <![LOG[[Win32App] The EspPhase: AccountSetup.]LOG]!
                 '''
+
+                #TODO Multi-user logged on (active), will process app session for each logged on user
+                """
+                <![LOG[[Win32App] ----------------------------------------------------- application poller starts. ----------------------------------------------------- ]LOG]!><time="07:18:23.2001775" date="9-27-2024" component="AppWorkload" context="" type="2" thread="26" file="">
+
+                <![LOG[[Win32App] Got 2 active user sessions]LOG]!><time="07:18:23.3489345" date="9-27-2024" component="AppWorkload" context="" type="1" thread="26" file="">
+                <![LOG[[Win32App] ..................... Processing user session 1, userId: 81a25b05-0a31-42cc-93d8-d9e462961f61, userSID:  ..................... ]LOG]!><time="07:18:23.4430143" date="9-27-2024" component="AppWorkload" context="" type="2" thread="26" file="">
+                <![LOG[[Win32App] Requesting required apps]LOG]!><time="07:18:23.6313546" date="9-27-2024" component="AppWorkload" context="" type="2" thread="26" file="">
+                <![LOG[starting impersonation, session id = 1]LOG]!><time="07:18:23.6782366" date="9-27-2024" component="IntuneManagementExtension" context="" type="1" thread="26" file="">
+                <![LOG[After impersonation: FORESTRYSA\Wittem01]LOG]!><time="07:18:23.6782366" date="9-27-2024" component="IntuneManagementExtension" context="" type="1" thread="26" file="">
+                <![LOG[[Win32App] Got 4 Win32App(s) for user 81a25b05-0a31-42cc-93d8-d9e462961f61 in session 1]LOG]!><time="07:18:24.1186939" date="9-27-2024" component="AppWorkload" context="" type="1" thread="26" file="">
+                <![LOG[[Win32App][V3Processor] Done processing 4 subgraphs.]LOG]!><time="07:18:24.2914236" date="9-27-2024" component="AppWorkload" context="" type="1" thread="26" file="">
+                <![LOG[[Win32App] ..................... Completed user session 1, userId: 81a25b05-0a31-42cc-93d8-d9e462961f61, userSID: S-1-5-21-3222387202-2936485571-3282210269-119131 ..................... ]LOG]!><time="07:18:24.2914236" date="9-27-2024" component="AppWorkload" context="" type="2" thread="26" file="">
+                
+                <![LOG[[Win32App] ..................... Processing user session 2, userId: ca5f3999-bd54-474d-9ca3-61f3568c0a6d, userSID:  ..................... ]LOG]!><time="07:18:24.2914236" date="9-27-2024" component="AppWorkload" context="" type="2" thread="26" file="">
+                <![LOG[[Win32App] Requesting required apps]LOG]!><time="07:18:24.3014442" date="9-27-2024" component="AppWorkload" context="" type="2" thread="26" file="">
+                <![LOG[starting impersonation, session id = 2]LOG]!><time="07:18:24.3387336" date="9-27-2024" component="IntuneManagementExtension" context="" type="1" thread="26" file="">
+                <![LOG[After impersonation: FORESTRYSA\mike]LOG]!><time="07:18:24.3387336" date="9-27-2024" component="IntuneManagementExtension" context="" type="1" thread="26" file="">
+                <![LOG[[Win32App] Got 1 Win32App(s) for user ca5f3999-bd54-474d-9ca3-61f3568c0a6d in session 2]LOG]!><time="07:18:24.7438088" date="9-27-2024" component="AppWorkload" context="" type="1" thread="26" file="">
+                <![LOG[[Win32App][V3Processor] Done processing 1 subgraphs.]LOG]!><time="07:19:51.8605774" date="9-27-2024" component="AppWorkload" context="" type="1" thread="26" file="">
+                <![LOG[[Win32App] ..................... Completed user session 2, userId: ca5f3999-bd54-474d-9ca3-61f3568c0a6d, userSID: S-1-5-21-3222387202-2936485571-3282210269-119133 ..................... ]LOG]!><time="07:19:51.8605774" date="9-27-2024" component="AppWorkload" context="" type="2" thread="26" file="">
+                
+                <![LOG[[Win32App] ----------------------------------------------------- application poller stopped. ----------------------------------------------------- ]LOG]!><time="07:19:51.8758800" date="9-27-2024" component="AppWorkload" context="" type="2" thread="26" file="">
+
+                """
             elif not self.user_session and each_line.startswith(self.log_keyword_table['LOG_USER_INDICATOR']):  # get current user session
                 end_place = each_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
                 self.user_session = each_line[len(self.log_keyword_table['LOG_USER_INDICATOR']):end_place]
