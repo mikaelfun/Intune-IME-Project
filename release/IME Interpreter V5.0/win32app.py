@@ -320,7 +320,8 @@ class Win32App:
                 self.no_enforcement_reason = "Subgraph may be missing required intent in dependency chain."
             self.reason_need_output = True
         elif self.subgraph_type == 3:
-            print("TBD, determine_no_enforcement_reason")
+            self.no_enforcement_reason = "Superseded app is not detected. No need to process."
+            self.reason_need_output = True
         else:
             self.no_enforcement_reason = self.cur_enforcement_state
             self.reason_need_output = True
@@ -638,7 +639,18 @@ class Win32App:
                     self.download_finish_time = cur_time
                     self.download_success = True
                     post_download = True
-
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_CONTENT_CACHED_INDICATOR']):
+                """
+                Added scenario where content is cached, no need to download
+                """
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_CONTENT_CACHED_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                self.has_enforcement = True
+                self.download_success = True
+                self.download_finish_time = cur_time
+                post_download = True
             # TODO: CDN failure scenario?
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_HASH_SUCCESS_INDICATOR']):
                 if self.hash_validate_success_time == "":
@@ -938,12 +950,13 @@ class Win32App:
                     self.app_file_size = app_size
 
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DO_FINISH_INDICATOR']):
-                if self.download_finish_time == "" and self.download_start_time != "":
-                    self.download_finish_time = cur_time
-                    self.download_success = True
-                    post_download = True
-                else:
-                    continue  # Means this is the line for other dependent apps
+                if self.has_enforcement:
+                    if self.download_finish_time == "" and self.download_start_time != "":
+                        self.download_finish_time = cur_time
+                        self.download_success = True
+                        post_download = True
+                    else:
+                        continue  # Means this is the line for other dependent apps
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DO_NOT_FINISH_INDICATOR']):
                 if self.download_finish_time == "" and self.download_start_time != "":
                     self.download_finish_time = cur_time
@@ -968,19 +981,33 @@ class Win32App:
                     self.download_success = True
                     post_download = True
 
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_CONTENT_CACHED_INDICATOR']):
+                """
+                Added scenario where content is cached, no need to download
+                """
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_CONTENT_CACHED_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                self.has_enforcement = True
+                self.download_success = True
+                self.download_finish_time = cur_time
+                post_download = True
                 # TODO: CDN failure scenario?
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_HASH_SUCCESS_INDICATOR']):
-                if self.hash_validate_success_time == "":
-                    self.hash_validate_success_time = cur_time
-                    self.hash_validate_success = True
-                else:
-                    continue  # Means this is the line for other dependent apps
+                if self.has_enforcement:
+                    if self.hash_validate_success_time == "":
+                        self.hash_validate_success_time = cur_time
+                        self.hash_validate_success = True
+                    else:
+                        continue  # Means this is the line for other dependent apps
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DECRYPT_SUCCESS_INDICATOR']):
-                if self.decryption_success_time == "":
-                    self.decryption_success_time = cur_time
-                    self.decryption_success = True
-                else:
-                    continue  # Means this is the line for other dependent apps
+                if self.has_enforcement:
+                    if self.decryption_success_time == "":
+                        self.decryption_success_time = cur_time
+                        self.decryption_success = True
+                    else:
+                        continue  # Means this is the line for other dependent apps
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DOWNLOAD_SIZE_INDICATOR']):
                 file_size_index_start = 38
                 file_size_index_end = cur_line.find(']LOG]!') - 3
@@ -994,11 +1021,12 @@ class Win32App:
                     (cur_line[download_time_index_start:download_time_index_stop]).replace(',', '')) // 1000
                 # print(self.detection_state_json)
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_CLEANUP_INDICATOR']):
-                if self.unzipping_success_time == "":
-                    self.unzipping_success_time = cur_time
-                    self.unzipping_success = True
-                else:
-                    continue  # Means this is the line for other dependent apps
+                if self.has_enforcement:
+                    if self.unzipping_success_time == "":
+                        self.unzipping_success_time = cur_time
+                        self.unzipping_success = True
+                    else:
+                        continue  # Means this is the line for other dependent apps
             elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_EXECUTE_INDICATOR']):
                 if self.current_attempt_num == "0":
                     self.current_attempt_num = cur_line[42:43] + '1'
@@ -1077,7 +1105,345 @@ class Win32App:
             self.download_average_speed = self.convert_speedraw_to_string()
 
     def process_win32_supercedence_app_log(self):
-        pass
+        post_install = False
+        post_download = False
+        for cur_line_index in range(len(self.full_log)):
+            cur_line = self.full_log[cur_line_index]
+            cur_time = logprocessinglibrary.get_timestamp_by_line(cur_line)
+
+            if cur_line.startswith(self.log_keyword_table['LOG_WIN32_DETECTION_OLD_INDICATOR']):
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_DETECTION_OLD_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                if not post_download and not post_install:
+                    detection_old_start_index = len(self.log_keyword_table['LOG_WIN32_DETECTION_OLD_RESULT_INDICATOR'])
+                    if cur_line[detection_old_start_index:detection_old_start_index + 8] == "Detected":
+                        self.pre_install_detection = True
+                        self.pre_install_detection_time = cur_time
+                    else:
+                        self.pre_install_detection = False
+                        self.pre_install_detection_time = cur_time
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DETECTION_STATE_REPORT_INDICATOR']):
+                # Evaluating whether app has enforcement
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_DETECTION_STATE_REPORT_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                # Pre-Download Detection
+                detection_state_json_start_index = len(
+                    self.log_keyword_table['LOG_WIN32_DETECTION_STATE_JSON_INDICATOR'])
+                detection_state_json_stop_index = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
+                self.detection_state_json = json.loads(
+                    cur_line[detection_state_json_start_index: detection_state_json_stop_index])
+                # print(self.detection_state_json)
+                if not post_download and not post_install:
+                    if 'DetectionState' not in self.detection_state_json:
+                        continue
+                    else:
+                        if self.detection_state_json['DetectionState']['NewValue'] == "Installed":
+                            self.pre_install_detection = True
+                            self.pre_install_detection_time = cur_time
+                        elif self.detection_state_json['DetectionState']['NewValue'] == "NotInstalled":
+                            self.pre_install_detection = False
+                            self.pre_install_detection_time = cur_time
+                        elif self.detection_state_json['DetectionState']['NewValue'] == "Undetectable":
+                            # Root app in dependency chain will not be detected before dependent apps are detected and processed
+                            self.pre_install_detection = False
+                            self.pre_install_detection_time = cur_time
+                elif post_download and not post_install:
+                    """
+                    post download, pre-install detection.
+                    Sometimes app gets detected after download.
+                    """
+                    if 'DetectionState' not in self.detection_state_json:
+                        continue
+                    else:
+                        if self.detection_state_json['DetectionState']['NewValue'] == "Installed":
+                            self.post_download_detection = True
+                            self.post_download_detection_time = cur_time
+                            self.skip_installation = True
+                elif post_download and post_install:
+                    if 'DetectionState' not in self.detection_state_json:
+                        continue
+                    else:
+                        if self.detection_state_json['DetectionState']['NewValue'] == "Installed":
+                            self.post_install_detection = True
+                            self.post_install_detection_time = cur_time
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_INDICATOR']):
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_APPLICABILITY_OLD_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                if not post_download and not post_install:
+                    detection_old_start_index = len(
+                        self.log_keyword_table['LOG_WIN32_APPLICABILITY_OLD_RESULT_INDICATOR'])
+                    if cur_line[detection_old_start_index:detection_old_start_index + 10] == "Applicable":
+                        self.applicability = True
+                        self.applicability_time = cur_time
+                    else:
+                        self.applicability = False
+                        self.applicability_time = cur_time
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR']):
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_APPLICABILITY_STATE_REPORT_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                applicability_state_json_start_index = len(
+                    self.log_keyword_table['LOG_WIN32_APPLICABILITY_STATE_JSON_INDICATOR'])
+                applicability_state_json_stop_index = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
+                self.applicability_state_json = json.loads(
+                    cur_line[applicability_state_json_start_index: applicability_state_json_stop_index])
+                if self.applicability_state_json['ApplicabilityState']['NewValue'] == "Applicable":
+                    self.applicability = True
+                elif self.applicability_state_json['ApplicabilityState'][
+                    'NewValue'] == "AppUnsupportedDueToUnknownReason":
+                    self.applicability = False
+                    self.applicability_reason = "User Context App will be processed after user logon."
+                else:
+                    self.applicability = False
+                self.applicability_time = cur_time
+
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_EXECUTION_STATE_REPORT_INDICATOR']):
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_EXECUTION_STATE_REPORT_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+
+                """
+                In post Install detection, if app not detected, it will reflect in Execution report instead of Detection report.
+                <![LOG[[Win32App] Completed detectionManager SideCarProductCodeDetectionManager, applicationDetectedByCurrentRule: False]LOG]!><time="20:48:53.4427411" date="10-16-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+                <![LOG[[Win32App][ReportingManager] Execution state for app with id: 6ddfcc73-09da-4789-a4a5-b437b73906d7 has been updated. Report delta: {"EnforcementState":{"OldValue":"Success","NewValue":"Error"},"EnforcementErrorCode":{"OldValue":0,"NewValue":-2016345060}}]LOG]!><time="20:48:53.4442020" date="10-16-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+                """
+                execution_state_json_start_index = len(
+                    self.log_keyword_table['LOG_WIN32_EXECUTION_STATE_JSON_INDICATOR'])
+                execution_state_json_stop_index = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
+                self.detection_state_json = json.loads(
+                    cur_line[execution_state_json_start_index: execution_state_json_stop_index])
+                if post_download and post_install:
+                    if self.detection_state_json['EnforcementState']['NewValue'] == "Error":
+                        self.post_install_detection = False
+                        self.post_install_detection_time = cur_time
+
+            elif cur_line.startswith(
+                    self.log_keyword_table['LOG_WIN32_NO_ACTION_REQUIRED_INDICATOR']):  # TODO ? Delete?
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, "app with id: ")
+                if cur_app_id != self.app_id:
+                    continue
+                # Stop without enforcement
+                self.has_enforcement = False
+                self.cur_app_log_end_index = cur_line_index
+                break
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DOWNLOADING_START_INDICATOR']):
+                """
+                Win32 downloading start indicator
+
+                <![LOG[[Win32App] Downloading app on session 2. App: 3dde4e19-3a18-4dec-b60e-720b919e1790]LOG]!><time="12:37:58.5140236" date="3-23-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">
+                """
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, '. App: ')
+                if cur_app_id != self.app_id:
+                    continue
+                if self.download_start_time == "":
+                    self.download_start_time = cur_time
+                self.has_enforcement = True
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DOWNLOAD_URL_LINE_INDICATOR']):
+                download_url_start_index = len(self.log_keyword_table['LOG_WIN32_DOWNLOAD_URL_INDICATOR'])
+                download_url_stop_index = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
+                if self.download_url == "":
+                    self.download_url = cur_line[download_url_start_index: download_url_stop_index]
+
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_PROXY_INDICATOR']):
+                proxy_start_index = len(self.log_keyword_table['LOG_WIN32_PROXY_INDICATOR'])
+                proxy_end_index = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
+                self.proxy_url = cur_line[proxy_start_index:proxy_end_index]
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DO_TIMEOUT_INDICATOR']):
+                if cur_line.startswith(self.log_keyword_table[
+                                           'LOG_WIN32_DO_BG_TIMEOUT_INDICATOR']):  # code update to allow DO background time out to 30 min instead of 10 min
+                    if self.download_do_mode == "" and self.pre_install_detection_time != "":
+                        self.download_do_mode = "BACKGROUND(30 min timeout)"
+                    else:
+                        continue  # Means this is the line for other dependent apps
+                elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DO_FG_TIMEOUT_INDICATOR']):
+                    if self.download_do_mode == "" and self.pre_install_detection_time != "":
+                        self.download_do_mode = "FOREGROUND(12 hour timeout)"
+                    else:
+                        continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR']):
+                """
+                Track downloaded size in case timeout.
+
+                <![LOG[[StatusService] Downloading app (id = e765119c-6af3-4d39-8eac-3e86fd7642b0, name Adobe Acrobat DC) via DO, bytes 720928912/721977488 for user 37ed0412-d13e-481c-a784-6447007aa208]LOG]!><time="09:49:19.3750179" date="10-26-2023" component="IntuneManagementExtension" context="" type="1" thread="5" file="">                
+                """
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_DOWNLOADING_PROGRESS_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                downloaded_size_index_start = cur_line.find(self.log_keyword_table[
+                                                                'LOG_WIN32_DOWNLOADED_START_INDICATOR']) + \
+                                              len(self.log_keyword_table['LOG_WIN32_DOWNLOADED_START_INDICATOR'])
+                downloaded_size_index_stop = cur_line.find(
+                    self.log_keyword_table['LOG_WIN32_DOWNLOADED_STOP_INDICATOR'])
+                percent_size = cur_line[downloaded_size_index_start: downloaded_size_index_stop].split('/')
+                downloaded_size = int(percent_size[0])
+                app_size = int(percent_size[1])
+                self.download_file_size = downloaded_size
+                if self.app_file_size <= 0:
+                    self.app_file_size = app_size
+
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DO_FINISH_INDICATOR']):
+                if self.has_enforcement:
+                    if self.download_finish_time == "" and self.download_start_time != "":
+                        self.download_finish_time = cur_time
+                        self.download_success = True
+                        post_download = True
+                    else:
+                        continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DO_NOT_FINISH_INDICATOR']):
+                if self.download_finish_time == "" and self.download_start_time != "":
+                    self.download_finish_time = cur_time
+                    self.download_success = False
+                else:
+                    continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_CDN_START_INDICATOR']):
+                """
+                DO mode failed and switched to CDN mode
+
+                <![LOG[[Win32App] ExternalCDN mode, content raw URL is http://swdc02-mscdn.manage.microsoft.com/9f5567be-61f6-471a-aa19-c861288bbeb6/7b67a1bc-58f6-4d45-bb3a-d1035fe0e897/d85339f0-1e76-4c3d-ba03-b82216aff5ec.intunewin.bin]LOG]!><time="15:38:38.0738644" date="10-23-2023" component="IntuneManagementExtension" context="" type="1" thread="10" file="">
+                <![LOG[[StatusService] Downloading app (id = 22ccfbac-0e48-43e2-960d-ada16559ed33, name Autopilot Branding) via CDN, bytes 21524/64425536 for user 00000000-0000-0000-0000-000000000000]LOG]!><time="15:38:38.1446607" date="10-23-2023" component="IntuneManagementExtension" context="" type="1" thread="16" file="">
+                <![LOG[[Win32App] CDN mode, download completes.]LOG]!><time="15:38:43.2381585" date="10-23-2023" component="IntuneManagementExtension" context="" type="1" thread="10" file="">
+
+                """
+                if self.download_url in cur_line:
+                    self.download_start_time = cur_time
+                    self.download_do_mode = "CDN mode"
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_CDN_STOP_INDICATOR']):
+                if self.download_do_mode == "CDN mode" and self.download_start_time != "":
+                    self.download_finish_time = cur_time
+                    self.download_success = True
+                    post_download = True
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_CONTENT_CACHED_INDICATOR']):
+                """
+                Added scenario where content is cached, no need to download
+                """
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_CONTENT_CACHED_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                self.has_enforcement = True
+                self.download_success = True
+                self.download_finish_time = cur_time
+                post_download = True
+
+                # TODO: CDN failure scenario?
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_HASH_SUCCESS_INDICATOR']):
+                if self.has_enforcement:
+                    if self.hash_validate_success_time == "":
+                        self.hash_validate_success_time = cur_time
+                        self.hash_validate_success = True
+                    else:
+                        continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DECRYPT_SUCCESS_INDICATOR']):
+                if self.has_enforcement:
+                    if self.decryption_success_time == "":
+                        self.decryption_success_time = cur_time
+                        self.decryption_success = True
+                    else:
+                        continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DOWNLOAD_SIZE_INDICATOR']):
+                file_size_index_start = 38
+                file_size_index_end = cur_line.find(']LOG]!') - 3
+                self.download_file_size = int(
+                    (cur_line[file_size_index_start:file_size_index_end]).replace(',', ''))
+
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_DOWNLOAD_TIME_INDICATOR']):
+                download_time_index_start = len(self.log_keyword_table['LOG_WIN32_DOWNLOAD_TIME_INDICATOR'])
+                download_time_index_stop = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING']) - 3
+                self.download_time = int(
+                    (cur_line[download_time_index_start:download_time_index_stop]).replace(',', '')) // 1000
+                # print(self.detection_state_json)
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_CLEANUP_INDICATOR']):
+                if self.has_enforcement:
+                    if self.unzipping_success_time == "":
+                        self.unzipping_success_time = cur_time
+                        self.unzipping_success = True
+                    else:
+                        continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_EXECUTE_INDICATOR']):
+                if self.current_attempt_num == "0":
+                    self.current_attempt_num = cur_line[42:43] + '1'
+                else:
+                    continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_INSTALLER_CREATE_INDICATOR']):
+                if self.install_start_time == "":
+                    self.install_start_time = cur_time
+                    self.installer_created_success = True
+                else:
+                    continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_INSTALLER_ID_INDICATOR']):
+                installer_thread_id_index_start = cur_line.find('process id = ') + len('process id = ')
+                installer_thread_id_index_stop = cur_line.find(']LOG]!')
+                if self.installer_thread_id == "":
+                    self.installer_thread_id = \
+                        cur_line[installer_thread_id_index_start:installer_thread_id_index_stop]
+                else:
+                    continue  # Means this is the line for other dependent apps
+
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_INSTALLER_TIMEOUT_INDICATOR']):
+                timeout_index_start = cur_line.find(self.log_keyword_table['LOG_WIN32_INSTALLER_TIMEOUT_INDICATOR']) + \
+                                      len(self.log_keyword_table['LOG_WIN32_INSTALLER_TIMEOUT_INDICATOR'])
+                timeout_index_stop = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING']) - 1
+                time_str_raw = cur_line[timeout_index_start: timeout_index_stop]
+                self.installer_timeout_str = str(int(int(time_str_raw) / 1000 / 60))
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_INSTALL_FINISH_INDICATOR']):
+                if self.install_finish_time == "":
+                    self.install_finish_time = cur_time
+                    post_install = True
+                else:
+                    continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_INSTALL_EXIT_CODE_INDICATOR']):
+
+                if cur_line.startswith(self.log_keyword_table['LOG_WIN32_INSTALL_EXIT_CODE_DEF_INDICATOR']):
+                    installation_result_index_start = len(
+                        self.log_keyword_table['LOG_WIN32_INSTALL_EXIT_CODE_DEF_INDICATOR'])
+                    installation_result_index_stop = cur_line.find(']LOG]!')
+                    if self.installation_result == "":
+                        self.installer_exit_success = True
+                        self.installation_result = cur_line[
+                                                   installation_result_index_start:installation_result_index_stop]
+                    else:
+                        continue  # Means this is the line for other dependent apps
+                else:
+                    exit_code_index_start = len('<![LOG[[Win32App] lpExitCode')
+                    exit_code_index_stop = cur_line.find(']LOG]!')
+                    if self.install_exit_code == -10000:
+                        self.installer_exit_success = True
+                        self.install_exit_code = int(cur_line[exit_code_index_start:exit_code_index_stop])
+                    else:
+                        continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_EXIT_CODE_NOMAPPING_INDICATOR']):
+                installation_result_index_start = len('<![LOG[[Win32App] ')
+                installation_result_index_stop = cur_line.find('of app: ')
+                if self.installation_result == "":
+                    self.installer_exit_success = True
+                    self.installation_result = \
+                        cur_line[installation_result_index_start:installation_result_index_stop]
+                else:
+                    continue  # Means this is the line for other dependent apps
+            elif cur_line.startswith(self.log_keyword_table['LOG_WIN32_REPORTING_STATE_INDICATOR']):
+                cur_enforcement_index_start = cur_line.find('{"ApplicationId"')
+                cur_enforcement_index_end = cur_line.find(self.log_keyword_table['LOG_ENDING_STRING'])
+                cur_app_id = logprocessinglibrary.find_app_id_with_starting_string(cur_line, self.log_keyword_table[
+                    'LOG_WIN32_REPORTING_STATE_INDICATOR'])
+                if cur_app_id != self.app_id:
+                    continue
+                app_json = cur_line[cur_enforcement_index_start:cur_enforcement_index_end]
+                try:
+                    temp_enforcement_report = json.loads(app_json)
+                    self.current_enforcement_status_report = temp_enforcement_report
+                except ValueError:
+                    print("Json invalid, dropping")
+        if self.download_start_time != "":
+            self.download_average_speed = self.convert_speedraw_to_string()
 
     def process_msfb_user_context_app_log(self):
         for cur_line_index in range(len(self.full_log)):
@@ -1497,7 +1863,7 @@ class Win32App:
             elif self.subgraph_type == 2:
                 right_string = "Dependent app"
             elif self.subgraph_type == 3:
-                right_string = "TBD_generate_standalone_win32_app_meta_log_output"
+                right_string = "Superseded app"
         elif self.intent == 1:
             right_string = "Available Install"
         elif self.intent == 3:
@@ -1537,6 +1903,13 @@ class Win32App:
             depth)
 
         left_string = 'Has Dependent Apps:'
+        right_string = 'No'
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+
+        left_string = 'Has Superseded Apps:'
         right_string = 'No'
         interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
@@ -1638,8 +2011,15 @@ class Win32App:
             constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
                                                                                                          right_string),
             depth)
-        # List Dependent apps
 
+        left_string = 'Has Superseded Apps:'
+        right_string = 'No'
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+
+        # List Dependent apps
         for each_dependent_app_index in range(len(self.dependent_apps_list)):
             each_dependent_app = self.dependent_apps_list[each_dependent_app_index]
             child_app_id = each_dependent_app['ChildId']
@@ -1651,8 +2031,125 @@ class Win32App:
                 right_string += 'No '
             elif child_auto_install == 10:
                 right_string += 'Yes '
-            elif child_auto_install == 100:
-                right_string += 'Supersedence '  # not yet implemented.
+
+            right_string += ('[' + child_app_name + ']')
+            interpreted_log_output += \
+                constructinterpretedlog.write_log_output_line_with_indent_depth(
+                    constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output \
+                        ("", right_string, logprocessinglibrary.CONST_META_DEPENDENT_APP_VALUE_INDEX), depth)
+
+        left_string = 'GRS time:'
+        right_string = (self.grs_time if self.grs_time != "" else 'No recorded GRS')
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+
+        left_string = 'GRS expired:'
+        right_string = str(self.grs_expiry)
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+
+        return interpreted_log_output
+
+    def generate_supercedence_win32_app_meta_log_output(self, depth=0):
+        interpreted_log_output = ""
+
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App ID:',
+                                                                                                         self.app_id),
+            depth)
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Name:',
+                                                                                                         self.app_name),
+            depth)
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output('App Type:',
+                                                                                                         self.app_type),
+            depth)
+        left_string = 'Target Type:'
+        right_string = ""
+        if self.target_type == 0:
+            right_string = 'Dependent App'
+        elif self.target_type == 1:
+            right_string = 'User Group'
+        elif self.target_type == 2:
+            right_string = 'Device Group'
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+
+        left_string = 'App Intent:'
+        right_string = ""
+        if self.intent == 0:
+            right_string = "Dependent app"
+        elif self.intent == 1:
+            right_string = "Available Install"
+        elif self.intent == 3:
+            right_string = "Required Install"
+        elif self.intent == 4:
+            right_string = "Required Uninstall"
+
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+
+        left_string = 'App Context:'
+        right_string = ""
+        if self.install_context == 1:
+            right_string = "User"
+        elif self.install_context == 2:
+            right_string = "System"
+
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+
+        left_string = 'Last Enforcement State:'
+        right_string = self.last_enforcement_state
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+
+        left_string = 'Current Enforcement State:'
+        right_string = self.cur_enforcement_state
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+
+        left_string = 'Has Dependent Apps:'
+        right_string = 'No'
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+
+        left_string = 'Has Superseded Apps:'
+        right_string = 'Yes'
+        interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+            constructinterpretedlog.write_two_string_at_left_and_middle_with_filled_spaces_to_log_output(left_string,
+                                                                                                         right_string),
+            depth)
+        # List Dependent apps
+
+        for each_supersedence_app_index in range(len(self.supersedence_apps_list)):
+            each_supersedence_app = self.supersedence_apps_list[each_supersedence_app_index]
+            child_app_id = each_supersedence_app['ChildId']
+            child_auto_install = each_supersedence_app['Action']
+            child_app_name = [match['Name'] for match in self.policy_json if match['Id'] == child_app_id].pop()
+            right_string = str(each_supersedence_app_index + 1) + ". " + child_app_id + " [Auto Uninstall]: "
+
+            if child_auto_install == 100:
+                right_string += 'No '
+            elif child_auto_install == 110:
+                right_string += 'Yes '
 
             right_string += ('[' + child_app_name + ']')
             interpreted_log_output += \
@@ -2259,7 +2756,10 @@ class Win32App:
             else:
                 temp_log += "Dependent standalone app: ["
         elif self.subgraph_type == 3:
-            temp_log += "Supercedence app: ["
+            if self.is_root_app:
+                temp_log += "Superceding app: ["
+            else:
+                temp_log += "Superceded app: ["
         temp_log += (self.app_name + "] " + 'with intent: ')
 
         "with intent "
@@ -2271,7 +2771,12 @@ class Win32App:
         4. Uninstall
         '''
         if self.intent == 0:
-            temp_log += "Dependent app"
+            if self.subgraph_type == 1:
+                temp_log += "Filtered by Assignment filter"
+            elif self.subgraph_type == 2:
+                temp_log += "Dependent app"
+            elif self.subgraph_type == 3:
+                temp_log += "Superceded app"
         elif self.intent == 1:
             temp_log += "Available Install"
         elif self.intent == 3:

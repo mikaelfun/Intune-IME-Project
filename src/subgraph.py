@@ -32,6 +32,7 @@ class SubGraph:
         self.log_content = subgraph_processing_log
         self.log_len = len(self.log_content)
         self.app_id_list = []
+        self.root_app_list = []
         self.app_names = dict()  # key: app id string, value: app name string
         self.policy_json = policy_json
         self.subgraph_app_object_list = []
@@ -54,7 +55,6 @@ class SubGraph:
             print(subgraph_processing_log)
             return None
         self.process_subgraph_meta()
-        self.check_subgraph_type()
         self.get_app_name_from_json_by_app_id()
         self.initialize_win32_apps_list()
 
@@ -112,6 +112,10 @@ class SubGraph:
         In one subgraph, the top root app is an app without any root apps above it.
         So it is the app not found in the dictionary
 
+        There could be multiple root apps in 1 subgraph. Eg. app1 depends on app2. app3 depends on app2. Then both app1
+        and app3 are root apps, and 3 apps are included in 1 subgraph.
+        The install sequence would be app2->app1->app2->app3
+
         :return: None
         """
         root_id = ""
@@ -135,30 +139,15 @@ class SubGraph:
                         root_to_leaf_dic[each_app_id].append(each_dependency_relationship_dict["ChildId"])
                     else:
                         root_to_leaf_dic[each_app_id] = [each_dependency_relationship_dict["ChildId"]]
-                        """
-                        public enum DependencyAction
-                        {
-                            Detect = 0,
-                            Install = 10,
-                        }
-
-                        public enum SupersedenceAction
-                        {
-                            Update = 100,
-                            Replace = 110
-                        }
-                        """
-                        if each_dependency_relationship_dict["Action"] > 10:
-                            self.subgraph_type = 3
 
         for each_app_id in self.app_id_list:
             if each_app_id not in leaf_to_root_dic.keys():
-                root_id = each_app_id
+                self.root_app_list.append(each_app_id)
                 # self.app_id_list.remove(each_app_id)
                 # self.app_id_list.insert(0, each_app_id)
-                break
+        for each_root in self.root_app_list:
+            new_app_id_list += (x for x in self.recursive_add_dependent_app_id(each_root, root_to_leaf_dic) if x not in new_app_id_list)
 
-        new_app_id_list = self.recursive_add_dependent_app_id(root_id, root_to_leaf_dic)
         self.app_id_list = new_app_id_list
 
     # depth first list to format list of all dependent apps
@@ -185,7 +174,10 @@ class SubGraph:
             (self.log_content[0][id_start_index:id_stop_index]).split(', '))
         # print(cur_subgraph.app_id_list)
         self.app_num = len(self.app_id_list)
-        if self.subgraph_type == 2:
+
+        self.check_subgraph_type()
+
+        if self.subgraph_type >= 2:
             self.sort_app_id_list_top_root_app()
         for each_line_index in range(1, self.log_len):
             cur_line = self.log_content[each_line_index]
@@ -253,10 +245,20 @@ class SubGraph:
             cur_app_grs_expiry = self.grs_expiry[cur_app_id] if cur_app_id in self.grs_expiry.keys() else False
             cur_app_last_enforcement_json = self.last_enforcement_json_dict[cur_app_id] \
                 if cur_app_id in self.last_enforcement_json_dict.keys() else None
-            self.subgraph_app_object_list.append(win32app.Win32App(self.log_content, cur_app_id, cur_app_name, self.policy_json,
+
+            cur_win32_app_object = win32app.Win32App(self.log_content, cur_app_id, cur_app_name, self.policy_json,
                                                           cur_app_grs_time, self.hash_key, cur_app_grs_expiry,
-                                                          self.subgraph_type, cur_app_last_enforcement_json))
+                                                          self.subgraph_type, cur_app_last_enforcement_json)
+            if cur_app_id in self.root_app_list:
+                cur_win32_app_object.is_root_app = True
+            self.subgraph_app_object_list.append(cur_win32_app_object)
             # print("here")
+
+    def get_subgraph_object_by_id(self, app_id):
+        for each_subgraph_app_object in self.subgraph_app_object_list:
+            if each_subgraph_app_object.app_id == app_id:
+                return each_subgraph_app_object
+        return None
 
     # Recursive function to handle dependency chain
     def generate_subgraph_dependent_app_processing_log_output(self, app_object, depth=0):
@@ -288,10 +290,64 @@ class SubGraph:
                 interpreted_log_output += '\n'
 
             if self.reevaluation_expired:
-                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(each_app_object.end_time + ' All dependent apps processed, processing root app [' + app_object.app_name + ']\n\n', depth)
+                dependent_app_end_time = each_app_object.end_time
+                if not each_app_object.has_enforcement:
+                    dependent_app_end_time = each_app_object.applicability_time
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(dependent_app_end_time + ' All dependent apps processed, processing root app [' + app_object.app_name + ']\n\n', depth)
                 interpreted_log_output += app_object.generate_win32app_post_download_log_output(depth)
                 if not app_object.has_enforcement and not app_object.reason_need_output:
                     interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(app_object.end_time + ' No Action required for this root app [' + app_object.app_name + '] because ' + app_object.no_enforcement_reason + '\n', depth)
+
+            else:
+                pass
+
+        return interpreted_log_output
+
+    # For loop function to handle supersedence chain
+    def generate_subgraph_supersedence_app_processing_log_output(self, app_object, depth=0):
+        interpreted_log_output = ""
+        # interpreted_log_output += write_log_output_line_with_indent_depth(str(app_index) + '.\n', depth)
+        has_supersedence_apps = True if app_object.supersedence_apps_list is not None else False
+        if not has_supersedence_apps:
+            interpreted_log_output += app_object.generate_standalone_win32_app_meta_log_output(depth)
+            interpreted_log_output += '\n'
+            if self.reevaluation_expired:
+                interpreted_log_output += app_object.generate_standalone_win32app_log_output(depth)
+                interpreted_log_output += '\n'
+        else:
+            interpreted_log_output += app_object.generate_supercedence_win32_app_meta_log_output(depth)
+            interpreted_log_output += '\n'
+
+            if self.reevaluation_expired:
+                interpreted_log_output += app_object.generate_win32app_first_line_log_output(depth)
+                interpreted_log_output += app_object.generate_win32app_pre_download_log_output(depth)
+                interpreted_log_output += '\n'
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+                    app_object.pre_install_detection_time + ' Processing superceded apps start\n\n', depth)
+
+            supersedence_app_id_list = [each_supersedence_dic['ChildId'] for each_supersedence_dic in
+                                      app_object.supersedence_apps_list]
+            supersedence_app_object_list = [each_app for each_app in self.subgraph_app_object_list if
+                                          each_app.app_id in supersedence_app_id_list]
+
+            each_app_object = None
+            for each_app_object in supersedence_app_object_list:
+                interpreted_log_output += self.generate_subgraph_supersedence_app_processing_log_output(
+                    each_app_object, depth + 1)
+                interpreted_log_output += '\n'
+
+            if self.reevaluation_expired:
+                superseded_app_end_time = each_app_object.end_time
+                if not each_app_object.has_enforcement:
+                    superseded_app_end_time = each_app_object.applicability_time
+                interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+                    superseded_app_end_time + ' All superseded apps processed, processing superceding app [' + app_object.app_name + ']\n\n',
+                    depth)
+                interpreted_log_output += app_object.generate_win32app_post_download_log_output(depth)
+                if not app_object.has_enforcement and not app_object.reason_need_output:
+                    interpreted_log_output += constructinterpretedlog.write_log_output_line_with_indent_depth(
+                        app_object.end_time + ' No Action required for this root app [' + app_object.app_name + '] because ' + app_object.no_enforcement_reason + '\n',
+                        depth)
 
             else:
                 pass
@@ -329,17 +385,13 @@ class SubGraph:
                         interpreted_log_output += '\n'
             else:
                 print("Error in code. Standalone flow does not have 1 app in current subgraph!")
-        else:
+        elif self.subgraph_type == 2:
             if (len(self.subgraph_app_object_list)) > 0:
-                if (len(self.subgraph_app_object_list)) > 1:
-                    """
-                    The first app in the line below is not necessarily the root app.
-                    <![LOG[[Win32App][V3Processor] Processing subgraph with app ids: 1f4b773e-53ed-4cd8-b12b-16c336bba549, b3aa3d56-d0f5-47a0-8240-ae85ed050a6b, 3dde4e19-3a18-4dec-b60e-720b919e1790]LOG]
-                    """
-                    self.subgraph_app_object_list[0].is_root_app = True
-                interpreted_log_output += (
-                    self.generate_subgraph_dependent_app_processing_log_output(self.subgraph_app_object_list[0]))
-                interpreted_log_output += '\n'
+                for each_root in self.root_app_list:
+                    each_root_win32_object = self.get_subgraph_object_by_id(each_root)
+                    interpreted_log_output += (
+                        self.generate_subgraph_dependent_app_processing_log_output(each_root_win32_object))
+                    interpreted_log_output += '\n'
 
             interpreted_log_output += '\n'
             if not self.reevaluation_expired:
@@ -358,5 +410,21 @@ class SubGraph:
             is always the root app id in this subgraph
 
             """
+        elif self.subgraph_type == 3:
+            """
+            supersedence flow
+            """
+            if (len(self.subgraph_app_object_list)) > 0:
+                for each_root in self.root_app_list:
+                    each_root_win32_object = self.get_subgraph_object_by_id(each_root)
+                    interpreted_log_output += (
+                        self.generate_subgraph_supersedence_app_processing_log_output(each_root_win32_object))
+                    interpreted_log_output += '\n'
 
+            interpreted_log_output += '\n'
+            if not self.reevaluation_expired:
+                interpreted_log_output += "Subgraph will be reevaluated after last reevaluation time + 8 hours\n\n"
+                return interpreted_log_output
+        else:
+            print("subgraph_type unknown!")
         return interpreted_log_output

@@ -132,7 +132,7 @@ if __name__ == '__main__':
 #     from imeinterpreter import *
 #
 #     # path_to_ime_log_folder = r"C:\Users\kufang\OneDrive - Microsoft\Projects\IME project\Log samples\2024\Eddie log multi aad user IME session not supported\Logs"
-#     path_to_ime_log_folder = r"C:\Users\kufang\Downloads\AUTO8CC0210MYV-autopilotlogs"
+#     path_to_ime_log_folder = r"C:\Users\kufang\OneDrive - Microsoft\Projects\IME project\Log samples\2024\supersedence Chrome no auto uninstall"
 #     a = ImeInterpreter(path_to_ime_log_folder)
 #     #print(a.generate_powershell_interpreter_log_output_webui())
 #     print(a.generate_win32_interpreter_log_output_webui())

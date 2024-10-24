@@ -53,6 +53,7 @@
   "LOG_WIN32_DOWNLOADED_START_INDICATOR" : ", bytes ",
   "LOG_WIN32_DOWNLOADED_STOP_INDICATOR" : " for user ",
   "LOG_WIN32_HASH_SUCCESS_INDICATOR" : "<![LOG[[Win32App] file hash validation pass",
+  "LOG_WIN32_CONTENT_CACHED_INDICATOR":"<![LOG[[Win32App] Content cache found for app id ",
   "LOG_WIN32_DECRYPT_SUCCESS_INDICATOR" : "<![LOG[[Win32App] Decryption is done successfully.]",
   "LOG_WIN32_DOWNLOAD_SIZE_INDICATOR" : "<![LOG[[Win32App] Downloaded file size ",
   "LOG_WIN32_DOWNLOAD_TIME_INDICATOR" : "<![LOG[[Win32App] Downloaded file time ",
