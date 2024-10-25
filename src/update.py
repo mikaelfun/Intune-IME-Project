@@ -234,13 +234,13 @@ class ColdUpdateThread(QThread):
         # print("Cold Update finishes")
         # logging.info("Cold - Update finished.")
 
-        restart_program()
         # UnGrey out button to prevent incomplete update download
         self.update_button_signal.emit(True)
         # appwindow.progress.setValue(100)
         self.update_progress_signal.emit(100)
         self.update_firstline_signal.emit("Update Completed. You can close the window.")
         self.update_secondline_signal.emit("")
+        restart_program()
 
     def download_file_via_url(self, url):
         filename = url.split("/src/")[-1].replace('%20', ' ')

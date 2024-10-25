@@ -1,6 +1,8 @@
 import shutil
 import sys
 import threading
+import time
+
 import requests
 import os
 from flaskappui import *
@@ -61,6 +63,8 @@ def update_selfupdater():
 
 
 def update_thread_job():
+    # delay 10 seconds to update update.exe
+    time.sleep(10)
     if update_selfupdater():
         pass
     else:
