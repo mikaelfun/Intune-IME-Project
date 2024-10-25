@@ -28,9 +28,9 @@ def init_keyword_table():
 def get_timestamp_by_line(log_line):
     # datetime in log looks like <time="09:11:50.3993219" date="3-12-2021" component="
     # datetime in agent executor log is the same
-    time_index = log_line.find("time=") + 6
-    date_index = log_line.find("date=") + 6
-    component_index = log_line.find("component=")
+    time_index = log_line.rfind("<time=\"") + 7
+    date_index = log_line.rfind("\" date=\"") + 8
+    component_index = log_line.rfind("component=\"")
     line_date = log_line[date_index:component_index - 2]
     line_time = log_line[time_index:date_index - 12]
     if time_index == 5 or date_index == 5:

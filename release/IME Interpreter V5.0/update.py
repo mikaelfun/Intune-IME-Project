@@ -1,5 +1,7 @@
 import os
 import shutil
+import signal
+import subprocess
 from datetime import datetime
 import logging
 import requests
@@ -19,6 +21,7 @@ global overall_downloaded
 overall_downloaded = 0
 global total_sizes
 total_sizes = 0
+main_program_path = os.path.join(os.getcwd(), "IME Interpreter V5.0.exe")
 
 # 日志文件
 folder_path = "logs"
@@ -141,6 +144,13 @@ def hot_update_singlethread():
     return True
 
 
+def restart_program():
+    print("Restarting program...")
+    # print(main_program_path)
+    subprocess.run([main_program_path])
+    # os.execl(python, python, main_program_path)
+
+
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -192,9 +202,20 @@ class ColdUpdateThread(QThread):
     update_secondline_signal = pyqtSignal(str)
     update_button_signal = pyqtSignal(bool)
 
+    def __init__(self):
+        super().__init__()
+        self._is_running = True
+
     def run(self):
         # Your thread logic here
         self.cold_update_singlethread()
+        self.delayed_exit()
+
+    def delayed_exit(self):
+        time.sleep(3)
+        self._is_running = False
+        os.kill(os.getpid(), signal.SIGINT)
+        sys.exit()
 
     def cold_update_singlethread(self):
         # appwindow.firstline.setText("Initializing update links..")
@@ -231,6 +252,7 @@ class ColdUpdateThread(QThread):
         self.update_progress_signal.emit(100)
         self.update_firstline_signal.emit("Update Completed. You can close the window.")
         self.update_secondline_signal.emit("")
+        restart_program()
 
     def download_file_via_url(self, url):
         filename = url.split("/src/")[-1].replace('%20', ' ')

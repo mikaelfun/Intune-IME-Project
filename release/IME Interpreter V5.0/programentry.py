@@ -1,6 +1,8 @@
 import shutil
 import sys
 import threading
+import time
+
 import requests
 import os
 from flaskappui import *
@@ -61,6 +63,8 @@ def update_selfupdater():
 
 
 def update_thread_job():
+    # delay 10 seconds to update update.exe
+    time.sleep(10)
     if update_selfupdater():
         pass
     else:
@@ -131,8 +135,7 @@ if __name__ == '__main__':
 # if __name__ == '__main__':
 #     from imeinterpreter import *
 #
-#     # path_to_ime_log_folder = r"C:\Users\kufang\OneDrive - Microsoft\Projects\IME project\Log samples\2024\Eddie log multi aad user IME session not supported\Logs"
-#     path_to_ime_log_folder = r"C:\Users\kufang\OneDrive - Microsoft\Projects\IME project\Log samples\2024\supersedence Chrome no auto uninstall"
+#     path_to_ime_log_folder = r"D:\Kun\Downloads\IME test logs\mdmdiagreport"
 #     a = ImeInterpreter(path_to_ime_log_folder)
 #     #print(a.generate_powershell_interpreter_log_output_webui())
 #     print(a.generate_win32_interpreter_log_output_webui())

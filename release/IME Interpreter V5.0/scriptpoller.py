@@ -80,17 +80,66 @@ class ScriptPoller:
         self.script_num_actual = len(script_process_start_index_list)
         if len(script_process_stop_index_list) != len(script_process_start_index_list):
             print("Warning! LOG_PS_SCRIPT_PROCESS_START_INDICATOR number and LOG_PS_SCRIPT_PROCESS_STOP1_INDICATOR number do not match!")
+            if len(script_process_start_index_list) == len(script_process_stop_index_list) + 1:
+                if script_process_start_index_list[-1] > script_process_stop_index_list[-1]:
+                    script_process_stop_index_list.append(self.log_len-1)
+            elif len(script_process_start_index_list) + 1 == len(script_process_stop_index_list):
+                if script_process_start_index_list[0] > script_process_stop_index_list[0]:
+                    script_process_start_index_list.insert(0, 0)
+            else:
+                print("Warning! missing too many ps poller keywords.")
 
-        for script_index in range(len(script_process_start_index_list)):
-            cur_script_start_line_index = script_process_start_index_list[script_index]
-            cur_script_stop_line_index = script_process_stop_index_list[script_index] + 1
-            cur_script_id = logprocessinglibrary.find_app_id_with_starting_string(self.log_content[cur_script_start_line_index], self.log_keyword_table['LOG_PS_SCRIPT_PROCESS_START_INDICATOR'])
-            cur_script_agent_executor_log_list = self.get_cur_script_agent_executor_log(cur_script_id, cur_script_start_line_index, cur_script_stop_line_index)
-            cur_script = powershell.PowerShellObject(cur_script_id,
-                self.log_content[cur_script_start_line_index:cur_script_stop_line_index],
-                self.get_policy_json, cur_script_agent_executor_log_list)
+        while len(script_process_start_index_list) != 0 and len(script_process_stop_index_list) != 0:
+            cur_script_start_line_index = script_process_start_index_list.pop(0)
+            line_index_iter = cur_script_start_line_index + 1
+            while line_index_iter < self.log_len:
+                if line_index_iter in script_process_stop_index_list:
+                    cur_script_stop_line_index = line_index_iter + 1
+                    cur_script_stop_line_index = min(cur_script_stop_line_index, self.log_len - 1)
+                    cur_script_id = logprocessinglibrary.find_app_id_with_starting_string(
+                        self.log_content[cur_script_start_line_index],
+                        self.log_keyword_table['LOG_PS_SCRIPT_PROCESS_START_INDICATOR'])
+                    cur_script_agent_executor_log_list = self.get_cur_script_agent_executor_log(cur_script_id,
+                                                                                                cur_script_start_line_index,
+                                                                                                cur_script_stop_line_index)
+                    cur_script = powershell.PowerShellObject(cur_script_id,
+                                                             self.log_content[
+                                                             cur_script_start_line_index:cur_script_stop_line_index],
+                                                             self.get_policy_json, cur_script_agent_executor_log_list)
 
-            self.powershell_object_list.append(cur_script)
+                    self.powershell_object_list.append(cur_script)
+                    script_process_stop_index_list.remove(line_index_iter)
+                    break
+                else:
+                    line_index_iter = line_index_iter + 1
+
+            if line_index_iter >= self.log_len:
+                cur_script_stop_line_index = line_index_iter
+                cur_script_stop_line_index = min(cur_script_stop_line_index, self.log_len - 1)
+                cur_script_id = logprocessinglibrary.find_app_id_with_starting_string(
+                    self.log_content[cur_script_start_line_index],
+                    self.log_keyword_table['LOG_PS_SCRIPT_PROCESS_START_INDICATOR'])
+                cur_script_agent_executor_log_list = self.get_cur_script_agent_executor_log(cur_script_id,
+                                                                                            cur_script_start_line_index,
+                                                                                            cur_script_stop_line_index)
+                cur_script = powershell.PowerShellObject(cur_script_id,
+                                                         self.log_content[
+                                                         cur_script_start_line_index:cur_script_stop_line_index],
+                                                         self.get_policy_json, cur_script_agent_executor_log_list)
+
+                self.powershell_object_list.append(cur_script)
+                break
+
+        if len(script_process_stop_index_list) != 0:
+            # Dropping all
+            print("Warning, dumping extra ps poller index stop: ")
+            print(script_process_stop_index_list)
+            script_process_stop_index_list.clear()
+
+        if len(script_process_start_index_list) != 0:
+            print("Warning, dumping extra ps poller index start: ")
+            print(script_process_start_index_list)
+            script_process_start_index_list.clear()
 
     def get_cur_script_agent_executor_log(self, cur_script_id, cur_script_start_line_index, cur_script_stop_line_index):
         cur_start_time = logprocessinglibrary.get_timestamp_by_line(self.log_content[cur_script_start_line_index])

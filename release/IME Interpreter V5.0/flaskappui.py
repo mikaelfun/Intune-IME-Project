@@ -1,3 +1,6 @@
+import signal
+import subprocess
+import sys
 import webbrowser
 import requests
 from flask import Flask, render_template, request, jsonify
@@ -60,7 +63,11 @@ def check_update():
             print("Aborting since update in progress")
             return "Update In Progress"
         else:
-            result = update.hot_update_singlethread()
+            updateexe_path = os.path.join(os.getcwd(), "update.exe")
+            subprocess.run([updateexe_path])
+            os.kill(os.getpid(), signal.SIGINT)
+            sys.exit()
+            #result = update.hot_update_singlethread()
         if result:
             return "Updated"
         else:
