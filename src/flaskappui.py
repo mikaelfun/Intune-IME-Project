@@ -62,8 +62,8 @@ def check_update():
             print("Aborting since update in progress")
             return "Update In Progress"
         else:
-            main_program_path = sys.argv[1]
-            print(main_program_path)
+            main_program_path = os.path.join(os.getcwd(), "IME Interpreter V5.0.exe")
+            #print(main_program_path)
             subprocess.Popen([sys.executable, "update.py", main_program_path])
             sys.exit()
             #result = update.hot_update_singlethread()
