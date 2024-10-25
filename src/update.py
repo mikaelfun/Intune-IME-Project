@@ -19,6 +19,7 @@ global overall_downloaded
 overall_downloaded = 0
 global total_sizes
 total_sizes = 0
+main_program_path = os.path.join(os.getcwd(), "IME Interpreter V5.0.exe")
 
 # 日志文件
 folder_path = "logs"
@@ -141,6 +142,12 @@ def hot_update_singlethread():
     return True
 
 
+def restart_program():
+    print("Restarting program...")
+    python = sys.executable
+    os.execl(python, python, main_program_path)
+
+
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -225,6 +232,7 @@ class ColdUpdateThread(QThread):
         print("Cold Update finishes")
         logging.info("Cold - Update finished.")
 
+        restart_program()
         # UnGrey out button to prevent incomplete update download
         self.update_button_signal.emit(True)
         # appwindow.progress.setValue(100)
@@ -253,6 +261,8 @@ class ColdUpdateThread(QThread):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        main_program_path = sys.argv[1]
     updateapp = QApplication(sys.argv)
     appwindow = MyWindow()
     appwindow.show()

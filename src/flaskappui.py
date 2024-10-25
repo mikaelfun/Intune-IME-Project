@@ -1,3 +1,5 @@
+import subprocess
+import sys
 import webbrowser
 import requests
 from flask import Flask, render_template, request, jsonify
@@ -60,7 +62,11 @@ def check_update():
             print("Aborting since update in progress")
             return "Update In Progress"
         else:
-            result = update.hot_update_singlethread()
+            main_program_path = sys.argv[1]
+            print(main_program_path)
+            subprocess.Popen([sys.executable, "update.py", main_program_path])
+            sys.exit()
+            #result = update.hot_update_singlethread()
         if result:
             return "Updated"
         else:
