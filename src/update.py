@@ -263,8 +263,6 @@ class ColdUpdateThread(QThread):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        main_program_path = sys.argv[1]
     updateapp = QApplication(sys.argv)
     appwindow = MyWindow()
     appwindow.show()
