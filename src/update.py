@@ -1,5 +1,6 @@
 import os
 import shutil
+import signal
 import subprocess
 from datetime import datetime
 import logging
@@ -201,12 +202,19 @@ class ColdUpdateThread(QThread):
     update_secondline_signal = pyqtSignal(str)
     update_button_signal = pyqtSignal(bool)
 
+    def __init__(self):
+        super().__init__()
+        self._is_running = True
+
     def run(self):
         # Your thread logic here
         self.cold_update_singlethread()
+        self.delayed_exit()
 
     def delayed_exit(self):
         time.sleep(3)
+        self._is_running = False
+        os.kill(os.getpid(), signal.SIGINT)
         sys.exit()
 
     def cold_update_singlethread(self):
@@ -245,8 +253,6 @@ class ColdUpdateThread(QThread):
         self.update_firstline_signal.emit("Update Completed. You can close the window.")
         self.update_secondline_signal.emit("")
         restart_program()
-        exit_thread = Thread(target=self.delayed_exit)
-        exit_thread.start()
 
     def download_file_via_url(self, url):
         filename = url.split("/src/")[-1].replace('%20', ' ')
