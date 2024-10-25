@@ -205,6 +205,10 @@ class ColdUpdateThread(QThread):
         # Your thread logic here
         self.cold_update_singlethread()
 
+    def delayed_exit(self):
+        time.sleep(3)
+        sys.exit()
+
     def cold_update_singlethread(self):
         # appwindow.firstline.setText("Initializing update links..")
         self.update_firstline_signal.emit("Initializing update links..")
@@ -241,6 +245,8 @@ class ColdUpdateThread(QThread):
         self.update_firstline_signal.emit("Update Completed. You can close the window.")
         self.update_secondline_signal.emit("")
         restart_program()
+        exit_thread = Thread(target=self.delayed_exit)
+        exit_thread.start()
 
     def download_file_via_url(self, url):
         filename = url.split("/src/")[-1].replace('%20', ' ')
