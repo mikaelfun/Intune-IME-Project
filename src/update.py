@@ -227,24 +227,24 @@ class ColdUpdateThread(QThread):
         # Grey out button to prevent incomplete update download
         self.update_button_signal.emit(False)
 
-        # temp_download_path = "temp"
-        # if not os.path.exists(temp_download_path):
-        #     os.makedirs(temp_download_path)
-        #
-        # for i in range(len(url_list)):
-        #     self.update_progress_signal.emit(((i+1))*100//total_progress_bars)
-        #     url = url_list[i]
-        #     self.download_file_via_url(url)
-        #
-        # try:
-        #     shutil.copytree(temp_download_path, '.\\', symlinks=False, ignore=None, ignore_dangling_symlinks=False,
-        #                     dirs_exist_ok=True)
-        #     print(f"Successfully copied {temp_download_path} to root")
-        #     shutil.rmtree(temp_download_path, ignore_errors=True)
-        # except Exception as e:
-        #     print(f"Error copying {temp_download_path}: {e}")
-        # print("Cold Update finishes")
-        # logging.info("Cold - Update finished.")
+        temp_download_path = "temp"
+        if not os.path.exists(temp_download_path):
+            os.makedirs(temp_download_path)
+
+        for i in range(len(url_list)):
+            self.update_progress_signal.emit(((i+1))*100//total_progress_bars)
+            url = url_list[i]
+            self.download_file_via_url(url)
+
+        try:
+            shutil.copytree(temp_download_path, '.\\', symlinks=False, ignore=None, ignore_dangling_symlinks=False,
+                            dirs_exist_ok=True)
+            print(f"Successfully copied {temp_download_path} to root")
+            shutil.rmtree(temp_download_path, ignore_errors=True)
+        except Exception as e:
+            print(f"Error copying {temp_download_path}: {e}")
+        print("Cold Update finishes")
+        logging.info("Cold - Update finished.")
 
         # UnGrey out button to prevent incomplete update download
         self.update_button_signal.emit(True)
