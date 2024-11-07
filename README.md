@@ -2,7 +2,7 @@
 IME tool to analyze IntuneManagementExtension.log, AgentExecutor.log and AppWorkload.log
 
 # How to use:
-Download and unzip IME Interpreter V5.0.zip from release/
+Download and unzip IME Interpreter V5.0.zip from release.
 There are 2 programs:
 1. IME Interpreter V5.0.exe: Main program with debug window for general use.
 2. update.exe: Updater program which is used to update *.py and *.json files from GitHub src folder. Whenever there is a hotpatch, run this program and it can be updated right away.
