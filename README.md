@@ -3,10 +3,11 @@ IME tool to analyze IntuneManagementExtension.log, AgentExecutor.log and AppWork
 
 # How to use:
 Download and unzip IME Interpreter V5.0.zip from release/
-There are 3 programs:
+There are 2 programs:
 1. IME Interpreter V5.0.exe: Main program with debug window for general use.
 2. update.exe: Updater program which is used to update *.py and *.json files from GitHub src folder. Whenever there is a hotpatch, run this program and it can be updated right away.
 
+Please note that the program maybe caught and blocked by defender antivirus. If it does, go to the antivirus protection history and allow the blocked file. Both exe's are safe to use without any viruses. You can check update.py and programentry.py for security review.
 
 
 ## Command line argument format:
@@ -42,8 +43,8 @@ Full log output:
 9. Incomplete Application Poller/Win32 app processing flow
 10. MSFB UWP app flow
 11. PowerShell diagnosis
+12. Proactive remediation diagnosis
+13. Win32 supersedence flow
 
 ## Roadmap
-
-1. Proactive remediation diagnosis
-2. Win32 supersedence flow
+1. Multi-user session scenario. Eg. when multiple aad users with Intune license is logged in to the same device, it will process apps for each user session. This scenario is currently not implemented.
