@@ -3,14 +3,15 @@ This is Class def for Win32App.
 Each SubGraph may contain multiple Win32Apps to process
 Create this class object for each Win32Apps.
 
-Error Code range: 5000 - 5999
+Error Code range: 6000 - 6999
 
 Class hierarchy:
 - ImeInterpreter
     - EMSLifeCycle
         - ApplicationPoller
-            - SubGraph
-                - Win32App
+            - UserSession
+                - SubGraph
+                   - Win32App
 
 Note:
     TargetType:
@@ -281,8 +282,10 @@ class Win32App:
                                                               '%m-%d-%Y %H:%M:%S')
             download_start_time = datetime.datetime.strptime(self.download_start_time[:-4], '%m-%d-%Y %H:%M:%S')
             time_difference = (download_finish_time - download_start_time).total_seconds()
+            if download_finish_time != download_start_time and time_difference == 0:
+                time_difference = 1
             if time_difference <= 0:
-                print("download_finish_time = download_start_time, download not finished")
+                # print("download time issue: " + self.start_time + " " + self.app_id + " , download start: " + self.download_start_time + ", download stop: " + self.download_finish_time )
                 self.download_success = False
                 download_average_speed_raw = 0
             else:
@@ -1449,14 +1452,14 @@ class Win32App:
         for cur_line_index in range(len(self.full_log)):
             cur_line = self.full_log[cur_line_index]
             cur_time = logprocessinglibrary.get_timestamp_by_line(cur_line)
+            """
+            MSFB UWP indicator for User Context
+            <![LOG[[ProcessMonitor] Calling CreateProcessAsUser: '"C:\Program Files (x86)\Microsoft Intune Management Extension\agentexecutor.exe" -executeWinGet -operationType "Detection"
+            <![LOG[[ProcessMonitor] Calling CreateProcessAsUser: '"C:\Program Files (x86)\Microsoft Intune Management Extension\agentexecutor.exe" -executeWinGet -operationType "ApplicabilityCheck"
+            <![LOG[[ProcessMonitor] Calling CreateProcessAsUser: '"C:\Program Files (x86)\Microsoft Intune Management Extension\agentexecutor.exe" -executeWinGet -operationType "Install"
+            <![LOG[[ProcessMonitor] Calling CreateProcessAsUser: '"C:\Program Files (x86)\Microsoft Intune Management Extension\agentexecutor.exe" -executeWinGet -operationType "Uninstall"
+            """
             if cur_line.startswith(self.log_keyword_table['LOG_MSFB_USER_EXECUTING_START_INDICATOR']):
-                """
-                MSFB UWP indicator for User Context
-                <![LOG[[ProcessMonitor] Calling CreateProcessAsUser: '"C:\Program Files (x86)\Microsoft Intune Management Extension\agentexecutor.exe" -executeWinGet -operationType "Detection"
-                <![LOG[[ProcessMonitor] Calling CreateProcessAsUser: '"C:\Program Files (x86)\Microsoft Intune Management Extension\agentexecutor.exe" -executeWinGet -operationType "ApplicabilityCheck"
-                <![LOG[[ProcessMonitor] Calling CreateProcessAsUser: '"C:\Program Files (x86)\Microsoft Intune Management Extension\agentexecutor.exe" -executeWinGet -operationType "Install"
-                <![LOG[[ProcessMonitor] Calling CreateProcessAsUser: '"C:\Program Files (x86)\Microsoft Intune Management Extension\agentexecutor.exe" -executeWinGet -operationType "Uninstall"
-                """
                 if '-operationType "Uninstall"' in cur_line:
                     """
                     Uninstall bypass app download
@@ -1634,7 +1637,8 @@ class Win32App:
                         self.log_keyword_table['LOG_MFSB_DETECTION_DETECTED_INDICATOR'])
                     detected_state_index_stop = cur_line.find(
                         self.log_keyword_table['LOG_MFSB_DETECTION_DETECTED_VERSION_INDICATOR']) - 3
-                    if cur_line[detected_state_index_start:detected_state_index_stop] == "Detected":
+                    detection_state_string = cur_line[detected_state_index_start:detected_state_index_stop]
+                    if detection_state_string == "Detected" or detection_state_string == "DetectedDifferentVersion":
                         self.pre_install_detection = True
                         self.pre_install_detection_time = cur_time
                         # self.has_enforcement = False
@@ -1793,6 +1797,8 @@ class Win32App:
                     continue
 
                 self.installer_exit_success = True
+                if not self.download_finish_time or self.download_finish_time == self.download_start_time:
+                    self.download_finish_time = cur_time
 
                 install_action_status_index_start = cur_line.find(
                     self.log_keyword_table['LOG_MSFB_INSTALL_ACTION_STATUS_INDICATOR']) + len(
@@ -1808,6 +1814,15 @@ class Win32App:
                     self.log_keyword_table['LOG_MSFB_INSTALL_EXECUTION_RESULT_INDICATOR']) - 3
                 self.install_error_message = cur_line[
                                              install_message_status_index_start:install_message_status_index_end]
+                self.install_error_message = self.install_error_message + ", "
+
+                extended_error_code_status_index_start = cur_line.find(
+                    self.log_keyword_table['LOG_MSFB_INSTALL_EXECUTION_RESULT_INDICATOR']) + len(
+                    self.log_keyword_table['LOG_MSFB_INSTALL_EXECUTION_RESULT_INDICATOR'])
+                extended_error_code_status_index_end = cur_line.find(
+                    self.log_keyword_table['LOG_MSFB_INSTALL_EXECUTION_RESULT_END_INDICATOR']) - 3
+
+                self.install_error_message = self.install_error_message + cur_line[extended_error_code_status_index_start:extended_error_code_status_index_end]
 
                 post_install = True
                 if self.install_finish_time == "":

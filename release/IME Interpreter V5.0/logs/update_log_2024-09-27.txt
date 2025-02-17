@@ -1,9 +1,0 @@
-2024-09-27 09:28:16, 883 werkzeug INFO [ _internal.py-_internal-97 ]  : [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2024-09-27 09:28:16, 883 werkzeug INFO [ _internal.py-_internal-97 ]  : [33mPress CTRL+C to quit[0m
-2024-09-27 09:28:17, 37 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [27/Sep/2024 09:28:17] "GET / HTTP/1.1" 200 -
-2024-09-27 09:28:17, 279 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [27/Sep/2024 09:28:17] "GET /static/css/nicepage.css HTTP/1.1" 200 -
-2024-09-27 09:28:17, 303 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [27/Sep/2024 09:28:17] "GET /static/css/index.css HTTP/1.1" 200 -
-2024-09-27 09:28:17, 323 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [27/Sep/2024 09:28:17] "GET /getversion HTTP/1.1" 200 -
-2024-09-27 09:28:17, 353 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [27/Sep/2024 09:28:17] "GET /static/js/jquery.js HTTP/1.1" 200 -
-2024-09-27 09:28:17, 404 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [27/Sep/2024 09:28:17] "GET /static/js/nicepage.js HTTP/1.1" 200 -

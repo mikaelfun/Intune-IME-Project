@@ -81,7 +81,9 @@ class ScriptPoller:
         if len(script_process_stop_index_list) != len(script_process_start_index_list):
             print("Warning! LOG_PS_SCRIPT_PROCESS_START_INDICATOR number and LOG_PS_SCRIPT_PROCESS_STOP1_INDICATOR number do not match!")
             if len(script_process_start_index_list) == len(script_process_stop_index_list) + 1:
-                if script_process_start_index_list[-1] > script_process_stop_index_list[-1]:
+                if not script_process_stop_index_list:
+                    script_process_stop_index_list.append(self.log_len-1)
+                elif script_process_start_index_list[-1] > script_process_stop_index_list[-1]:
                     script_process_stop_index_list.append(self.log_len-1)
             elif len(script_process_start_index_list) + 1 == len(script_process_stop_index_list):
                 if script_process_start_index_list[0] > script_process_stop_index_list[0]:

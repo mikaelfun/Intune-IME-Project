@@ -1,18 +1,19 @@
 """
 This is Class def for SubGraph.
-Each Application Poller session may contain multiple SubGraphs to process
+Each User Session may contain multiple SubGraphs to process
 A SubGraph is a set of applications with all dependency/supercedence
 A SubGraph can contain 1 single app without any dependency/supercedence
 Create this class object for each SubGraph.
 
-Error Code range: 4000 - 4999
+Error Code range: 5000 - 5999
 
 Class hierarchy:
 - ImeInterpreter
     - EMSLifeCycle
         - ApplicationPoller
-            - SubGraph
-                - Win32App
+            -UserSession
+                - SubGraph
+                    - Win32App
 
 """
 import logprocessinglibrary

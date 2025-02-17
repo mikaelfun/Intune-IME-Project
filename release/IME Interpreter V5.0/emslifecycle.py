@@ -9,8 +9,9 @@ Class hierarchy:
 - ImeInterpreter
     - EMSLifeCycle
         - ApplicationPoller
-            - SubGraph
-                - Win32App
+            -UserSession
+                - SubGraph
+                    - Win32App
 
 """
 import json
@@ -300,11 +301,11 @@ class EMSLifeCycle:
             self.remediation_obejct_list.append(
                 remediation.Remediation(agent_executor_remediation_log_list[-self.remediation_num:][index_remediation_log], ime_remediation_log_list[-self.remediation_num:][index_remediation_log]))
 
-    def generate_ems_win32_lifecycle_log_output(self, show_not_expired_subgraph):
+    def generate_ems_win32_lifecycle_log_output(self, show_full_log):
         interpreted_log_output = ""
         for cur_app_poller_log_index in range(self.poller_num):
             cur_app_poller_log = self.app_poller_object_list[cur_app_poller_log_index]
-            ems_win32_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_not_expired_subgraph)
+            ems_win32_lifecycle_log_output = cur_app_poller_log.generate_application_poller_log_output(show_full_log)
             if ems_win32_lifecycle_log_output != "":
                 interpreted_log_output += ems_win32_lifecycle_log_output
                 interpreted_log_output += '\n'

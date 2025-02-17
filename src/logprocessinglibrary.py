@@ -68,6 +68,27 @@ def locate_line_contains_keyword(full_log, keyword):
             line_index_list.append(index)
     return line_index_list
 
+def align_index_lists(line_start, line_stop):
+    # Ensure both lists are sorted in ascending order
+    line_start.sort()
+    line_stop.sort()
+
+    # Initialize the aligned lists
+    aligned_start = []
+    aligned_stop = []
+
+    # Iterate through both lists and align them
+    i, j = 0, 0
+    while i < len(line_start) and j < len(line_stop):
+        if line_start[i] < line_stop[j]:
+            aligned_start.append(line_start[i])
+            aligned_stop.append(line_stop[j])
+            i += 1
+            j += 1
+        else:
+            j += 1
+
+    return aligned_start, aligned_stop
 
 def process_breaking_line_log(full_log):
     """

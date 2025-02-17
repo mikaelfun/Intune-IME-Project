@@ -132,11 +132,13 @@ if __name__ == '__main__':
             ime_interpreter_app.run(port=5000, debug=True)
             print("E2. Error reading config.ini!! Run update.exe to fix!")
 
+
 # if __name__ == '__main__':
 #     from imeinterpreter import *
 #
-#     path_to_ime_log_folder = r"D:\Kun\Downloads\IME test logs\mdmdiagreport"
+#     # path_to_ime_log_folder = r"C:\Users\kufang\OneDrive - Microsoft\Projects\IME project\Log samples\2024\Eddie log multi aad user IME session not supported\Logs"
+#     path_to_ime_log_folder = r"C:\Users\kufang\Downloads\Eddie log multi aad user IME session not supported\Logs"
 #     a = ImeInterpreter(path_to_ime_log_folder)
 #     #print(a.generate_powershell_interpreter_log_output_webui())
-#     print(a.generate_win32_interpreter_log_output_webui())
+#     print(a.generate_win32_interpreter_log_output_webui(True))
 #     #print(a.generate_remediation_interpreter_log_output_webui())

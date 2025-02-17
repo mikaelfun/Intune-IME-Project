@@ -9,8 +9,9 @@ Class hierarchy:
 - ImeInterpreter
     - EMSLifeCycle
         - ApplicationPoller
-            - SubGraph
-                - Win32App
+            -UserSession
+                - SubGraph
+                    - Win32App
 
 """
 import os
@@ -28,8 +29,8 @@ class ImeInterpreter:
         self.ems_agent_sorted_start_times, self.ems_agent_sorted_stop_times = [], []
         self.initialize_odc_folder()
         self.full_log = self.load_full_logs()  # full log as line of string list
-
-        with open("combinedIME.txt", 'w', encoding='utf-8') as f:
+        combinedIME_path = os.path.join(log_folder_path, "combinedIME.txt")
+        with open(combinedIME_path, 'w', encoding='utf-8') as f:
             for item in self.full_log:
                 # print(item)
                 f.writelines(item)
@@ -98,12 +99,16 @@ class ImeInterpreter:
                 return None
             # exit(1100)
         most_recent_log_file_as_lines = self.open_log_file(ime_log_file_path)
-        if most_recent_log_file_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 and not full_log[
-            -1].startswith('<![LOG[EMS Agent Stopped]'):
-            post_part_start_index = full_log[-1].find('LOG]!>')
-            made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
-            most_recent_log_file_as_lines.insert(0, made_up_line)
-        full_log = full_log + most_recent_log_file_as_lines
+        """
+        fix bug where latest IME log could be empty.
+        """
+        if most_recent_log_file_as_lines:
+            if most_recent_log_file_as_lines[0].startswith('<![LOG[EMS Agent Started]') and len(full_log) > 0 \
+                    and not full_log[-1].startswith('<![LOG[EMS Agent Stopped]'):
+                post_part_start_index = full_log[-1].find('LOG]!>')
+                made_up_line = '<![LOG[EMS Agent Stopped]LOG]!>' + full_log[-1][post_part_start_index + 6:]
+                most_recent_log_file_as_lines.insert(0, made_up_line)
+            full_log = full_log + most_recent_log_file_as_lines
         return full_log
 
     def load_all_agent_executor_logs(self):
@@ -158,7 +163,10 @@ class ImeInterpreter:
             left_time = logprocessinglibrary.get_timestamp_by_line(left_line)
             right_time = logprocessinglibrary.get_timestamp_by_line(right_line)
             date_format = "%m-%d-%Y %H:%M:%S.%f"
-
+            # print(left_line)
+            # print(left_time)
+            # print(right_line)
+            # print(right_time)
             left_date_object = datetime.datetime.strptime(left_time, date_format)
             right_date_object = datetime.datetime.strptime(right_time, date_format)
             if left_date_object > right_date_object:
@@ -422,7 +430,7 @@ class ImeInterpreter:
                                                                       index_lifecycle_log],
                                                                   ems_agent_restart_reasons[index_lifecycle_log]))
 
-    def generate_win32_interpreter_log_output_webui(self, show_not_expired_subgraph=False):
+    def generate_win32_interpreter_log_output_webui(self, show_full_log=False):
         interpreted_log_output = ""
         # interpreted_log_output += constructinterpretedlog.write_empty_plus_to_log_output()
         # return interpreted_log_output
@@ -442,7 +450,7 @@ class ImeInterpreter:
             interpreted_log_output += constructinterpretedlog.write_ime_service_start_by_reason(cur_lifecycle_log,
             self.ems_agent_sorted_stop_times[cur_lifecycle_log_index], self.ems_agent_sorted_start_times[cur_lifecycle_log_index + 1])
             interpreted_log_output += '\n'
-            interpreted_log_output += cur_lifecycle_log.generate_ems_win32_lifecycle_log_output(show_not_expired_subgraph)
+            interpreted_log_output += cur_lifecycle_log.generate_ems_win32_lifecycle_log_output(show_full_log)
 
         return interpreted_log_output
 
