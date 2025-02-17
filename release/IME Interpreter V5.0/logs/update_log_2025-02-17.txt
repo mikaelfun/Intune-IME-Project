@@ -1,10 +1,9 @@
-2025-02-17 11:17:32, 806 werkzeug INFO [ _internal.py-_internal-97 ]  : [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-02-17 11:38:42, 303 werkzeug INFO [ _internal.py-_internal-97 ]  : [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2025-02-17 11:17:32, 806 werkzeug INFO [ _internal.py-_internal-97 ]  : [33mPress CTRL+C to quit[0m
-2025-02-17 11:17:33, 207 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:17:33] "GET / HTTP/1.1" 200 -
-2025-02-17 11:17:33, 397 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:17:33] "GET /static/css/nicepage.css HTTP/1.1" 200 -
-2025-02-17 11:17:33, 404 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:17:33] "GET /static/css/index.css HTTP/1.1" 200 -
-2025-02-17 11:17:33, 404 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:17:33] "GET /static/js/nicepage.js HTTP/1.1" 200 -
-2025-02-17 11:17:33, 451 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:17:33] "GET /static/js/jquery.js HTTP/1.1" 200 -
-2025-02-17 11:17:33, 539 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:17:33] "GET /getversion HTTP/1.1" 200 -
-2025-02-17 11:17:43, 541 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:17:43] "POST /analyze HTTP/1.1" 200 -
+2025-02-17 11:38:42, 303 werkzeug INFO [ _internal.py-_internal-97 ]  : [33mPress CTRL+C to quit[0m
+2025-02-17 11:38:43, 325 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:38:43] "GET / HTTP/1.1" 200 -
+2025-02-17 11:38:43, 508 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:38:43] "GET /static/css/nicepage.css HTTP/1.1" 200 -
+2025-02-17 11:38:43, 548 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:38:43] "GET /static/css/index.css HTTP/1.1" 200 -
+2025-02-17 11:38:43, 641 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:38:43] "GET /static/js/jquery.js HTTP/1.1" 200 -
+2025-02-17 11:38:43, 646 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:38:43] "GET /static/js/nicepage.js HTTP/1.1" 200 -
+2025-02-17 11:38:43, 704 werkzeug INFO [ _internal.py-_internal-97 ]  : 127.0.0.1 - - [17/Feb/2025 11:38:43] "GET /getversion HTTP/1.1" 200 -
