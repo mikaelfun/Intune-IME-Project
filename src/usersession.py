@@ -185,7 +185,7 @@ class UserSession:
             elif cur_line.startswith(self.log_keyword_table['LOG_SUBGRAPH_PROCESSING_END_INDICATOR']):
                 temp_index_list_subgraph_processing_stop.append(log_line_index)
             elif cur_line.startswith(self.log_keyword_table['LOG_SUBGRAPH_PROCESSING_NOT_APPLICABLE_INDICATOR']):
-                self.index_list_subgraph_processing_stop.append(log_line_index)
+                temp_index_list_subgraph_processing_stop.append(log_line_index)
             elif self.subgraph_num_expected == -1 and cur_line.startswith(
                     self.log_keyword_table['LOG_V3_PROCESSOR_ALL_SUBGRAPH_1_INDICATOR']) \
                     and self.log_keyword_table[
@@ -207,14 +207,14 @@ class UserSession:
                 reporting_state_json_string = cur_line[reporting_state_start_index:reporting_state_end_index]
                 self.last_enforcement_json_dict[cur_app_id] = json.loads(reporting_state_json_string)
 
+        self.index_list_subgraph_processing_start, self.index_list_subgraph_processing_stop = (
+            logprocessinglibrary.align_index_lists(temp_index_list_subgraph_processing_start,
+                                                   temp_index_list_subgraph_processing_stop))
+
         # Support Subgraph ending pre-maturely
         if len(self.index_list_subgraph_processing_start) == len(self.index_list_subgraph_processing_stop) + 1:
             if self.index_list_subgraph_processing_start[-1] > self.index_list_subgraph_processing_stop[-1]:
                 self.index_list_subgraph_processing_stop.append(self.log_len - 1)
-
-        self.index_list_subgraph_processing_start, self.index_list_subgraph_processing_stop = (
-            logprocessinglibrary.align_index_lists(temp_index_list_subgraph_processing_start,
-                                                   temp_index_list_subgraph_processing_stop))
 
 
         if len(self.index_list_subgraph_processing_start) == 0 or len(
