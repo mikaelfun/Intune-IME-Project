@@ -101,37 +101,54 @@ def process_breaking_line_log(full_log):
     Local deadline time = 1/1/0001 12:00:00 AM
     GRS expired = True]LOG]!><time="12:50:53.0788084" date="2-27-2023" component="IntuneManagementExtension" context="" type="1" thread="14" file="">
     <![LOG[[Win32App][ActionProcessor] Found: 0 apps with intent to uninstall before enforcing installs: [].]LOG]!><time="12:50:53.0788084" date="2-27-2023" component="IntuneManagementExtension" context="" type="1" thread="14" file="">
+
+    Also need to handle dirty log like:
+
+    <![LOG[EMS Agent Stopped]LOG]!><time="14:54:47.4106180" date="2-25-2025" component="IntuneManagementExtension" context="" type="1" thread="26" file="">
+    8:15.7527381" date="2-25-2025" component="IntuneManagementExtension" context="" type="1" thread="1" file="">
+    <![LOG[[Location Service] Failed to Get Endpoint From LocationServiceServiceAddressesController with url checkin.dm.microsoft.com/RestUserAuthLocationService/RestUserAuthLocationService/Certificate/ServiceAddresses, thumbprint 67BD152D91314F81F30F0E96055110B211184230,True, ex System.UriFormatException: Invalid URI: The format of the URI could not be determined.
+       at System.Uri.CreateThis(String uri, Boolean dontEscape, UriKind uriKind)
+       at System.Uri..ctor(String uriString)
+       at Microsoft.Management.Services.IntuneWindowsAgent.AgentCommon.DiscoveryService.GetEndpointFromLocationServiceServiceAddressesController(X509Certificate2 deviceCertificate, Guid deviceId)]LOG]!><time="14:48:15.7761191" date="2-25-2025" component="IntuneManagementExtension" context="" type="2" thread="1" file="">
+
     """
 
     log_keyword_table = init_keyword_table()
     log_len = len(full_log)
     line_index_iter = 0
     temp_log = []
+    in_broken = False
     while line_index_iter < log_len:
-        # Normal line with start and thread
         cur_line = full_log[line_index_iter]
         cur_thread = locate_thread(cur_line)
         if cur_line.startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != cur_thread:
+            """
+            Normal line with log start and thread
+            """
             temp_log.append(cur_line)
         elif cur_line.startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == locate_thread(cur_line):
             """
             start of broken log
             <![LOG[AAD User check is failed, exception is System.ComponentModel.Win32Exception (0x80004005):
+            need to append the next line until the next line has log ending.
             """
-
             temp_log.append(cur_line.replace('\n', ' | '))
+            in_broken = True
         elif not cur_line.startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" == cur_thread:
             """
             middle of broken log, no start, no thread.
             Append to last line string end.
             """
-            temp_log[-1] = temp_log[-1] + cur_line.replace('\n', ' | ')
+            if in_broken:
+                temp_log[-1] = temp_log[-1] + cur_line.replace('\n', ' | ')
         elif not cur_line.startswith(log_keyword_table['LOG_STARTING_STRING']) and "-1" != cur_thread:
             """
             end of broken log, no start, got thread.
             Append to last line string end.
             """
-            temp_log[-1] = temp_log[-1] + cur_line
+            if in_broken:
+                temp_log[-1] = temp_log[-1] + cur_line
+                in_broken = False
 
         line_index_iter = line_index_iter + 1
 
