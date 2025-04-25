@@ -207,15 +207,14 @@ class UserSession:
                 reporting_state_json_string = cur_line[reporting_state_start_index:reporting_state_end_index]
                 self.last_enforcement_json_dict[cur_app_id] = json.loads(reporting_state_json_string)
 
+        # Support Subgraph ending pre-maturely
+        if len(temp_index_list_subgraph_processing_start) == len(temp_index_list_subgraph_processing_stop) + 1:
+            if temp_index_list_subgraph_processing_start[-1] > temp_index_list_subgraph_processing_stop[-1]:
+                temp_index_list_subgraph_processing_stop.append(self.log_len - 1)
+
         self.index_list_subgraph_processing_start, self.index_list_subgraph_processing_stop = (
             logprocessinglibrary.align_index_lists(temp_index_list_subgraph_processing_start,
                                                    temp_index_list_subgraph_processing_stop))
-
-        # Support Subgraph ending pre-maturely
-        if len(self.index_list_subgraph_processing_start) == len(self.index_list_subgraph_processing_stop) + 1:
-            if self.index_list_subgraph_processing_start[-1] > self.index_list_subgraph_processing_stop[-1]:
-                self.index_list_subgraph_processing_stop.append(self.log_len - 1)
-
 
         if len(self.index_list_subgraph_processing_start) == 0 or len(
                 self.index_list_subgraph_processing_stop) == 0:

@@ -110,7 +110,8 @@ class ApplicationPoller:
             elif (self.log_keyword_table['LOG_USER_SESSION_PROCESS_INTERRUPTED_BY_REBOOT_INDICATOR']) in cur_line:
                 temp_index_list_user_session_processing_stop.append(log_line_index)
 
-
+        if len(temp_index_list_user_session_processing_start) == len(temp_index_list_user_session_processing_stop) + 1:
+            temp_index_list_user_session_processing_stop.append(self.log_len - 1)
         self.index_list_user_session_processing_start, self.index_list_user_session_processing_stop = (
             logprocessinglibrary.align_index_lists(temp_index_list_user_session_processing_start, temp_index_list_user_session_processing_stop))
 
